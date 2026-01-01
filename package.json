@@ -1,0 +1,20 @@
+{
+  "name": "roche-void-server",
+  "version": "1.0.0",
+  "description": "Backend server for ROCHE Void website - Stripe Embedded Checkout",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "stripe": "^14.21.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1"
+  },
+  "keywords": ["stripe", "payment", "music"],
+  "author": "",
+  "license": "ISC"
+}
+
