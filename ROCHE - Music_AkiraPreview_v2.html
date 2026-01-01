@@ -64,7 +64,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: var(--space-32);
+            padding: var(--space-32) var(--space-32) 180px var(--space-32); /* Added bottom padding for fixed footer */
             width: 100%;
             height: 100vh;
             position: absolute;
@@ -115,12 +115,13 @@
 
         .music-view {
             display: none;
-            padding: 80px 24px; 
+            padding: 80px 24px 0 24px; /* No bottom padding, handled by content */
             padding-top: 120px; /* Push content lower visually */
-            min-height: 100vh;
+            min-height: calc(100vh - 180px - 60px); /* Viewport minus footer (180px) and mini-player (60px) */
             align-items: flex-start; /* Start from top + padding */
             justify-content: flex-start; /* Allow manual spacing */
-            flex-direction: column; 
+            flex-direction: column;
+            padding-bottom: calc(180px + 60px + 20px); /* Footer + mini-player + extra spacing */
         }
 
 
@@ -221,6 +222,11 @@
             min-height: 50px; /* Minimum height for collapsed state */
         }
         
+        .track-item:hover {
+            border-color: var(--color-highlight);
+            border-width: 1px;
+        }
+        
         .track-item:last-child {
             border-bottom: none;
         }
@@ -232,16 +238,19 @@
             align-items: center; /* Center text vertically */
         }
 
-        .track-item:hover {
-            opacity: 1; 
-            border-color: transparent;
-            background: rgba(255, 255, 255, 0.05);
+        .track-item:hover:not(.active) {
+            opacity: 1 !important; 
+            border-color: var(--color-highlight);
+            border-width: 2px;
+            background: rgba(0, 212, 255, 0.03);
         }
 
         .track-item.active {
             border-color: var(--color-highlight);
+            border-width: 2px;
             background: rgba(0, 212, 255, 0.05); 
             flex: 5; /* Grow MORE to ensure last item content fits */
+            opacity: 1 !important;
         }
 
         /* Player Wrapper Animation */
@@ -401,14 +410,122 @@
             font-family: 'Space Mono', monospace;
         }
 
-        footer {
+        /* Mini Player Styles */
+        .mini-player {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.98);
+            border-top: 1px solid var(--color-border);
+            padding: 12px 24px;
+            z-index: 999;
+            transform: translateY(100%);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .mini-player.visible {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mini-player-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: var(--space-16);
+        }
+
+        .mini-player-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .mini-player-track {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--color-text);
+            font-family: 'Akira Expanded', sans-serif;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .mini-player-time {
+            font-size: 10px;
+            color: var(--color-text-secondary);
+            font-family: 'Space Mono', monospace;
+            margin-top: 2px;
+        }
+
+        .mini-player-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .mini-player-btn {
+            background: none;
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            padding: 0;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .mini-player-btn:hover {
+            border-color: var(--color-accent);
+            color: var(--color-accent);
+        }
+
+        .mini-player-progress {
+            width: 200px;
+            height: 3px;
+            background: var(--color-border);
+            border-radius: 2px;
+            cursor: pointer;
             position: relative;
+        }
+
+        .mini-player-progress-fill {
+            height: 100%;
+            background: var(--color-accent);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
             z-index: 1000; /* Increased Z-Index */
             border-top: 1px solid var(--color-border);
             padding: var(--space-32) var(--space-24);
             text-align: center;
-            margin-top: auto;
+            background: var(--color-bg); /* Ensure footer has background to cover content */
             pointer-events: auto; /* Ensure clickable */
+        }
+
+        /* Adjust footer position when mini-player is visible */
+        body.has-mini-player footer {
+            bottom: 60px; /* Height of mini-player */
         }
 
         .poem {
@@ -484,6 +601,15 @@
             width: 90%;
             border-radius: var(--radius-base);
             position: relative;
+        }
+
+        #checkoutContent {
+            max-width: 600px;
+            padding: var(--space-24);
+        }
+
+        #checkout {
+            margin-top: var(--space-16);
         }
 
         .modal-close {
@@ -646,6 +772,7 @@
         }
 
         @media (min-width: 768px) {
+            /* Apply layout to all music-content - archive view will override */
             .music-content {
                 flex-direction: row;
                 align-items: stretch; /* Stretch both columns to same height */
@@ -657,28 +784,49 @@
 
             .release-info {
                 flex: 0 0 320px;
-                /* Removed sticky, now fixed height container */
                 display: flex;
                 flex-direction: column;
-                justify-content: space-between; /* Space out content nicely */
+                justify-content: flex-start; /* Align to top */
+                align-items: flex-start;
             }
 
             .tracks-area {
                 flex: 1;
                 max-width: 500px;
                 height: 100%; /* Match parent height */
-                overflow: hidden; /* No scrollbars, we use flex shrink/grow */
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start; /* Align tracks to top */
             }
             
             .release-header {
-                text-align: left; /* Align text left within the block */
-                margin-right: 0;
-                margin-left: auto; /* Push the whole block to the right */
+                text-align: left;
                 display: flex;
                 flex-direction: column;
-                align-items: flex-start; /* Align children (button/img) to left */
-                width: 300px; /* Fix width of the block to match artwork */
-                height: 100%; /* Fill the container */
+                align-items: flex-start;
+                width: 100%;
+                margin-bottom: var(--space-24); /* Consistent spacing */
+            }
+            
+            .release-header h2 {
+                margin-top: 0;
+                margin-bottom: var(--space-16);
+            }
+            
+            .release-header p {
+                margin-bottom: var(--space-24); /* Space before artwork */
+            }
+            
+            .ep-artwork {
+                margin-bottom: var(--space-24); /* Space before button */
+            }
+            
+            .track-list {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start; /* Align to top */
             }
             
             .ep-artwork {
@@ -738,9 +886,14 @@
             text-align: center;
             margin-top: auto;
             padding-top: 150px; /* Much lower */
-            padding-bottom: 60px;
+            padding-bottom: 0; /* No bottom padding, will be handled by parent */
+            margin-bottom: calc(180px + 60px + 20px); /* Footer (180px) + mini-player (60px) + extra spacing */
             opacity: 0;
             transition: opacity 1s ease 0.5s;
+            position: relative;
+            z-index: 1; /* Ensure it's above other content */
+            flex-shrink: 0; /* Don't shrink */
+            max-height: fit-content; /* Prevent it from growing beyond content */
         }
 
         .music-view.organized .older-music-section {
@@ -792,6 +945,20 @@
             flex: unset;
             height: auto;
             overflow: visible;
+        }
+        
+        /* Override archive view in media query to prevent layout conflicts */
+        @media (min-width: 768px) {
+            #archiveView .music-content {
+                flex-direction: column;
+                height: auto;
+                margin-top: 0;
+            }
+            
+            #archiveView .tracks-area {
+                max-width: 1000px;
+                height: auto;
+            }
         }
 
         #archiveList::-webkit-scrollbar {
@@ -940,6 +1107,22 @@
         </div>
     </div>
 
+    <!-- Mini Player (appears above footer when playing) -->
+    <div class="mini-player" id="miniPlayer">
+        <div class="mini-player-content">
+            <div class="mini-player-info">
+                <div class="mini-player-track" id="miniPlayerTrack">—</div>
+                <div class="mini-player-time" id="miniPlayerTime">0:00 / 0:00</div>
+            </div>
+            <div class="mini-player-controls">
+                <button class="mini-player-btn" id="miniPlayBtn" onclick="togglePlayFromMini()">▶</button>
+                <div class="mini-player-progress" onclick="seekMini(event)">
+                    <div class="mini-player-progress-fill" id="miniProgressFill"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <div class="poem">
             <a href="https://www.samaritans.org/" target="_blank" rel="noopener noreferrer">Samaritans</a> 116 123 • <a href="https://www.thecalmzone.net/" target="_blank" rel="noopener noreferrer">CALM</a> 0800 58 58 58 • <a href="https://www.papyrus-uk.org/" target="_blank" rel="noopener noreferrer">Papyrus</a> 0800 068 4141 • <a href="https://www.crisis.org.uk/get-help/" target="_blank" rel="noopener noreferrer">Crisis</a> 85258
@@ -953,7 +1136,7 @@
     </footer>
 
     <div class="modal" id="donationModal">
-        <div class="modal-content">
+        <div class="modal-content" id="donationFormContent">
             <button class="modal-close" onclick="closeDonation()">×</button>
             <h3>Support This Track</h3>
             <p>Choose your contribution. No amount is too small.</p>
@@ -977,6 +1160,11 @@
                 <input type="text" id="donorName" placeholder="Your name">
             </div>
             <button class="submit-btn" onclick="submitDonation()">Complete Support</button>
+        </div>
+        <!-- Embedded Checkout Container (hidden by default) -->
+        <div class="modal-content" id="checkoutContent" style="display: none;">
+            <button class="modal-close" onclick="closeCheckout()">×</button>
+            <div id="checkout"></div>
         </div>
     </div>
 
@@ -1107,13 +1295,16 @@
         };
 
         // Initialize Stripe
-        const stripe = Stripe('pk_live_YOUR_STRIPE_PUBLIC_KEY');
+        const stripe = Stripe('pk_live_51SkeM0BlFcUia3s1u859vt0ycjJb4wU2oZJJt1yjx2VeeAOqSbjBnYZ5TV1ozmj1Qi3GRs1Um0eXwhRJCbzM2O0I00wzYDXNjj');
+        let checkout = null;
 
         let currentTrack = null;
         let selectedAmount = 0;
         let isPlaying = false;
         let isFullEPDownload = false;
         let previousView = 'home'; // Track where we came from
+        let placeholderAudio = null; // Cache for placeholder audio
+        const trackPlaceholders = {}; // Cache placeholders per track
 
         function goToMusic() {
             const message = document.querySelector('.message');
@@ -1190,6 +1381,12 @@
             const musicView = document.getElementById('musicView');
             const archiveView = document.getElementById('archiveView');
             
+            // Stop audio and hide mini-player
+            audioPlayer.pause();
+            isPlaying = false;
+            currentTrack = null;
+            updateMiniPlayer();
+            
             // Handle closing whichever view is open
             if(musicView.style.display !== 'none') {
                 musicView.classList.remove('visible', 'organized');
@@ -1213,6 +1410,45 @@
         function loadEP(epKey) {
             const data = musicData[epKey];
             const musicView = document.getElementById('musicView');
+            
+            // Reset player state - move player back to template if it's in an old track
+            const player = document.getElementById('player');
+            const playerTemplate = document.getElementById('playerTemplate');
+            
+            // Remove active states from old tracks before clearing
+            document.querySelectorAll('.track-item').forEach(item => {
+                item.classList.remove('active');
+                const wrapper = item.querySelector('.track-player-wrapper');
+                if (wrapper) {
+                    wrapper.classList.remove('expanded');
+                }
+            });
+            
+            // Ensure player is in template before clearing track list
+            if (player && player.parentElement) {
+                const currentParent = player.parentElement;
+                // If player is not already in template, move it there
+                if (currentParent.id !== 'playerTemplate') {
+                    if (currentParent.removeChild) {
+                        currentParent.removeChild(player);
+                    }
+                    if (playerTemplate) {
+                        playerTemplate.appendChild(player);
+                    }
+                    player.style.display = 'none';
+                }
+            }
+            
+            // Reset current track state
+            currentTrack = null;
+            isPlaying = false;
+            const audioPlayer = document.getElementById('audioPlayer');
+            if (audioPlayer) {
+                audioPlayer.pause();
+                audioPlayer.src = '';
+                audioPlayer.load();
+            }
+            updateMiniPlayer();
             
             // Update Header Info
             musicView.querySelector('#releaseTitle').textContent = data.title;
@@ -1360,6 +1596,48 @@
         }
 
         function selectTrack(track, trackEl) {
+            // Get the player element - ensure it exists
+            const player = document.getElementById('player');
+            const audioPlayer = document.getElementById('audioPlayer');
+            
+            if (!player) {
+                console.error('Player element not found!');
+                return;
+            }
+            
+            if (!audioPlayer) {
+                console.error('Audio player element not found!');
+                return;
+            }
+
+            // Check if clicking the same track that's already expanded - if so, collapse it
+            const currentParent = player.parentNode;
+            const isSameTrack = currentTrack === track && currentParent && currentParent.closest('.track-item') === trackEl;
+            const isCurrentlyExpanded = trackEl.classList.contains('active');
+            
+            if (isSameTrack && isCurrentlyExpanded) {
+                // Toggle off - collapse the track
+                trackEl.classList.remove('active');
+                const wrapper = trackEl.querySelector('.track-player-wrapper');
+                if (wrapper) {
+                    wrapper.classList.remove('expanded');
+                }
+                
+                // Reset audio
+                audioPlayer.pause();
+                isPlaying = false;
+                document.getElementById('playBtn').textContent = '▶ Play';
+                if (document.getElementById('miniPlayBtn')) {
+                    document.getElementById('miniPlayBtn').textContent = '▶';
+                }
+                
+                // Clear current track and hide mini-player
+                currentTrack = null;
+                updateMiniPlayer();
+                
+                return; // Exit early - track is now collapsed
+            }
+
             // Remove active class from all items and collapse wrappers
             document.querySelectorAll('.track-item').forEach(item => {
                 item.classList.remove('active');
@@ -1367,24 +1645,28 @@
                 if (wrapper) wrapper.classList.remove('expanded');
             });
 
-            // If clicking the same track, just toggle off (optional, but here we just re-open)
-            if (currentTrack === track && document.getElementById('player').parentNode.closest('.track-item') === trackEl) {
-               // Optional: Toggle close logic here if desired
-            }
-
             currentTrack = track;
             trackEl.classList.add('active');
             
-            // Get the player element
-            const player = document.getElementById('player');
-            const audioPlayer = document.getElementById('audioPlayer');
-            
             // Update Info
-            document.getElementById('playerTrack').textContent = track.title;
+            const playerTrackEl = document.getElementById('playerTrack');
+            if (playerTrackEl) {
+                playerTrackEl.textContent = track.title;
+            }
             
             // Move player to new location
             const newWrapper = trackEl.querySelector('.track-player-wrapper');
             const newInner = trackEl.querySelector('.track-player-inner');
+            
+            if (!newWrapper || !newInner) {
+                console.error('Track player wrapper or inner not found!');
+                return;
+            }
+            
+            // If player is already in a different container, remove it first
+            if (player.parentElement && player.parentElement !== newInner) {
+                player.parentElement.removeChild(player);
+            }
             
             // Ensure player is visible
             player.style.display = 'block';
@@ -1407,20 +1689,41 @@
             document.getElementById('currentTime').textContent = '0:00';
             document.getElementById('progressFill').style.width = '0%';
             
+            // Generate placeholder audio for this specific track based on duration
+            const durationParts = track.duration.split(':');
+            const minutes = parseInt(durationParts[0]) || 0;
+            const seconds = parseInt(durationParts[1]) || 0;
+            const totalSeconds = minutes * 60 + seconds;
+            const duration = totalSeconds || 180; // Default to 3 minutes if duration invalid
+            
+            if (!trackPlaceholders[track.title]) {
+                trackPlaceholders[track.title] = generatePlaceholderAudio(duration);
+            }
+            audioPlayer.src = trackPlaceholders[track.title];
+            audioPlayer.load();
+            
+            // Update duration display (will be updated when audio loads)
+            
+            // Update mini-player to show current track
+            updateMiniPlayer();
+            
             // Auto play on selection? User asked to "open the new one", implies showing it. 
             // We won't auto-play to avoid jarring noise, but we reset state.
         }
 
-        function generatePlaceholderAudio() {
+        function generatePlaceholderAudio(durationSeconds = 180) {
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const duration = 3;
+            const duration = durationSeconds || 180; // Default to 3 minutes
             const sampleRate = audioContext.sampleRate;
             const buffer = audioContext.createBuffer(1, duration * sampleRate, sampleRate);
             const data = buffer.getChannelData(0);
 
-            const frequency = 261.63;
+            // Create a more interesting tone with slight variation
+            const baseFreq = 261.63; // C4
             for (let i = 0; i < buffer.length; i++) {
-                data[i] = Math.sin((i / sampleRate) * frequency * 2 * Math.PI) * 0.3;
+                const t = i / sampleRate;
+                const freq = baseFreq + Math.sin(t * 0.5) * 10; // Slight vibrato
+                data[i] = Math.sin(t * freq * 2 * Math.PI) * 0.2 * (1 - t / duration); // Fade out
             }
 
             const wav = audioBufferToWav(buffer);
@@ -1484,19 +1787,70 @@
             if (!currentTrack) return;
             const audioPlayer = document.getElementById('audioPlayer');
 
-            if (!placeholderAudio) {
-                placeholderAudio = generatePlaceholderAudio();
-                audioPlayer.src = placeholderAudio;
+            // Ensure we have placeholder audio for this track
+            if (!audioPlayer.src || audioPlayer.src === '') {
+                if (!trackPlaceholders[currentTrack.title]) {
+                    const durationParts = currentTrack.duration.split(':');
+                    const minutes = parseInt(durationParts[0]) || 0;
+                    const seconds = parseInt(durationParts[1]) || 0;
+                    const totalSeconds = minutes * 60 + seconds || 180;
+                    trackPlaceholders[currentTrack.title] = generatePlaceholderAudio(totalSeconds);
+                }
+                audioPlayer.src = trackPlaceholders[currentTrack.title];
+                audioPlayer.load();
             }
 
             if (isPlaying) {
                 audioPlayer.pause();
                 document.getElementById('playBtn').textContent = '▶ Play';
+                if (document.getElementById('miniPlayBtn')) {
+                    document.getElementById('miniPlayBtn').textContent = '▶';
+                }
                 isPlaying = false;
             } else {
                 audioPlayer.play();
                 document.getElementById('playBtn').textContent = '⏸ Pause';
+                if (document.getElementById('miniPlayBtn')) {
+                    document.getElementById('miniPlayBtn').textContent = '⏸';
+                }
                 isPlaying = true;
+            }
+            updateMiniPlayer();
+        }
+
+        function togglePlayFromMini() {
+            togglePlay(null);
+        }
+
+        function seekMini(event) {
+            seek(event);
+        }
+
+        function updateMiniPlayer() {
+            const miniPlayer = document.getElementById('miniPlayer');
+            if (currentTrack) {
+                // Show mini-player whenever a track is selected
+                miniPlayer.classList.add('visible');
+                document.body.classList.add('has-mini-player');
+                document.getElementById('miniPlayerTrack').textContent = currentTrack.title;
+                
+                // Update time display
+                if (audioPlayer.duration) {
+                    const current = Math.floor(audioPlayer.currentTime || 0);
+                    const total = Math.floor(audioPlayer.duration);
+                    const currentMinutes = Math.floor(current / 60);
+                    const currentSeconds = current % 60;
+                    const totalMinutes = Math.floor(total / 60);
+                    const totalSeconds = total % 60;
+                    document.getElementById('miniPlayerTime').textContent = 
+                        `${currentMinutes}:${currentSeconds.toString().padStart(2, '0')} / ${totalMinutes}:${totalSeconds.toString().padStart(2, '0')}`;
+                } else {
+                    document.getElementById('miniPlayerTime').textContent = '0:00 / 0:00';
+                }
+            } else {
+                // Hide mini-player
+                miniPlayer.classList.remove('visible');
+                document.body.classList.remove('has-mini-player');
             }
         }
 
@@ -1526,16 +1880,48 @@
             const current = Math.floor(audioPlayer.currentTime);
             const minutes = Math.floor(current / 60);
             const seconds = current % 60;
-            document.getElementById('currentTime').textContent = 
-                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            const currentTimeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
             
-            const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+            document.getElementById('currentTime').textContent = currentTimeStr;
+            
+            // Update mini-player time
+            if (document.getElementById('miniPlayerTime')) {
+                const totalMinutes = Math.floor(audioPlayer.duration / 60) || 0;
+                const totalSeconds = Math.floor(audioPlayer.duration % 60) || 0;
+                const durationStr = `${totalMinutes}:${totalSeconds.toString().padStart(2, '0')}`;
+                document.getElementById('miniPlayerTime').textContent = `${currentTimeStr} / ${durationStr}`;
+            }
+            
+            const percent = audioPlayer.duration ? (audioPlayer.currentTime / audioPlayer.duration) * 100 : 0;
             document.getElementById('progressFill').style.width = percent + '%';
+            if (document.getElementById('miniProgressFill')) {
+                document.getElementById('miniProgressFill').style.width = percent + '%';
+            }
+        });
+
+        audioPlayer.addEventListener('loadedmetadata', () => {
+            // Update duration when audio loads
+            const totalMinutes = Math.floor(audioPlayer.duration / 60) || 0;
+            const totalSeconds = Math.floor(audioPlayer.duration % 60) || 0;
+            document.getElementById('duration').textContent = `${totalMinutes}:${totalSeconds.toString().padStart(2, '0')}`;
+            updateMiniPlayer();
         });
 
         audioPlayer.addEventListener('ended', () => {
             document.getElementById('playBtn').textContent = '▶ Play';
+            if (document.getElementById('miniPlayBtn')) {
+                document.getElementById('miniPlayBtn').textContent = '▶';
+            }
             isPlaying = false;
+            updateMiniPlayer();
+        });
+
+        audioPlayer.addEventListener('play', () => {
+            updateMiniPlayer();
+        });
+
+        audioPlayer.addEventListener('pause', () => {
+            updateMiniPlayer();
         });
 
         function setAmount(amount, event) {
@@ -1598,11 +1984,85 @@
                 alert('Minimum donation is £1');
                 return;
             } else {
-                // Paid Option (Pay What You Want)
-                // Redirect to your specific Stripe Payment Link
-                const stripeLink = "https://buy.stripe.com/28E28q2Q07gqahKdIJ2sM00"; 
-                window.location.href = stripeLink;
+                // Paid Option - Use Stripe Embedded Checkout
+                await initializeEmbeddedCheckout(email, name, amount, itemTitle, downloadUrl);
             }
+        }
+
+        async function initializeEmbeddedCheckout(email, name, amount, itemTitle, downloadUrl) {
+            try {
+                // Hide donation form, show checkout container
+                document.getElementById('donationFormContent').style.display = 'none';
+                document.getElementById('checkoutContent').style.display = 'block';
+
+                // Call your backend to create a Checkout Session
+                // Replace 'YOUR_BACKEND_URL' with your actual server URL (e.g., 'http://localhost:4242' for local testing)
+                const response = await fetch('YOUR_BACKEND_URL/create-checkout-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        amount: amount,
+                        email: email,
+                        name: name,
+                        itemTitle: itemTitle
+                    })
+                });
+
+                const { clientSecret, error } = await response.json();
+
+                if (error) {
+                    alert('Error: ' + error.message);
+                    closeCheckout();
+                    return;
+                }
+
+                // Initialize embedded checkout
+                checkout = await stripe.initEmbeddedCheckout({
+                    clientSecret: clientSecret
+                });
+
+                // Mount the checkout form
+                checkout.mount(document.getElementById('checkout'));
+
+                // Listen for checkout completion
+                checkout.on('complete', async () => {
+                    // Get session ID from URL or from checkout session
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const sessionId = urlParams.get('session_id');
+
+                    if (sessionId) {
+                        // Verify payment succeeded
+                        const statusResponse = await fetch(`YOUR_BACKEND_URL/session-status?session_id=${sessionId}`);
+                        const { status, customer_email } = await statusResponse.json();
+
+                        if (status === 'complete') {
+                            // Success! Unlock the download
+                            await captureEmail(customer_email || email, name, itemTitle, `£${amount}`);
+                            downloadFile(downloadUrl, itemTitle);
+                            alert('Thank you for joining the club.');
+                            closeCheckout();
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error('Checkout error:', error);
+                alert('Failed to initialize checkout. Please try again.');
+                closeCheckout();
+            }
+        }
+
+        function closeCheckout() {
+            // Clean up embedded checkout
+            if (checkout) {
+                checkout.unmount();
+                checkout = null;
+            }
+            // Hide checkout, show form
+            document.getElementById('checkoutContent').style.display = 'none';
+            document.getElementById('donationFormContent').style.display = 'block';
+            // Reset form
+            closeDonation();
         }
 
         /* 
@@ -1651,6 +2111,28 @@
             const modal = document.getElementById('donationModal');
             if (e.target === modal) {
                 closeDonation();
+            }
+        });
+
+        // Check for completed checkout session on page load
+        window.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionId = urlParams.get('session_id');
+
+            if (sessionId) {
+                // Check if payment was successful
+                try {
+                    const response = await fetch(`YOUR_BACKEND_URL/session-status?session_id=${sessionId}`);
+                    const { status } = await response.json();
+
+                    if (status === 'complete') {
+                        // Clean up URL
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        alert('Payment successful! Thank you for joining the club.');
+                    }
+                } catch (error) {
+                    console.error('Error checking session status:', error);
+                }
             }
         });
     </script>
