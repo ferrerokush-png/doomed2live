@@ -29,8 +29,9 @@
             --color-bg: #0a0a0a;
             --color-text: #f5f5f5;
             --color-text-secondary: #999;
-            --color-accent: #00d4ff;
-            --color-accent-hover: #00a8cc;
+            --color-accent: #b30000; /* Dark Red */
+            --color-accent-hover: #ff0000; /* Brighter Red on hover */
+            --color-highlight: #00d4ff; /* Blue for track highlights */
             --color-border: #222;
             --space-16: 16px;
             --space-24: 24px;
@@ -69,23 +70,28 @@
             position: absolute;
             top: 0;
             left: 0;
+            z-index: 50; /* Ensure container is above potential hidden views */
+            pointer-events: auto; /* Ensure events work */
         }
 
         .logo {
-            transition: top 0.25s ease, left 0.25s ease;
-
-            position: absolute;
+            /* removed transition for top/left */
+            position: fixed; /* Fixed position to stay in place */
             top: var(--space-24);
             left: var(--space-24);
             font-size: 14px;
             font-weight: 700;
             letter-spacing: 2px;
-            color: var(--color-text);
+            color: #b30000;
             text-transform: uppercase;
             font-family: 'Space Mono', monospace;
+            z-index: 1000; /* Ensure it stays on top */
         }
 
+        /* Ensure message is clickable */
         .message {
+            position: relative;
+            z-index: 100; /* Bring above other elements */
             text-align: center;
             cursor: pointer;
             transition: opacity 0.3s ease;
@@ -102,22 +108,25 @@
             letter-spacing: -1px;
             line-height: 1.2;
             font-family: 'Akira Expanded', sans-serif;
+            pointer-events: auto; /* Ensure h1 specifically receives clicks */
         }
 
         
 
         .music-view {
             display: none;
-            padding: 80px 24px 0 24px;
+            padding: 80px 24px; 
+            padding-top: 120px; /* Push content lower visually */
+            min-height: 100vh;
+            align-items: flex-start; /* Start from top + padding */
+            justify-content: flex-start; /* Allow manual spacing */
+            flex-direction: column; 
         }
 
-        .music-view.active {
-            display: block;
-        }
 
         .back-button {
-            position: absolute;
-            top: var(--space-24);
+            position: fixed; /* Fixed position to stay relative to fixed logo */
+            top: 60px; /* Positioned below the logo (approx 24px + height + gap) */
             left: var(--space-24);
             background: none;
             border: none;
@@ -126,8 +135,14 @@
             cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 1px;
-            transition: color 0.2s;
+            transition: color 0.2s, opacity 1s ease; /* Added opacity transition */
             font-family: 'Space Mono', monospace;
+            z-index: 999;
+            opacity: 0; /* Start hidden */
+        }
+
+        .music-view.organized .back-button {
+            opacity: 1; /* Fade in when organized */
         }
 
         .back-button:hover {
@@ -146,8 +161,8 @@
             width: 100%;
             max-width: 300px;
             height: 300px;
-            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
-            border: 1px solid var(--color-border);
+            /* background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); Removed background color/gradient */
+            /* border: 1px solid var(--color-border); Removed border if image covers it */
             border-radius: var(--radius-base);
             margin: 0 auto var(--space-32) auto;
             display: flex;
@@ -156,6 +171,14 @@
             font-size: 14px;
             color: var(--color-text-secondary);
             text-transform: uppercase;
+            overflow: hidden; /* Ensure image stays within radius */
+        }
+        
+        .ep-artwork img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         .release-header h2 {
@@ -177,24 +200,110 @@
         .track-list {
             display: flex;
             flex-direction: column;
-            gap: var(--space-16);
+            gap: 0; /* Remove gap, use border/padding */
             max-width: 600px;
             margin: 0 auto;
+            height: 100%; /* Fill the container */
         }
 
         .track-item {
             display: flex;
-            gap: var(--space-16);
+            flex-direction: column; 
+            gap: 0; 
             cursor: pointer;
-            transition: opacity 0.2s;
-            padding: var(--space-16);
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1); /* Smoother flex transition */
+            padding: 0; 
             border: 1px solid transparent;
-            border-radius: var(--radius-base);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle divider */
+            border-radius: 0; /* Square edges for stack look */
+            overflow: hidden; 
+            flex: 1; /* Distribute space evenly */
+            min-height: 50px; /* Minimum height for collapsed state */
+        }
+        
+        .track-item:last-child {
+            border-bottom: none;
+        }
+
+        .track-item-content {
+            display: flex;
+            gap: var(--space-16);
+            padding: var(--space-16);
+            align-items: center; /* Center text vertically */
         }
 
         .track-item:hover {
-            opacity: 0.8;
-            border-color: var(--color-border);
+            opacity: 1; 
+            border-color: transparent;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .track-item.active {
+            border-color: var(--color-highlight);
+            background: rgba(0, 212, 255, 0.05); 
+            flex: 5; /* Grow MORE to ensure last item content fits */
+        }
+
+        /* Player Wrapper Animation */
+        .track-player-wrapper {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .track-player-wrapper.expanded {
+            grid-template-rows: 1fr;
+            opacity: 1;
+        }
+
+        .track-player-inner {
+            overflow: hidden;
+            min-height: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease 0.2s; /* Fade in content slightly after expansion starts */
+        }
+
+        .track-player-wrapper.expanded .track-player-inner {
+            opacity: 1;
+        }
+
+        /* Modified Player Styles for inline display */
+        .player {
+            margin-top: 0;
+            background: none;
+            border: none;
+            border-top: 1px solid var(--color-border);
+            border-radius: 0;
+            padding: var(--space-16);
+            max-width: none;
+            display: block; /* Always block, controlled by wrapper */
+            opacity: 1; /* Remove fade in since wrapper animates height */
+        }
+
+        .download-full-ep-btn {
+            display: inline-block;
+            margin-top: var(--space-24);
+            margin-left: auto;
+            margin-right: auto;
+            background: var(--color-text);
+            color: var(--color-bg);
+            border: none;
+            padding: 10px 30px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            font-family: 'Space Mono', monospace;
+            border-radius: var(--radius-base);
+            transition: all 0.2s;
+            width: auto; /* Let content dictate width */
+            max-width: 100%;
+        }
+
+        .download-full-ep-btn:hover {
+            background: var(--color-accent);
+            color: var(--color-bg);
         }
 
         .track-info {
@@ -235,20 +344,8 @@
             display: block;
         }
 
-        .player-title {
-            font-size: 12px;
-            color: var(--color-text-secondary);
-            text-transform: uppercase;
-            margin: 0 0 var(--space-16) 0;
-            letter-spacing: 1px;
-            font-family: 'Space Mono', monospace;
-        }
-
-        .player-track {
-            font-size: 16px;
-            font-weight: 700;
-            margin: 0 0 var(--space-16) 0;
-            font-family: 'Akira Expanded', sans-serif;
+        .player-title, .player-track {
+            display: none;
         }
 
         .player-controls {
@@ -305,25 +402,36 @@
         }
 
         footer {
+            position: relative;
+            z-index: 1000; /* Increased Z-Index */
             border-top: 1px solid var(--color-border);
             padding: var(--space-32) var(--space-24);
             text-align: center;
             margin-top: auto;
+            pointer-events: auto; /* Ensure clickable */
         }
 
         .poem {
             font-size: 10px;
-            color: var(--color-text-secondary);
+            color: var(--color-text); /* Made white for numbers */
             margin: 0 0 var(--space-16) 0;
             line-height: 1.4;
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
             font-family: 'Space Mono', monospace;
+            font-weight: 700; /* Make everything bold like previous strong tags */
         }
         
-        .poem strong {
-            display: inline;
+        .poem a {
+            color: var(--color-text); /* White by default */
+            text-decoration: none;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+
+        .poem a:hover {
+            color: #ff0000; /* Red on hover */
         }
         
         .poem br {
@@ -449,7 +557,7 @@
         }
 
         .amount-btn.active {
-            background: rgba(0, 212, 255, 0.1);
+            background: rgba(179, 0, 0, 0.1); /* Red tint */
             border-color: var(--color-accent);
             color: var(--color-accent);
         }
@@ -475,9 +583,8 @@
         }
     
         /* Shift logo down when music view is active to avoid overlap with back button */
-        body.music-active .logo {
-            top: 64px;
-        }
+        /* REMOVED: Logo is now fixed at top left */
+        /* body.music-active .logo { top: 64px; } */
 
         /* Responsive tweaks for small screens */
         @media (max-width: 768px) {
@@ -487,15 +594,14 @@
                 font-size: 12px;
             }
 
-            body.music-active .logo {
-                top: 56px;
-            }
+            /* body.music-active .logo { top: 56px; } REMOVED */
 
             .back-button {
-                top: 16px !important;
+                top: 48px !important; /* Adjusted for smaller screens below logo */
                 left: 16px !important;
                 font-size: 12px;
                 padding: 6px 10px;
+                padding-left: 0; /* Align text with logo */
             }
         }
 
@@ -504,7 +610,7 @@
 <style>
 /* CRT Effect & Header Transition */
 .message h1 {
-    transition: opacity 3s cubic-bezier(0.23, 1, 0.32, 1);
+    transition: opacity 1.5s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .message.clicked h1 {
@@ -512,39 +618,323 @@
 }
 </style>
 
+    <style>
+        /* New Layout Styles */
+        .music-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Center vertically on mobile */
+            flex: 1; /* Take up available space */
+            gap: var(--space-32);
+            max-width: 1000px;
+            width: 100%; 
+            margin: 0 auto;
+            opacity: 0; 
+            transition: opacity 1s ease;
+        }
+
+        .music-view.visible .music-content {
+            opacity: 1;
+        }
+
+        .release-info {
+            width: 100%;
+        }
+
+        .tracks-area {
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            .music-content {
+                flex-direction: row;
+                align-items: stretch; /* Stretch both columns to same height */
+                justify-content: center;
+                gap: 60px;
+                height: 560px; /* Increased height for better fit */
+                margin-top: 40px; /* Additional push down */
+            }
+
+            .release-info {
+                flex: 0 0 320px;
+                /* Removed sticky, now fixed height container */
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between; /* Space out content nicely */
+            }
+
+            .tracks-area {
+                flex: 1;
+                max-width: 500px;
+                height: 100%; /* Match parent height */
+                overflow: hidden; /* No scrollbars, we use flex shrink/grow */
+            }
+            
+            .release-header {
+                text-align: left; /* Align text left within the block */
+                margin-right: 0;
+                margin-left: auto; /* Push the whole block to the right */
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start; /* Align children (button/img) to left */
+                width: 300px; /* Fix width of the block to match artwork */
+                height: 100%; /* Fill the container */
+            }
+            
+            .ep-artwork {
+                margin-left: 0;
+                margin-right: 0; 
+                width: 100%; /* Fill the 300px container */
+                flex-shrink: 0; /* Prevent artwork shrinking */
+            }
+
+            .download-full-ep-btn {
+                margin-left: 0;
+                margin-right: 0;
+                width: auto; /* Allow button to be smaller */
+                margin-top: auto; /* Push to bottom */
+            }
+        }
+
+        /* Disorganized to Organized Animation */
+        .track-item {
+            /* Initial disorganized state */
+            opacity: 0;
+            transform: translate(var(--tx), var(--ty)) rotate(var(--r));
+            transition: 
+                opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1),
+                transform 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        /* Organized state */
+        .music-view.organized .track-item {
+            opacity: 1;
+            transform: translate(0, 0) rotate(0);
+        }
+        
+        .release-info {
+            transition: opacity 1s ease, transform 1s ease;
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        
+        .music-view.organized .release-info {
+            opacity: 1;
+            transform: none;
+        }
+        
+        .player {
+             transition: opacity 1s ease 0.5s; /* Delay player fade in */
+             opacity: 0;
+        }
+        
+        .music-view.organized .player {
+             opacity: 1;
+        }
+
+        /* Older Music Section */
+        .older-music-section {
+            width: 100%;
+            text-align: center;
+            margin-top: auto;
+            padding-top: 150px; /* Much lower */
+            padding-bottom: 60px;
+            opacity: 0;
+            transition: opacity 1s ease 0.5s;
+        }
+
+        .music-view.organized .older-music-section {
+            opacity: 1;
+        }
+
+        .older-music-btn {
+            background: none;
+            border: 1px solid var(--color-border);
+            color: var(--color-text-secondary);
+            padding: 16px 40px;
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Akira Expanded', sans-serif;
+        }
+
+        /* Archive Grid Styles */
+        #archiveList {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 32px;
+            padding: 0;
+            height: auto;
+            max-height: 100%;
+            overflow-y: visible; /* Allow scrolling */
+            border: none;
+            justify-content: center; /* Center the grid items */
+            max-width: 900px;
+            margin: 0 auto; /* Center the grid container */
+        }
+
+        /* Archive View Specific Layout overrides */
+        #archiveView .music-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: auto;
+            min-height: 60vh;
+            max-width: 1000px;
+        }
+
+        #archiveView .tracks-area {
+            width: 100%;
+            max-width: 1000px; /* Expand to full width */
+            flex: unset;
+            height: auto;
+            overflow: visible;
+        }
+
+        #archiveList::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        #archiveList::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        /* Override track-item for archive grid */
+        #archiveList .track-item {
+            flex: unset;
+            width: 100%;
+            height: auto;
+            border: none;
+            border-radius: var(--radius-base);
+            background: transparent;
+            margin: 0;
+            min-height: 0;
+            padding: 0;
+            opacity: 0; /* Handled by JS animation */
+        }
+
+        #archiveList .track-item:hover {
+            background: transparent;
+            opacity: 1;
+        }
+
+        .archive-item {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .archive-thumb {
+            width: 100%;
+            aspect-ratio: 1; /* Square */
+            overflow: hidden;
+            border-radius: var(--radius-base);
+            background: #222;
+            position: relative;
+        }
+
+        .archive-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+            display: block;
+        }
+
+        .archive-item:hover .archive-thumb img {
+            transform: scale(1.05);
+        }
+
+        .archive-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .archive-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--color-text);
+            font-family: 'Akira Expanded', sans-serif;
+            line-height: 1.2;
+        }
+
+        .archive-meta {
+            font-size: 10px;
+            color: var(--color-text-secondary);
+            font-family: 'Space Mono', monospace;
+            text-transform: uppercase;
+        }
+    </style>
 </head>
 <body>
-    <div class="logo">ROCHE</div>
+    <div class="logo">ROCHÈ</div>
 
     <div class="container" id="homeView">
-        <div class="message">
-            <h1 data-text="You are not alone." onclick="goToMusic()">You are not alone.</h1>
+        <div class="message" onclick="goToMusic()">
+            <h1 data-text="Welcome to the void">Welcome to the void</h1>
         </div>
     </div>
 
     <div class="music-view" id="musicView">
-        <button class="back-button" onclick="goHome()" style="display: flex; align-items: center; position: fixed; top: 24px; left: 24px; z-index: 100;">← Back</button>
-        <div style="margin-bottom: 40px;">
-            <div class="release-header">
-                <div class="ep-artwork">DOOMED<br>TO<br>LIVE</div>
-                <h2 id="releaseTitle">Doomed to Live</h2>
-                <p id="releaseType">EP</p>
+        <button class="back-button" onclick="goHome()">← Back</button>
+        
+        <div class="music-content">
+            <div class="release-info">
+                <div class="release-header">
+                    <div class="ep-artwork">
+                        <img src="doomedtolivecoverart.png" alt="Doomed To Live EP Cover">
+                    </div>
+                    <h2 id="releaseTitle">Doomed to Live</h2>
+                    <p id="releaseType">EP</p>
+                    <button class="download-full-ep-btn" onclick="downloadFullEP()">Download Full EP</button>
+                </div>
             </div>
-            <div class="track-list" id="trackList"></div>
-            <div class="player" id="player">
-                <div class="player-title">Now Playing</div>
-                <div class="player-track" id="playerTrack">—</div>
-                <audio id="audioPlayer"></audio>
-                <div class="player-controls">
-                    <button id="playBtn" onclick="togglePlay()">▶ Play</button>
-                    <button onclick="downloadTrack()">⬇ Download</button>
+
+            <div class="tracks-area">
+                <div class="track-list" id="trackList"></div>
+                <!-- Hidden Player Template that will be moved around -->
+                <div id="playerTemplate" style="display: none;">
+                    <div class="player" id="player">
+                        <div class="player-title">Now Playing</div>
+                        <div class="player-track" id="playerTrack">—</div>
+                        <audio id="audioPlayer"></audio>
+                        <div class="player-controls">
+                            <button id="playBtn" onclick="togglePlay(event)">▶ Play</button>
+                            <button onclick="downloadTrack(event)">⬇ Download</button>
+                        </div>
+                        <div class="player-progress" onclick="seek(event)">
+                            <div class="player-progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="player-time">
+                            <span id="currentTime">0:00</span>
+                            <span id="duration">3:00</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="player-progress" onclick="seek(event)">
-                    <div class="player-progress-fill" id="progressFill"></div>
-                </div>
-                <div class="player-time">
-                    <span id="currentTime">0:00</span>
-                    <span id="duration">3:00</span>
+            </div>
+        </div>
+        
+        <!-- Older Music Section (Outside the 2-column layout) -->
+        <div class="older-music-section">
+            <button class="older-music-btn" onclick="goToArchive()">OLDER MUSIC</button>
+        </div>
+    </div>
+
+    <!-- Archive View (Reusing layout structure) -->
+    <div class="music-view" id="archiveView">
+        <button class="back-button" onclick="returnToLatest()">← Latest</button>
+        
+        <div class="music-content">
+            <div class="tracks-area">
+                <div class="track-list" id="archiveList">
+                    <!-- Populated by JS -->
                 </div>
             </div>
         </div>
@@ -552,7 +942,7 @@
 
     <footer>
         <div class="poem">
-            If struggling: <strong>Samaritans 116 123</strong> • <strong>CALM 0800 58 58 58</strong> • <strong>Papyrus 0800 068 4141</strong> • <strong>Crisis 85258</strong> • <strong>999</strong>
+            <a href="https://www.samaritans.org/" target="_blank" rel="noopener noreferrer">Samaritans</a> 116 123 • <a href="https://www.thecalmzone.net/" target="_blank" rel="noopener noreferrer">CALM</a> 0800 58 58 58 • <a href="https://www.papyrus-uk.org/" target="_blank" rel="noopener noreferrer">Papyrus</a> 0800 068 4141 • <a href="https://www.crisis.org.uk/get-help/" target="_blank" rel="noopener noreferrer">Crisis</a> 85258
         </div>
         <div class="socials">
             <a href="https://tiktok.com/@rocheofficiel" class="social-link">TikTok</a>
@@ -576,7 +966,7 @@
             </div>
             <div class="form-group">
                 <label>Custom Amount (£)</label>
-                <input type="number" id="customAmount" placeholder="Enter amount" min="0" step="0.01">
+                <input type="number" id="customAmount" placeholder="Enter amount (1-99)" min="1" max="99" step="0.01">
             </div>
             <div class="form-group">
                 <label>Email *</label>
@@ -596,12 +986,122 @@
             doomed: {
                 title: 'Doomed to Live',
                 type: 'EP',
+                year: '2025',
+                cover: 'doomedtolivecoverart.png',
                 tracks: [
                     { title: 'Doomed to Live', duration: '3:45', downloadUrl: 'https://your-bunny-cdn.b-cdn.net/doomed-to-live.mp3' },
                     { title: 'If Only', duration: '4:12', downloadUrl: 'https://your-bunny-cdn.b-cdn.net/if-only.mp3' },
                     { title: 'Why Do Fools Fall In Love', duration: '3:58', downloadUrl: 'https://your-bunny-cdn.b-cdn.net/why-do-fools.mp3' },
                     { title: 'Mayday', duration: '3:32', downloadUrl: 'https://your-bunny-cdn.b-cdn.net/mayday.mp3' },
                     { title: 'End Like This', duration: '4:28', downloadUrl: 'https://your-bunny-cdn.b-cdn.net/end-like-this.mp3' }
+                ]
+            },
+            armor: {
+                title: 'Armor',
+                type: 'Single',
+                year: '2025',
+                cover: 'old cover art/armor.jpg',
+                tracks: [
+                    { title: 'Armor', duration: '2:45', downloadUrl: '#' }
+                ]
+            },
+            overu: {
+                title: 'Over U',
+                type: 'Single',
+                year: '2025',
+                cover: 'old cover art/over u.jpg',
+                tracks: [
+                    { title: 'Over U', duration: '2:50', downloadUrl: '#' }
+                ]
+            },
+            rain: {
+                title: 'Rain',
+                type: 'Single',
+                year: '2025',
+                cover: 'old cover art/rain.jpg',
+                tracks: [
+                    { title: 'Rain', duration: '3:20', downloadUrl: '#' }
+                ]
+            },
+            legaltender: {
+                title: 'Legal Tender',
+                type: 'Single',
+                year: '2025',
+                cover: 'old cover art/legal tender.jpg',
+                tracks: [
+                    { title: 'Legal Tender', duration: '2:55', downloadUrl: '#' }
+                ]
+            },
+            americandream: {
+                title: 'American Dream',
+                type: 'Single',
+                year: '2025',
+                cover: 'old cover art/americandreams.jpg',
+                tracks: [
+                    { title: 'American Dream', duration: '3:15', downloadUrl: '#' }
+                ]
+            },
+            interim: {
+                title: 'Interim',
+                type: 'Single',
+                year: '2025',
+                cover: 'old cover art/interim.jpg',
+                tracks: [
+                    { title: 'Interim', duration: '3:05', downloadUrl: '#' }
+                ]
+            },
+            setmefree: {
+                title: 'Set Me Free',
+                type: 'Single',
+                year: '2025',
+                cover: 'old cover art/set me free.jpg',
+                tracks: [
+                    { title: 'Set Me Free', duration: '3:10', downloadUrl: '#' }
+                ]
+            },
+            deepend: {
+                title: 'Deep End',
+                type: 'Single',
+                year: '2024',
+                cover: 'old cover art/Deep End.jpg',
+                tracks: [
+                    { title: 'Deep End', duration: '3:00', downloadUrl: '#' }
+                ]
+            },
+            dejavu: {
+                title: 'Deja Vu',
+                type: 'Single',
+                year: '2024',
+                cover: 'old cover art/deja vu.jpg',
+                tracks: [
+                    { title: 'Deja Vu', duration: '3:00', downloadUrl: '#' }
+                ]
+            },
+            mademan: {
+                title: 'Made Man',
+                type: 'Single',
+                year: '2024',
+                cover: 'old cover art/made man.jpg',
+                tracks: [
+                    { title: 'Made Man', duration: '3:00', downloadUrl: '#' }
+                ]
+            },
+            playstation: {
+                title: 'Playstation',
+                type: 'Single',
+                year: '2024',
+                cover: 'old cover art/playstation.jpg',
+                tracks: [
+                    { title: 'Playstation', duration: '3:00', downloadUrl: '#' }
+                ]
+            },
+            go: {
+                title: 'GO',
+                type: 'Single',
+                year: '2023',
+                cover: 'old cover art/go.jpg',
+                tracks: [
+                    { title: 'GO', duration: '2:30', downloadUrl: '#' }
                 ]
             }
         };
@@ -612,65 +1112,303 @@
         let currentTrack = null;
         let selectedAmount = 0;
         let isPlaying = false;
-        let placeholderAudio = null;
-        const audioPlayer = document.getElementById('audioPlayer');
+        let isFullEPDownload = false;
+        let previousView = 'home'; // Track where we came from
 
         function goToMusic() {
             const message = document.querySelector('.message');
             message.classList.add('clicked');
+            
+            previousView = 'home';
 
             setTimeout(() => {
                 document.body.classList.add('music-active');
                 document.getElementById('homeView').style.display = 'none';
-                document.getElementById('musicView').style.display = 'block';
-                loadEP('doomed');
-            }, 3000); // match transition duration
+                document.getElementById('archiveView').style.display = 'none'; // Ensure archive is hidden
+                
+                const musicView = document.getElementById('musicView');
+                musicView.style.display = 'flex'; 
+                
+                // Trigger reflow
+                void musicView.offsetWidth;
+                
+                musicView.classList.add('visible');
+                loadEP('doomed'); // Default load
+                
+                setTimeout(() => {
+                    musicView.classList.add('organized');
+                }, 100);
+            }, 1500); 
+        }
+
+        function goToArchive() {
+            const musicView = document.getElementById('musicView');
+            const archiveView = document.getElementById('archiveView');
+            
+            // Hide Music View
+            musicView.classList.remove('visible', 'organized');
+            
+            setTimeout(() => {
+                musicView.style.display = 'none';
+                
+                // Show Archive View
+                archiveView.style.display = 'flex';
+                void archiveView.offsetWidth;
+                archiveView.classList.add('visible');
+                
+                loadArchive();
+                
+                setTimeout(() => {
+                    archiveView.classList.add('organized');
+                }, 100);
+            }, 500);
+        }
+
+        function returnToLatest() {
+            // Go back to the main Music View (Doomed to Live)
+            const musicView = document.getElementById('musicView');
+            const archiveView = document.getElementById('archiveView');
+            
+            archiveView.classList.remove('visible', 'organized');
+            
+            setTimeout(() => {
+                archiveView.style.display = 'none';
+                
+                musicView.style.display = 'flex';
+                void musicView.offsetWidth;
+                musicView.classList.add('visible');
+                loadEP('doomed'); // Reset to latest
+                
+                setTimeout(() => {
+                    musicView.classList.add('organized');
+                }, 100);
+            }, 500);
         }
 
         function goHome() {
             document.body.classList.remove('music-active');
-            document.getElementById('musicView').style.display = 'none';
+            const musicView = document.getElementById('musicView');
+            const archiveView = document.getElementById('archiveView');
+            
+            // Handle closing whichever view is open
+            if(musicView.style.display !== 'none') {
+                musicView.classList.remove('visible', 'organized');
+                setTimeout(() => { musicView.style.display = 'none'; finishHomeTransition(); }, 500);
+            } else {
+                archiveView.classList.remove('visible', 'organized');
+                setTimeout(() => { archiveView.style.display = 'none'; finishHomeTransition(); }, 500);
+            }
+        }
+        
+        function finishHomeTransition() {
             document.getElementById('homeView').style.display = 'flex';
             audioPlayer.pause();
             isPlaying = false;
-            document.getElementById('playBtn').textContent = '▶ Play';
+            if(document.getElementById('playBtn')) document.getElementById('playBtn').textContent = '▶ Play';
 
             const message = document.querySelector('.message');
             message.classList.remove('clicked');
         }
 
-        function loadEP(ep) {
-            const data = musicData[ep];
-            document.getElementById('releaseTitle').textContent = data.title;
-            document.getElementById('releaseType').textContent = data.type;
+        function loadEP(epKey) {
+            const data = musicData[epKey];
+            const musicView = document.getElementById('musicView');
+            
+            // Update Header Info
+            musicView.querySelector('#releaseTitle').textContent = data.title;
+            musicView.querySelector('#releaseType').textContent = data.type;
+            
+            // Update Cover Art
+            const artworkImg = musicView.querySelector('.ep-artwork img');
+            if(data.cover) {
+                artworkImg.src = data.cover;
+            } else {
+                artworkImg.src = 'doomedtolivecoverart.png'; // Fallback
+            }
 
             const trackList = document.getElementById('trackList');
             trackList.innerHTML = '';
+            
+            // Handle Download Button Visibility
+            const downloadBtn = musicView.querySelector('.download-full-ep-btn');
+            if (epKey === 'doomed') {
+                downloadBtn.style.display = 'inline-block';
+                // Also ensure Back button goes to Home
+                musicView.querySelector('.back-button').onclick = goHome;
+                musicView.querySelector('.back-button').textContent = "← Back";
+                // Show Archive Button
+                const olderMusicSection = musicView.querySelector('.older-music-section');
+                if(olderMusicSection) olderMusicSection.style.display = 'block';
+            } else {
+                // If viewing an older release inside the main player view
+                downloadBtn.style.display = 'none'; // Only Doomed has full EP download logic for now
+                
+                // Change Back button to return to Archive
+                musicView.querySelector('.back-button').onclick = goToArchive;
+                musicView.querySelector('.back-button').textContent = "← Archives";
+                
+                // Hide Archive Button (we are already in a sub-view)
+                const olderMusicSection = musicView.querySelector('.older-music-section');
+                if(olderMusicSection) olderMusicSection.style.display = 'none';
+            }
 
-            data.tracks.forEach((track) => {
+            data.tracks.forEach((track, index) => {
                 const trackEl = document.createElement('div');
                 trackEl.className = 'track-item';
+                
+                // Random values for disorganization effect
+                const tx = (Math.random() * 60 - 30) + 'px';
+                const ty = (Math.random() * 60 + 20) + 'px';
+                const r = (Math.random() * 10 - 5) + 'deg';
+                
+                trackEl.style.setProperty('--tx', tx);
+                trackEl.style.setProperty('--ty', ty);
+                trackEl.style.setProperty('--r', r);
+                // Stagger transition delays
+                trackEl.style.transitionDelay = (index * 0.05) + 's';
+
+                // New HTML structure for inline player
                 trackEl.innerHTML = `
-                    <div class="track-info">
-                        <div class="track-title">${track.title}</div>
-                        <div class="track-meta">${track.duration}</div>
+                    <div class="track-item-content">
+                        <div class="track-info">
+                            <div class="track-title">${track.title}</div>
+                            <div class="track-meta">${track.duration}</div>
+                        </div>
+                    </div>
+                    <div class="track-player-wrapper">
+                        <div class="track-player-inner"></div>
                     </div>
                 `;
-                trackEl.onclick = () => selectTrack(track);
+                
+                // Pass event to prevent bubbling if clicking player controls
+                trackEl.onclick = (e) => {
+                    // Don't trigger if clicking inside the player controls
+                    if (e.target.closest('.player') || e.target.closest('button')) return;
+                    selectTrack(track, trackEl);
+                };
+                
                 trackList.appendChild(trackEl);
             });
         }
+        
+        function loadArchive() {
+            const list = document.getElementById('archiveList');
+            list.innerHTML = '';
+            
+            // Filter keys (excluding 'doomed') and assume they are in chronological order (or user provided order)
+            // If explicit sorting is needed based on year, we can do:
+            // const keys = Object.keys(musicData)
+            //    .filter(k => k !== 'doomed')
+            //    .sort((a, b) => parseInt(musicData[b].year || 0) - parseInt(musicData[a].year || 0));
+            // But preserving object definition order usually works if defined correctly.
+            const keys = Object.keys(musicData).filter(k => k !== 'doomed'); 
+            
+            keys.forEach((key, index) => {
+                const item = musicData[key];
+                const el = document.createElement('div');
+                el.className = 'track-item'; // Reuse animation class for fade in
+                
+                // Simplified animation for grid
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                el.style.transitionDelay = (index * 0.05) + 's';
+                
+                // Add organized class logic
+                setTimeout(() => {
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, 50);
+                
+                el.innerHTML = `
+                    <div class="archive-item" onclick="viewRelease('${key}')">
+                        <div class="archive-thumb">
+                            <img src="${item.cover || 'doomedtolivecoverart.png'}" 
+                                 alt="${item.title}" 
+                                 onerror="this.src='doomedtolivecoverart.png'">
+                        </div>
+                        <div class="archive-info">
+                            <div class="archive-title">${item.title}</div>
+                            <div class="archive-meta">${item.type} • ${item.year || '2025'}</div>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(el);
+            });
+        }
+        
+        function viewRelease(key) {
+            // Switch from Archive View to Music View (populated with release)
+            const archiveView = document.getElementById('archiveView');
+            const musicView = document.getElementById('musicView');
+            
+            archiveView.classList.remove('visible', 'organized');
+            
+            setTimeout(() => {
+                archiveView.style.display = 'none';
+                
+                musicView.style.display = 'flex';
+                void musicView.offsetWidth;
+                musicView.classList.add('visible');
+                
+                loadEP(key);
+                
+                setTimeout(() => {
+                    musicView.classList.add('organized');
+                }, 100);
+            }, 500);
+        }
 
-        function selectTrack(track) {
+        function selectTrack(track, trackEl) {
+            // Remove active class from all items and collapse wrappers
+            document.querySelectorAll('.track-item').forEach(item => {
+                item.classList.remove('active');
+                const wrapper = item.querySelector('.track-player-wrapper');
+                if (wrapper) wrapper.classList.remove('expanded');
+            });
+
+            // If clicking the same track, just toggle off (optional, but here we just re-open)
+            if (currentTrack === track && document.getElementById('player').parentNode.closest('.track-item') === trackEl) {
+               // Optional: Toggle close logic here if desired
+            }
+
             currentTrack = track;
+            trackEl.classList.add('active');
+            
+            // Get the player element
+            const player = document.getElementById('player');
+            const audioPlayer = document.getElementById('audioPlayer');
+            
+            // Update Info
             document.getElementById('playerTrack').textContent = track.title;
-            document.getElementById('player').classList.add('active');
+            
+            // Move player to new location
+            const newWrapper = trackEl.querySelector('.track-player-wrapper');
+            const newInner = trackEl.querySelector('.track-player-inner');
+            
+            // Ensure player is visible
+            player.style.display = 'block';
+
+            // Append player to the inner container of the clicked track
+            newInner.appendChild(player);
+            
+            // Force a reflow to ensure the browser registers the move before animating
+            void newWrapper.offsetWidth; 
+            
+            // Trigger animation
+            requestAnimationFrame(() => {
+                newWrapper.classList.add('expanded');
+            });
+
+            // Reset Audio logic
             audioPlayer.pause();
             isPlaying = false;
             document.getElementById('playBtn').textContent = '▶ Play';
             document.getElementById('currentTime').textContent = '0:00';
             document.getElementById('progressFill').style.width = '0%';
-            document.getElementById('player').scrollIntoView({ behavior: 'smooth' });
+            
+            // Auto play on selection? User asked to "open the new one", implies showing it. 
+            // We won't auto-play to avoid jarring noise, but we reset state.
         }
 
         function generatePlaceholderAudio() {
@@ -741,8 +1479,10 @@
             return arrayBuffer;
         }
 
-        function togglePlay() {
+        function togglePlay(event) {
+            if (event) event.stopPropagation();
             if (!currentTrack) return;
+            const audioPlayer = document.getElementById('audioPlayer');
 
             if (!placeholderAudio) {
                 placeholderAudio = generatePlaceholderAudio();
@@ -760,8 +1500,18 @@
             }
         }
 
-        function downloadTrack() {
+        function downloadTrack(event) {
+            if (event) event.stopPropagation();
             if (!currentTrack) return;
+            isFullEPDownload = false;
+            document.getElementById('donationModal').classList.add('active');
+        }
+
+        function downloadFullEP() {
+            isFullEPDownload = true;
+            // Set a dummy "current track" for the modal title or logic if needed, 
+            // or modify modal logic to handle full EP text
+            document.querySelector('#donationModal h3').textContent = "Support Full EP";
             document.getElementById('donationModal').classList.add('active');
         }
 
@@ -790,7 +1540,18 @@
 
         function setAmount(amount, event) {
             selectedAmount = amount;
-            document.getElementById('customAmount').value = '';
+            const customInput = document.getElementById('customAmount');
+            
+            if (amount === 0) {
+                // Hide custom amount input for Free option
+                customInput.value = '';
+                customInput.parentElement.style.display = 'none';
+            } else {
+                // Show custom amount input for paid options (or clear it if specific amount selected)
+                customInput.parentElement.style.display = 'block';
+                customInput.value = '';
+            }
+
             document.querySelectorAll('.amount-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
@@ -799,6 +1560,16 @@
 
         function closeDonation() {
             document.getElementById('donationModal').classList.remove('active');
+            // Reset state
+            setTimeout(() => {
+                document.querySelector('#donationModal h3').textContent = "Support This Track";
+                document.getElementById('customAmount').parentElement.style.display = 'block'; // Reset visibility
+                document.getElementById('customAmount').value = '';
+                document.getElementById('donorEmail').value = '';
+                document.getElementById('donorName').value = '';
+                document.querySelectorAll('.amount-btn').forEach(btn => btn.classList.remove('active'));
+                selectedAmount = 0;
+            }, 300);
         }
 
         async function submitDonation() {
@@ -806,6 +1577,9 @@
             const name = document.getElementById('donorName').value;
             const customAmount = document.getElementById('customAmount').value;
             const amount = customAmount ? parseFloat(customAmount) : selectedAmount;
+            
+            const itemTitle = isFullEPDownload ? "Doomed to Live (Full EP)" : currentTrack.title;
+            const downloadUrl = isFullEPDownload ? "https://your-bunny-cdn.b-cdn.net/doomed-to-live-full-ep.zip" : currentTrack.downloadUrl; // Example URL
 
             if (!email) {
                 alert('Please enter your email');
@@ -814,9 +1588,9 @@
 
             if (amount === '' || amount === 0 || amount === '0') {
                 // Free download - just capture email
-                await captureEmail(email, name, currentTrack.title, 'Free');
-                downloadFile(currentTrack.downloadUrl, currentTrack.title);
-                alert(`Thank you for supporting ROCHE!\n\nTrack: ${currentTrack.title}\nEmail: ${email}`);
+                await captureEmail(email, name, itemTitle, 'Free');
+                downloadFile(downloadUrl, itemTitle);
+                alert(`Thank you for supporting ROCHE!\n\nItem: ${itemTitle}\nEmail: ${email}`);
                 document.getElementById('donorEmail').value = '';
                 document.getElementById('donorName').value = '';
                 closeDonation();
@@ -824,56 +1598,24 @@
                 alert('Minimum donation is £1');
                 return;
             } else {
-                // Process payment with Stripe
-                await processStripePayment(email, name, amount, currentTrack.title);
+                // Paid Option (Pay What You Want)
+                // Redirect to your specific Stripe Payment Link
+                const stripeLink = "https://buy.stripe.com/28E28q2Q07gqahKdIJ2sM00"; 
+                window.location.href = stripeLink;
             }
         }
 
+        /* 
+           NOTE: To make this work with REAL Stripe payments without a backend server:
+           1. Go to Stripe Dashboard -> Products -> Add Product.
+           2. Create a "Pay What You Want" pricing or fixed prices (£1, £3, £5).
+           3. Get the "Payment Link" for each.
+           4. Redirect the user to that link in the submitDonation function above.
+        */
+
         async function processStripePayment(email, name, amount, trackTitle) {
-            const amountInPence = Math.round(amount * 100);
-
-            try {
-                // Create payment intent on your backend
-                const response = await fetch('YOUR_BACKEND_URL/create-payment-intent', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        amount: amountInPence,
-                        email: email,
-                        name: name,
-                        track: trackTitle
-                    })
-                });
-
-                const data = await response.json();
-                
-                if (data.clientSecret) {
-                    // Confirm payment
-                    const result = await stripe.confirmCardPayment(data.clientSecret, {
-                        payment_method: {
-                            card: await stripe.createToken('card'),
-                            billing_details: {
-                                email: email,
-                                name: name
-                            }
-                        }
-                    });
-
-                    if (result.paymentIntent.status === 'succeeded') {
-                        await captureEmail(email, name, trackTitle, `£${amount}`);
-                        downloadFile(currentTrack.downloadUrl, trackTitle);
-                        alert(`Thank you for supporting ROCHE!\n\nDonation: £${amount}\nTrack: ${trackTitle}`);
-                        document.getElementById('donorEmail').value = '';
-                        document.getElementById('donorName').value = '';
-                        closeDonation();
-                    } else {
-                        alert('Payment failed. Please try again.');
-                    }
-                }
-            } catch (error) {
-                console.error('Payment error:', error);
-                alert('Payment processing failed. Please try again.');
-            }
+             // Deprecated in favor of the simpler redirection logic above for static sites
+             // unless you deploy a backend server.
         }
 
         async function captureEmail(email, name, track, amount) {
