@@ -1017,23 +1017,83 @@
         /* body.music-active .logo { top: 64px; } */
 
         /* Responsive tweaks for small screens */
+        /* Responsive tweaks for mobile */
         @media (max-width: 768px) {
             .logo {
-                top: 16px;
-                left: 16px;
-                font-size: 12px;
+                top: 20px;
+                left: 20px;
+                font-size: 14px;
+                /* Keep legible */
             }
 
-            /* body.music-active .logo { top: 56px; } REMOVED */
-
             .back-button {
-                top: 48px !important;
-                /* Adjusted for smaller screens below logo */
-                left: 16px !important;
+                top: 60px !important;
+                left: 20px !important;
                 font-size: 12px;
-                padding: 6px 10px;
-                padding-left: 0;
-                /* Align text with logo */
+                opacity: 1 !important;
+                /* Always show if active */
+            }
+
+            .music-view {
+                padding-top: 100px;
+                /* Reduced from 22vh */
+                padding-bottom: 120px;
+                /* Space for footer/player */
+                justify-content: flex-start;
+            }
+
+            .music-content {
+                gap: var(--space-24);
+                width: 100%;
+            }
+
+            .ep-artwork {
+                max-width: 85%;
+                /* Make slightly smaller on mobile */
+                margin-bottom: var(--space-24);
+            }
+
+            .release-header h2 {
+                font-size: 24px;
+                /* Smaller title */
+            }
+
+            .track-item-content {
+                padding: 12px 0;
+                /* Less padding */
+            }
+
+            .track-title {
+                font-size: 14px;
+            }
+
+            .download-full-ep-btn {
+                width: 90%;
+                /* Full width button */
+                margin-top: 32px;
+            }
+
+            /* Center main page text perfectly */
+            .container {
+                height: 100dvh;
+                /* Use dynamic viewport height */
+            }
+
+            .message h1 {
+                font-size: clamp(2rem, 10vw, 3.5rem);
+                /* Adjusted scaling */
+                width: 100%;
+                padding: 0 20px;
+            }
+
+            .track-right {
+                margin-left: 12px;
+                gap: 8px;
+            }
+
+            .inline-support-btn {
+                padding: 6px 12px;
+                font-size: 10px;
             }
         }
     </style>
