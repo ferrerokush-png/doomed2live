@@ -972,6 +972,26 @@
             color: var(--color-accent);
         }
 
+        .amount-option-btn {
+            flex: 1;
+            padding: 10px;
+            background: transparent;
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+            cursor: pointer;
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            border-radius: var(--radius-base);
+            transition: all 0.2s;
+        }
+
+        .amount-option-btn.active {
+            border-color: var(--color-accent);
+            color: var(--color-accent);
+            background: rgba(179, 0, 0, 0.1);
+        }
+
         .submit-btn {
             width: 100%;
             padding: 12px;
@@ -1451,36 +1471,87 @@
         </div>
     </footer>
 
-    <div class="modal" id="donationModal">
-        <div class="modal-content" id="donationFormContent">
-            <button class="modal-close" onclick="closeDonation()">×</button>
-            <h3>Support This Track</h3>
-            <p>Choose your contribution. No amount is too small.</p>
-            <div class="amount-buttons" id="amountButtons">
-                <button class="amount-btn" onclick="setAmount(0, event)">Free</button>
-                <button class="amount-btn" onclick="setAmount(1, event)">£1</button>
-                <button class="amount-btn" onclick="setAmount(3, event)">£3</button>
-                <button class="amount-btn" onclick="setAmount(5, event)">£5</button>
-                <button class="amount-btn" onclick="setAmount(10, event)">£10</button>
+    <!-- Sympathy Modal (First Interaction) -->
+    <div class="modal" id="sympathyModal">
+        <div class="modal-content" style="text-align: center;">
+            <button class="modal-close" onclick="closeModal('sympathyModal')">×</button>
+            <h3 style="margin-bottom: 32px; font-size: 20px;">Support Roche</h3>
+            <p style="font-size: 14px; line-height: 1.6; margin-bottom: 24px;">
+                "Don't walk on by, kind sir/lady! Toss a penny in the hat for the poor noisemaker. A warm meal buys a
+                sweeter beat, it does.
+            </p>
+            <p style="font-size: 14px; line-height: 1.6; margin-bottom: 32px; color: var(--color-icon);">
+                Or take the tune for naught, if fortune hasn't favored ye this week."
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+                <button class="submit-btn" onclick="openPaymentModal()">Toss a Penny (Support & Download WAV)</button>
+                <button class="submit-btn"
+                    style="background: transparent; border: 1px solid var(--color-text-secondary); color: var(--color-text-secondary);"
+                    onclick="openContactModal()">Take for Naught (Free MP3)</button>
             </div>
-            <div class="form-group">
-                <label>Custom Amount (£)</label>
-                <input type="number" id="customAmount" placeholder="Enter amount (1-99)" min="1" max="99" step="0.01">
-            </div>
-            <div class="form-group">
-                <label>Email *</label>
-                <input type="email" id="donorEmail" placeholder="your@email.com" required>
-            </div>
-            <div class="form-group">
-                <label>Name (Optional)</label>
-                <input type="text" id="donorName" placeholder="Your name">
-            </div>
-            <button class="submit-btn" onclick="submitDonation()">Complete Support</button>
         </div>
-        <!-- Embedded Checkout Container (hidden by default) -->
-        <div class="modal-content" id="checkoutContent" style="display: none;">
-            <button class="modal-close" onclick="closeCheckout()">×</button>
-            <div id="checkout"></div>
+    </div>
+
+    <!-- Payment Input Modal -->
+    <div class="modal" id="paymentModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('paymentModal')">×</button>
+            <button class="back-link" onclick="backToSympathy()"
+                style="border: none; background: none; color: var(--color-text-secondary); cursor: pointer; margin-bottom: 16px; padding: 0;">←
+                Back</button>
+            <h3>Toss a Penny</h3>
+            <p id="paymentDescription">Select your contribution amount.</p>
+
+            <div class="form-group">
+                <label>Amount (£)</label>
+                <div style="display: flex; gap: 16px; margin-bottom: 16px;">
+                    <button class="amount-option-btn active" onclick="setPaymentAmount('min')">Minimum</button>
+                    <button class="amount-option-btn" onclick="setPaymentAmount('custom')">Custom</button>
+                </div>
+                <input type="number" id="paymentAmountInput" placeholder="Enter amount" step="0.01">
+                <p id="minAmountMsg" style="font-size: 10px; color: var(--color-accent); margin-top: 4px;">Minimum:
+                    £1.00
+                </p>
+            </div>
+
+            <button class="submit-btn" onclick="initiateStripeCheckout()">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <!-- Contact Form Modal (Free MP3) -->
+    <div class="modal" id="contactModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('contactModal')">×</button>
+            <button class="back-link" onclick="backToSympathy()"
+                style="border: none; background: none; color: var(--color-text-secondary); cursor: pointer; margin-bottom: 16px; padding: 0;">←
+                Back</button>
+            <h3>Fortune Hasn't Favored?</h3>
+            <p>No worries. Just let me know who's listening.</p>
+
+            <form id="freeDownloadForm" onsubmit="submitFreeForm(event)">
+                <div class="form-group">
+                    <label>Name *</label>
+                    <input type="text" id="freeName" required>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="freeEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone (Optional)</label>
+                    <input type="tel" id="freePhone">
+                </div>
+                <button type="submit" class="submit-btn" style="background: var(--color-text-secondary);">Get
+                    MP3s</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Stripe Checkout Modal -->
+    <div class="modal" id="checkoutModal">
+        <div class="modal-content" style="max-width: 800px; width: 95%;">
+            <button class="modal-close" onclick="closeModal('checkoutModal')">×</button>
+            <div id="stripe-checkout-container"></div>
         </div>
     </div>
 
@@ -1610,10 +1681,7 @@
             }
         };
 
-        // Initialize Stripe
-        const stripe = Stripe('pk_live_51SkeM0BlFcUia3s1u859vt0ycjJb4wU2oZJJt1yjx2VeeAOqSbjBnYZ5TV1ozmj1Qi3GRs1Um0eXwhRJCbzM2O0I00wzYDXNjj');
-        let checkout = null;
-
+        // Global state
         let currentTrack = null;
         let selectedAmount = 0;
         let isPlaying = false;
@@ -2201,145 +2269,179 @@
             updateMiniPlayer();
         }
 
-        function setAmount(amount, event) {
-            selectedAmount = amount;
-            const customInput = document.getElementById('customAmount');
+        // Initialize Stripe
+        let stripe;
 
-            if (amount === 0) {
-                // Hide custom amount input for Free option
-                customInput.value = '';
-                customInput.parentElement.style.display = 'none';
-            } else {
-                // Show custom amount input for paid options (or clear it if specific amount selected)
-                customInput.parentElement.style.display = 'block';
-                customInput.value = '';
-            }
-
-            document.querySelectorAll('.amount-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-        }
-
-        function closeDonation() {
-            document.getElementById('donationModal').classList.remove('active');
-            // Reset state
-            setTimeout(() => {
-                document.querySelector('#donationModal h3').textContent = "Support This Track";
-                document.getElementById('customAmount').parentElement.style.display = 'block'; // Reset visibility
-                document.getElementById('customAmount').value = '';
-                document.getElementById('donorEmail').value = '';
-                document.getElementById('donorName').value = '';
-                document.querySelectorAll('.amount-btn').forEach(btn => btn.classList.remove('active'));
-                selectedAmount = 0;
-            }, 300);
-        }
-
-        async function submitDonation() {
-            const email = document.getElementById('donorEmail').value;
-            const name = document.getElementById('donorName').value;
-            const customAmount = document.getElementById('customAmount').value;
-            const amount = customAmount ? parseFloat(customAmount) : selectedAmount;
-
-            const itemTitle = isFullEPDownload ? "Doomed to Live (Full EP)" : currentTrack.title;
-            const downloadUrl = isFullEPDownload ? "https://your-bunny-cdn.b-cdn.net/doomed-to-live-full-ep.zip" : currentTrack.downloadUrl; // Example URL
-
-            if (!email) {
-                alert('Please enter your email');
-                return;
-            }
-
-            if (amount === '' || amount === 0 || amount === '0') {
-                // Free download - just capture email
-                await captureEmail(email, name, itemTitle, 'Free');
-                downloadFile(downloadUrl, itemTitle);
-                alert(`Thank you for supporting ROCHE!\n\nItem: ${itemTitle}\nEmail: ${email}`);
-                document.getElementById('donorEmail').value = '';
-                document.getElementById('donorName').value = '';
-                closeDonation();
-            } else if (amount < 1) {
-                alert('Minimum donation is £1');
-                return;
-            } else {
-                // Paid Option - Use Stripe Embedded Checkout
-                await initializeEmbeddedCheckout(email, name, amount, itemTitle, downloadUrl);
-            }
-        }
-
-        async function initializeEmbeddedCheckout(email, name, amount, itemTitle, downloadUrl) {
+        async function initStripe() {
             try {
-                // Hide donation form, show checkout container
-                document.getElementById('donationFormContent').style.display = 'none';
-                document.getElementById('checkoutContent').style.display = 'block';
+                const response = await fetch('/api/config');
+                const { publishableKey } = await response.json();
+                if (publishableKey) {
+                    stripe = Stripe(publishableKey);
+                }
+            } catch (e) {
+                console.error("Could not fetch Stripe key", e);
+            }
+        }
+        initStripe();
 
-                // Call your backend to create a Checkout Session
-                // Replace 'YOUR_BACKEND_URL' with your actual server URL (e.g., 'http://localhost:4242' for local testing)
-                const response = await fetch('YOUR_BACKEND_URL/create-checkout-session', {
+        // Multi-Step Modal Logic
+        let selectedPaymentType = 'min'; // 'min' or 'custom'
+        let stripeCheckout = null;
+
+        function downloadTrack(event) {
+            if (event) event.stopPropagation();
+            if (!currentTrack) return;
+            isFullEPDownload = false;
+            document.getElementById('sympathyModal').classList.add('active');
+        }
+
+        function downloadFullEP() {
+            isFullEPDownload = true;
+            document.getElementById('sympathyModal').classList.add('active');
+        }
+
+        function openPaymentModal() {
+            closeModal('sympathyModal');
+            document.getElementById('paymentModal').classList.add('active');
+
+            // Set correct minimum message
+            const minMsg = document.getElementById('minAmountMsg');
+            const desc = document.getElementById('paymentDescription');
+            if (isFullEPDownload) {
+                minMsg.textContent = "Minimum: £3.99";
+                desc.textContent = "Support the Full EP (Min £3.99)";
+            } else {
+                minMsg.textContent = "Minimum: £1.00";
+                desc.textContent = "Support this Track (Min £1.00)";
+            }
+
+            setPaymentAmount('min'); // Default to minimum
+        }
+
+        function openContactModal() {
+            closeModal('sympathyModal');
+            document.getElementById('contactModal').classList.add('active');
+        }
+
+        function backToSympathy() {
+            closeModal('paymentModal');
+            closeModal('contactModal');
+            closeModal('checkoutModal');
+            document.getElementById('sympathyModal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+
+            // Reset states if needed
+            if (modalId === 'paymentModal') {
+                document.getElementById('paymentAmountInput').value = '';
+            }
+            if (modalId === 'checkoutModal' && stripeCheckout) {
+                stripeCheckout.unmount();
+                stripeCheckout = null;
+                document.getElementById('stripe-checkout-container').innerHTML = '';
+            }
+        }
+
+        function setPaymentAmount(type) {
+            selectedPaymentType = type;
+            const input = document.getElementById('paymentAmountInput');
+            const buttons = document.querySelectorAll('.amount-option-btn');
+
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            if (type === 'min') {
+                buttons[0].classList.add('active');
+                input.value = isFullEPDownload ? 3.99 : 1.00;
+                input.readOnly = true;
+            } else {
+                buttons[1].classList.add('active');
+                input.value = '';
+                input.readOnly = false;
+                input.focus();
+            }
+        }
+
+        async function initiateStripeCheckout() {
+            const amountInput = document.getElementById('paymentAmountInput');
+            let amount = parseFloat(amountInput.value);
+            const minAmount = isFullEPDownload ? 3.99 : 1.00;
+            const itemTitle = isFullEPDownload ? "Doomed to Live (Full EP)" : currentTrack.title;
+            const downloadUrl = isFullEPDownload ? "https://your-bunny-cdn.b-cdn.net/doomed-to-live-full-ep.zip" : currentTrack.downloadUrl;
+
+            if (isNaN(amount) || amount < minAmount) {
+                alert(`Please enter a valid amount (Minimum £${minAmount})`);
+                return;
+            }
+
+            // Capture Email/Name for record (Optional: send to your DB here)
+            // But main focus is checkout
+
+            // Open Checkout Modal
+            closeModal('paymentModal');
+            document.getElementById('checkoutModal').classList.add('active');
+
+            try {
+                // Call backend to create checkout session
+                const response = await fetch('/api/checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        amount: amount,
-                        email: email,
-                        name: name,
-                        itemTitle: itemTitle
+                        amount: amount, // Send amount in GBP (backend converts to pence)
+                        itemTitle: itemTitle,
+                        // We could capture email/name from a form before this step if desired
+                        // but current UI asks for amount -> checkout. Checkout collects email.
                     })
                 });
 
                 const { clientSecret, error } = await response.json();
 
                 if (error) {
-                    alert('Error: ' + error.message);
-                    closeCheckout();
+                    console.error('API Error:', error);
+                    alert('Error starting checkout: ' + error);
+                    closeModal('checkoutModal');
                     return;
                 }
 
                 // Initialize embedded checkout
-                checkout = await stripe.initEmbeddedCheckout({
+                stripeCheckout = await stripe.initEmbeddedCheckout({
                     clientSecret: clientSecret
                 });
 
                 // Mount the checkout form
-                checkout.mount(document.getElementById('checkout'));
+                stripeCheckout.mount(document.getElementById('stripe-checkout-container'));
 
-                // Listen for checkout completion
-                checkout.on('complete', async () => {
-                    // Get session ID from URL or from checkout session
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const sessionId = urlParams.get('session_id');
-
-                    if (sessionId) {
-                        // Verify payment succeeded
-                        const statusResponse = await fetch(`YOUR_BACKEND_URL/session-status?session_id=${sessionId}`);
-                        const { status, customer_email } = await statusResponse.json();
-
-                        if (status === 'complete') {
-                            // Success! Unlock the download
-                            await captureEmail(customer_email || email, name, itemTitle, `£${amount}`);
-                            downloadFile(downloadUrl, itemTitle);
-                            alert('Thank you for joining the club.');
-                            closeCheckout();
-                        }
-                    }
-                });
-
-            } catch (error) {
-                console.error('Checkout error:', error);
-                alert('Failed to initialize checkout. Please try again.');
-                closeCheckout();
+            } catch (err) {
+                console.error('Checkout error:', err);
+                alert('Could not initiate checkout. Check console.');
+                closeModal('checkoutModal');
             }
         }
 
-        function closeCheckout() {
-            // Clean up embedded checkout
-            if (checkout) {
-                checkout.unmount();
-                checkout = null;
-            }
-            // Hide checkout, show form
-            document.getElementById('checkoutContent').style.display = 'none';
-            document.getElementById('donationFormContent').style.display = 'block';
-            // Reset form
-            closeDonation();
+        async function submitFreeForm(event) {
+            event.preventDefault();
+            const name = document.getElementById('freeName').value;
+            const email = document.getElementById('freeEmail').value;
+            const phone = document.getElementById('freePhone').value;
+
+            // Submit to Google Form (Hidden Iframe Method)
+            // User must provide exact ENTRY_IDs
+
+            const FORM_ID = "1HJFNpv5LnyQFUd9yNgDGIhoMBBc9VdDj18NU3T8Qcpg"; // Extracted from your link
+            // const ENTRY_NAME = "entry.XXXXXX";
+            // const ENTRY_EMAIL = "entry.XXXXXX";
+            // const ENTRY_PHONE = "entry.XXXXXX";
+
+            // Temporary Alert until user provides Entry IDs
+            alert(`Thanks ${name}! \n\nNOTE: You need to replace the 'entry.XXXXXX' placeholders in the code with your real Google Form input IDs to make this work.\n\nProviding MP3 download now...`);
+
+            closeModal('contactModal');
+
+            const itemTitle = isFullEPDownload ? "Doomed to Live (Full EP)" : currentTrack.title;
+            // logic to trigger MP3 download...
+            // downloadFile(currentTrack.downloadUrl, itemTitle);
         }
 
         /* 
@@ -2350,29 +2452,9 @@
            4. Redirect the user to that link in the submitDonation function above.
         */
 
-        async function processStripePayment(email, name, amount, trackTitle) {
-            // Deprecated in favor of the simpler redirection logic above for static sites
-            // unless you deploy a backend server.
-        }
-
         async function captureEmail(email, name, track, amount) {
-            // Send to your backend to store in database/email service
-            try {
-                await fetch('YOUR_BACKEND_URL/capture-email', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: email,
-                        name: name,
-                        track: track,
-                        amount: amount,
-                        timestamp: new Date().toISOString()
-                    })
-                });
-                console.log('✓ Email captured:', email);
-            } catch (error) {
-                console.error('Email capture error:', error);
-            }
+            // Placeholder if you want to log paid donations to DB
+            console.log('Payment Success:', email, amount);
         }
 
         function downloadFile(url, filename) {
