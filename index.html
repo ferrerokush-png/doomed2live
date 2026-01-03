@@ -1911,7 +1911,7 @@
                             </div>
                         </div>
                         <div class="track-right">
-                            <button class="inline-support-btn" onclick="downloadTrack(event)">Download</button>
+                            <button class="inline-support-btn" onclick="downloadTrack(event, '${epKey}', ${index})">Download</button>
                         </div>
                     </div>
                 `;
@@ -2294,8 +2294,19 @@
         let selectedPaymentType = 'min'; // 'min' or 'custom'
         let stripeCheckout = null;
 
-        function downloadTrack(event) {
+        function downloadTrack(event, epKey, index) {
             if (event) event.stopPropagation();
+
+            // If specific track args provided, update context
+            if (epKey && typeof index === 'number') {
+                const track = musicData[epKey].tracks[index];
+                if (track) {
+                    currentTrack = track;
+                    // Note: We update currentTrack for metadata context, 
+                    // but we don't necessarily start playing it unless they click play.
+                }
+            }
+
             if (!currentTrack) return;
             isFullEPDownload = false;
             document.getElementById('sympathyModal').classList.add('active');
