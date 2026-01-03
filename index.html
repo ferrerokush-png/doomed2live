@@ -2426,22 +2426,61 @@
             const email = document.getElementById('freeEmail').value;
             const phone = document.getElementById('freePhone').value;
 
-            // Submit to Google Form (Hidden Iframe Method)
-            // User must provide exact ENTRY_IDs
+            // Google Form Submission info
+            const FORM_ID = "1HJFNpv5LnyQFUd9yNgDGIhoMBBc9VdDj18NU3T8Qcpg";
+            const ENTRY_NAME = "entry.1740210107";
+            const ENTRY_EMAIL = "entry.1802953598";
+            const ENTRY_PHONE = "entry.5498969";
 
-            const FORM_ID = "1HJFNpv5LnyQFUd9yNgDGIhoMBBc9VdDj18NU3T8Qcpg"; // Extracted from your link
-            // const ENTRY_NAME = "entry.XXXXXX";
-            // const ENTRY_EMAIL = "entry.XXXXXX";
-            // const ENTRY_PHONE = "entry.XXXXXX";
+            const submitUrl = `https://docs.google.com/forms/d/${FORM_ID}/formResponse`;
 
-            // Temporary Alert until user provides Entry IDs
-            alert(`Thanks ${name}! \n\nNOTE: You need to replace the 'entry.XXXXXX' placeholders in the code with your real Google Form input IDs to make this work.\n\nProviding MP3 download now...`);
+            // Create a hidden iframe to target the form submission (prevents redirect)
+            let iframe = document.getElementById('hidden_iframe');
+            if (!iframe) {
+                iframe = document.createElement('iframe');
+                iframe.name = 'hidden_iframe';
+                iframe.id = 'hidden_iframe';
+                iframe.style.display = 'none';
+                document.body.appendChild(iframe);
+            }
 
+            // Create a temporary form to submit
+            const form = document.createElement('form');
+            form.target = 'hidden_iframe';
+            form.action = submitUrl;
+            form.method = 'POST';
+
+            // Add inputs
+            const addInput = (name, value) => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = name;
+                input.value = value;
+                form.appendChild(input);
+            };
+
+            addInput(ENTRY_NAME, name);
+            addInput(ENTRY_EMAIL, email);
+            if (phone) addInput(ENTRY_PHONE, phone);
+
+            document.body.appendChild(form);
+            form.submit();
+
+            // Cleanup
+            setTimeout(() => {
+                document.body.removeChild(form);
+            }, 1000);
+
+            // Close modal and show success logic
             closeModal('contactModal');
 
             const itemTitle = isFullEPDownload ? "Doomed to Live (Full EP)" : currentTrack.title;
-            // logic to trigger MP3 download...
-            // downloadFile(currentTrack.downloadUrl, itemTitle);
+            const downloadUrl = isFullEPDownload ? "https://your-bunny-cdn.b-cdn.net/doomed-to-live-full-ep.zip" : currentTrack.downloadUrl;
+
+            alert(`Thanks ${name}! Your details have been sent to the list.\n\nDownloading ${itemTitle}...`);
+
+            // Trigger download
+            downloadFile(downloadUrl, itemTitle);
         }
 
         /* 
