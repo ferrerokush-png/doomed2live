@@ -2026,17 +2026,25 @@
             audioPlayer.pause();
             isPlaying = false;
 
-            // Placeholder generation logic
-            const durationParts = track.duration.split(':');
-            const minutes = parseInt(durationParts[0]) || 0;
-            const seconds = parseInt(durationParts[1]) || 0;
-            const totalSeconds = minutes * 60 + seconds;
-            const duration = totalSeconds || 180;
+            if (track.mp3Url) {
+                audioPlayer.src = track.mp3Url;
+            } else if (track.downloadUrl && track.downloadUrl !== '#') {
+                // Fallback for older data structure if any
+                audioPlayer.src = track.downloadUrl;
+            } else {
+                // Placeholder generation logic (Fallback)
+                const durationParts = track.duration.split(':');
+                const minutes = parseInt(durationParts[0]) || 0;
+                const seconds = parseInt(durationParts[1]) || 0;
+                const totalSeconds = minutes * 60 + seconds;
+                const duration = totalSeconds || 180;
 
-            if (!trackPlaceholders[track.title]) {
-                trackPlaceholders[track.title] = generatePlaceholderAudio(duration);
+                if (!trackPlaceholders[track.title]) {
+                    trackPlaceholders[track.title] = generatePlaceholderAudio(duration);
+                }
+                audioPlayer.src = trackPlaceholders[track.title];
             }
-            audioPlayer.src = trackPlaceholders[track.title];
+
             audioPlayer.load();
 
             // Auto play
