@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,7 +17,7 @@
     </style>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
-        
+
         @font-face {
             font-family: 'Akira Expanded';
             src: url('https://cdn.jsdelivr.net/gh/ferrerokush-png/doomed2live@main/AkiraExpanded-SuperBold.woff2') format('woff2');
@@ -29,9 +30,12 @@
             --color-bg: #0a0a0a;
             --color-text: #f5f5f5;
             --color-text-secondary: #999;
-            --color-accent: #b30000; /* Dark Red */
-            --color-accent-hover: #ff0000; /* Brighter Red on hover */
-            --color-highlight: #00d4ff; /* Blue for track highlights */
+            --color-accent: #b30000;
+            /* Dark Red */
+            --color-accent-hover: #ff0000;
+            /* Brighter Red on hover */
+            --color-highlight: #00d4ff;
+            /* Blue for track highlights */
             --color-border: #222;
             --space-16: 16px;
             --space-24: 24px;
@@ -43,7 +47,8 @@
             box-sizing: border-box;
         }
 
-        html, body {
+        html,
+        body {
             margin: 0;
             padding: 0;
             background-color: var(--color-bg);
@@ -64,37 +69,45 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: var(--space-32) var(--space-32) 180px var(--space-32); /* Added bottom padding for fixed footer */
+            padding: var(--space-32) var(--space-32) 180px var(--space-32);
+            /* Added bottom padding for fixed footer */
             width: 100%;
             height: 100vh;
             position: absolute;
             top: 0;
             left: 0;
-            z-index: 50; /* Ensure container is above potential hidden views */
-            pointer-events: auto; /* Ensure events work */
+            z-index: 50;
+            /* Ensure container is above potential hidden views */
+            pointer-events: auto;
+            /* Ensure events work */
         }
 
         .logo {
             /* removed transition for top/left */
-            position: fixed; /* Fixed position to stay in place */
+            position: fixed;
+            /* Fixed position to stay in place */
             top: var(--space-24);
             left: var(--space-24);
             font-size: 14px;
-            font-weight: 900; /* Maximum boldness */
+            font-weight: 900;
+            /* Maximum boldness */
             letter-spacing: 2px;
             color: #b30000;
             text-transform: uppercase;
             font-family: 'Space Mono', monospace;
-            z-index: 1000; /* Ensure it stays on top */
+            z-index: 1000;
+            /* Ensure it stays on top */
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            text-shadow: 0 0 0.5px #b30000; /* Slight shadow to enhance boldness */
+            text-shadow: 0 0 0.5px #b30000;
+            /* Slight shadow to enhance boldness */
         }
 
         /* Ensure message is clickable */
         .message {
             position: relative;
-            z-index: 100; /* Bring above other elements */
+            z-index: 100;
+            /* Bring above other elements */
             text-align: center;
             cursor: pointer;
             transition: opacity 0.3s ease;
@@ -103,7 +116,7 @@
         .message:hover {
             opacity: 0.8;
         }
-        
+
         .message h1 {
             font-size: clamp(2.5rem, 8vw, 6rem);
             font-weight: 700;
@@ -111,26 +124,30 @@
             letter-spacing: -1px;
             line-height: 1.2;
             font-family: 'Akira Expanded', sans-serif;
-            pointer-events: auto; /* Ensure h1 specifically receives clicks */
+            pointer-events: auto;
+            /* Ensure h1 specifically receives clicks */
         }
 
-        
+
 
         .music-view {
             display: none;
-            padding: 80px 24px 0 24px; /* No bottom padding, handled by content */
-            padding-top: 120px; /* Push content lower visually */
-            min-height: calc(100vh - 180px - 60px); /* Viewport minus footer (180px) and mini-player (60px) */
-            align-items: flex-start; /* Start from top + padding */
-            justify-content: flex-start; /* Allow manual spacing */
+            padding: 22vh 24px 10vh 24px;
+            /* Percentage based padding to push content lower */
+            min-height: 100vh;
+            align-items: center;
+            justify-content: flex-start;
+            /* Align to top with padding pushing it down */
             flex-direction: column;
-            padding-bottom: calc(180px + 60px + 20px); /* Footer + mini-player + extra spacing */
+            box-sizing: border-box;
         }
 
 
         .back-button {
-            position: fixed; /* Fixed position to stay relative to fixed logo */
-            top: 60px; /* Positioned below the logo (approx 24px + height + gap) */
+            position: fixed;
+            /* Fixed position to stay relative to fixed logo */
+            top: 60px;
+            /* Positioned below the logo (approx 24px + height + gap) */
             left: var(--space-24);
             background: none;
             border: none;
@@ -139,14 +156,17 @@
             cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 1px;
-            transition: color 0.2s, opacity 1s ease; /* Added opacity transition */
+            transition: color 0.2s, opacity 1s ease;
+            /* Added opacity transition */
             font-family: 'Space Mono', monospace;
             z-index: 999;
-            opacity: 0; /* Start hidden */
+            opacity: 0;
+            /* Start hidden */
         }
 
         .music-view.organized .back-button {
-            opacity: 1; /* Fade in when organized */
+            opacity: 1;
+            /* Fade in when organized */
         }
 
         .back-button:hover {
@@ -166,10 +186,12 @@
 
         .ep-artwork {
             width: 100%;
-            max-width: 300px;
-            height: 300px;
-            /* background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); Removed background color/gradient */
-            /* border: 1px solid var(--color-border); Removed border if image covers it */
+            max-width: 485px;
+            /* Set to 485px */
+            height: auto;
+            /* Allow height to adjust */
+            aspect-ratio: 1 / 1;
+            /* Square aspect ratio */
             border-radius: var(--radius-base);
             margin: 0 auto var(--space-32) auto;
             display: flex;
@@ -178,9 +200,10 @@
             font-size: 14px;
             color: var(--color-text-secondary);
             text-transform: uppercase;
-            overflow: hidden; /* Ensure image stays within radius */
+            overflow: hidden;
+            /* Ensure image stays within radius */
         }
-        
+
         .ep-artwork img {
             width: 100%;
             height: 100%;
@@ -207,79 +230,163 @@
         .track-list {
             display: flex;
             flex-direction: column;
-            gap: 0; /* Remove gap, use border/padding */
-            max-width: 600px;
+            gap: 0;
+            /* Remove gap, use border/padding */
+            max-width: 100%;
             margin: 0 auto;
-            height: 100%; /* Fill the container */
+            height: auto;
+            width: 100%;
+            /* Ensure full width */
         }
 
         .track-item {
             display: flex;
-            flex-direction: column; 
-            gap: 0; 
-            cursor: pointer;
-            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1); /* Smoother flex transition */
-            padding: 0; 
+            flex-direction: column;
+            gap: 0;
+            cursor: default;
+            /* Cursor handled by buttons */
+            padding: 0;
             border: 1px solid transparent;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle divider */
-            border-radius: 0; /* Square edges for stack look */
-            overflow: hidden; 
-            flex: 1; /* Distribute space evenly */
-            min-height: 50px; /* Minimum height for collapsed state */
+            border-bottom: 1px solid transparent;
+            /* Remove divider */
+            width: 100%;
+            min-height: 70px;
+            /* Fixed height */
+            background: transparent;
         }
-        
+
+        /* Ensure full width */
+
+        .play-icon {
+            font-size: 10px;
+            color: var(--color-accent);
+            margin-right: var(--space-16);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border: 1px solid var(--color-accent);
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .track-item:hover .play-icon {
+            background: var(--color-accent);
+            color: var(--color-bg);
+        }
+
         .track-item:hover {
-            border-color: var(--color-highlight);
-            border-width: 1px;
+            background: transparent;
+            border-color: transparent;
+            border-bottom: 1px solid transparent !important;
+            box-shadow: none;
         }
-        
+
+        .track-item.active {
+            background: transparent;
+            border-color: transparent;
+            border-bottom: 1px solid transparent !important;
+        }
+
         .track-item:last-child {
-            border-bottom: none;
+            border-bottom: 1px solid transparent;
+            /* Use transparent instead of none to maintain 1px spacing if needed, but none is fine for look. */
+            /* Actually, if we use none, height changes by 1px. Use transparent to keep layout stable. */
+            border-bottom-color: transparent;
+        }
+
+        .track-item:last-child:hover {
+            border-bottom-color: transparent;
+            /* Keep distinct from others if needed */
         }
 
         .track-item-content {
             display: flex;
-            gap: var(--space-16);
+            width: 100%;
+            justify-content: space-between;
+            align-items: center;
             padding: var(--space-16);
-            align-items: center; /* Center text vertically */
         }
 
-        .track-item:hover:not(.active) {
-            opacity: 1 !important; 
-            border-color: var(--color-highlight);
-            border-width: 2px;
-            background: rgba(0, 212, 255, 0.03);
+        .track-left {
+            display: flex;
+            align-items: center;
+            gap: var(--space-16);
+            flex: 1;
+        }
+
+        .track-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-16);
+            margin-left: var(--space-32);
+            flex-shrink: 0;
+        }
+
+        .play-icon-btn {
+            color: var(--color-accent);
+            background: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            transition: color 0.2s;
+            margin-right: 8px;
+            padding: 4px;
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .play-icon-btn:hover {
+            color: var(--color-accent-hover);
+            background: none;
+        }
+
+        .inline-support-btn {
+            background: transparent;
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+            padding: 8px 16px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Space Mono', monospace;
+            transition: all 0.2s;
+        }
+
+        .inline-support-btn:hover {
+            border-color: #b30000;
+            color: #b30000;
+            background: rgba(179, 0, 0, 0.1);
+        }
+
+        .track-item:hover {
+            background: transparent;
         }
 
         .track-item.active {
-            border-color: var(--color-highlight);
-            border-width: 2px;
-            background: rgba(0, 212, 255, 0.05); 
-            flex: 5; /* Grow MORE to ensure last item content fits */
-            opacity: 1 !important;
+            background: transparent;
+            border-color: transparent;
+            /* Keep layout stable */
+        }
+
+        .track-duration-inline {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            font-family: 'Space Mono', monospace;
+            margin-left: var(--space-16);
         }
 
         /* Player Wrapper Animation */
+        /* Hide expansion elements */
         .track-player-wrapper {
-            display: grid;
-            grid-template-rows: 0fr;
-            transition: grid-template-rows 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-
-        .track-player-wrapper.expanded {
-            grid-template-rows: 1fr;
-            opacity: 1;
-        }
-
-        .track-player-inner {
-            overflow: hidden;
-            min-height: 0;
-            opacity: 0;
-            transition: opacity 0.3s ease 0.2s; /* Fade in content slightly after expansion starts */
-        }
-
-        .track-player-wrapper.expanded .track-player-inner {
-            opacity: 1;
+            display: none !important;
         }
 
         /* Modified Player Styles for inline display */
@@ -291,16 +398,21 @@
             border-radius: 0;
             padding: var(--space-16);
             max-width: none;
-            display: block; /* Always block, controlled by wrapper */
-            opacity: 1; /* Remove fade in since wrapper animates height */
+            display: block;
+            /* Always block, controlled by wrapper */
+            opacity: 1;
+            /* Remove fade in since wrapper animates height */
         }
 
         .download-full-ep-btn {
             display: inline-block;
-            margin-top: var(--space-24);
+            margin-top: 5vh;
+            /* Evenly spaced between content and footer */
+            margin-bottom: 5vh;
             margin-left: auto;
             margin-right: auto;
-            background: #b30000; /* Dark red matching theme */
+            background: #b30000;
+            /* Dark red matching theme */
             color: white;
             border: none;
             padding: 12px 24px;
@@ -318,11 +430,12 @@
         }
 
         .download-full-ep-btn:hover {
-            background: #ff0000; /* Brighter red on hover */
+            background: #ff0000;
+            /* Brighter red on hover */
             box-shadow: 0 4px 8px rgba(179, 0, 0, 0.4);
             transform: translateY(-1px);
         }
-        
+
         .download-full-ep-btn:active {
             transform: translateY(0);
             box-shadow: 0 2px 4px rgba(179, 0, 0, 0.3);
@@ -335,19 +448,30 @@
             justify-content: center;
         }
 
+        .track-text-container {
+            display: flex;
+            align-items: center;
+            min-width: 0;
+            margin-right: var(--space-8);
+        }
+
         .track-title {
             font-size: 16px;
             font-weight: 700;
             margin: 0;
             color: var(--color-text);
             font-family: 'Akira Expanded', sans-serif;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .track-meta {
+        .track-duration-inline {
             font-size: 12px;
             color: var(--color-text-secondary);
-            margin-top: 4px;
             font-family: 'Space Mono', monospace;
+            margin-left: var(--space-24);
+            flex-shrink: 0;
         }
 
         .player {
@@ -366,7 +490,8 @@
             display: block;
         }
 
-        .player-title, .player-track {
+        .player-title,
+        .player-track {
             display: none;
         }
 
@@ -374,6 +499,8 @@
             display: flex;
             gap: var(--space-16);
             align-items: center;
+            justify-content: space-between;
+            /* Push items to edges */
             margin-bottom: var(--space-16);
         }
 
@@ -395,12 +522,12 @@
             border-color: var(--color-accent);
             color: var(--color-accent);
         }
-        
+
         /* Specific class for download buttons - Dark red theme */
         .download-btn {
-            background: #b30000 !important; /* Dark red matching theme */
-            color: white !important;
-            border: none !important;
+            background: transparent !important;
+            color: var(--color-text) !important;
+            border: 1px solid var(--color-border) !important;
             padding: 10px 20px !important;
             font-size: 12px !important;
             font-weight: 700 !important;
@@ -408,17 +535,18 @@
             letter-spacing: 1px !important;
             font-family: 'Space Mono', monospace !important;
             border-radius: 6px !important;
-            box-shadow: 0 2px 4px rgba(179, 0, 0, 0.3) !important;
+            box-shadow: none !important;
+            transition: all 0.2s ease !important;
         }
-        
+
         .download-btn:hover {
-            background: #ff0000 !important; /* Brighter red on hover */
-            box-shadow: 0 4px 8px rgba(179, 0, 0, 0.4) !important;
+            background: rgba(179, 0, 0, 0.1) !important;
+            border-color: #b30000 !important;
+            color: #b30000 !important;
+            box-shadow: 0 0 10px rgba(179, 0, 0, 0.2) !important;
             transform: translateY(-1px);
-            border-color: transparent !important;
-            color: white !important;
         }
-        
+
         .download-btn:active {
             transform: translateY(0);
             box-shadow: 0 2px 4px rgba(179, 0, 0, 0.3) !important;
@@ -451,114 +579,214 @@
             font-family: 'Space Mono', monospace;
         }
 
-        /* Mini Player Styles - Fixed and attached to footer */
-        .mini-player {
-            position: fixed;
-            bottom: 0; /* Attached to bottom */
+        /* Updated Mini Player Styles - Pop up above footer */
+        /* Updated Mini Player Styles - Full Width Bar */
+        /* Updated Mini Player Styles - Full Width Bar Stacking on Footer */
+        /* Discreet Player Styles */
+        .footer-progress-container {
+            position: absolute;
+            top: -1px;
+            /* Overlap border */
             left: 0;
-            right: 0;
             width: 100%;
-            background: rgba(10, 10, 10, 0.98);
-            border-top: 1px solid var(--color-border);
-            padding: 16px 24px;
-            z-index: 999; /* Above footer */
-            transform: translateY(100%);
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .footer-progress-bar {
+            height: 100%;
+            background: #ff0000;
+            /* Red Playhead */
+            width: 0%;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+
+        .discreet-player-info {
+            position: fixed;
+            bottom: 120px;
+            /* Just above footer */
+            left: 50%;
+            /* Center horizontally */
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(10, 10, 10, 0.85);
+            /* Slightly transparent */
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 8px 16px;
+            border-radius: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
             opacity: 0;
-            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
             pointer-events: none;
         }
 
-        .mini-player.visible {
-            transform: translateY(0);
+        .discreet-player-info.visible {
+            transform: translateX(-50%) translateY(0);
             opacity: 1;
             pointer-events: auto;
         }
 
-        .mini-player-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center; /* Center all content */
-            gap: var(--space-24);
-            flex-wrap: wrap;
-        }
-
-        .mini-player-info {
-            flex: 0 1 auto; /* Don't grow, allow shrink */
-            min-width: 0;
-            text-align: center; /* Center the text */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .mini-player-track {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--color-text);
-            font-family: 'Akira Expanded', sans-serif;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 300px; /* Limit width for centering */
-            text-align: center;
-        }
-
-        .mini-player-time {
-            font-size: 10px;
-            color: var(--color-text-secondary);
-            font-family: 'Space Mono', monospace;
-            margin-top: 4px;
-            text-align: center;
-        }
-
-        .mini-player-controls {
-            display: flex;
-            align-items: center;
-            justify-content: center; /* Center controls */
-            gap: 16px;
-            flex-shrink: 0;
-        }
-
-        .mini-player-btn {
-            background: none;
-            border: 1px solid var(--color-border);
-            color: var(--color-text);
-            width: 32px;
-            height: 32px;
+        .discreet-status {
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
-            cursor: pointer;
+            background: var(--color-accent);
+            animation: pulse-red 2s infinite;
+        }
+
+        .discreet-text {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            color: var(--color-text);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .discreet-controls {
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 12px;
+            margin-left: 8px;
+            padding-left: 12px;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .discreet-btn {
+            background: none;
+            border: none;
+            color: var(--color-text);
+            cursor: pointer;
             font-size: 10px;
             padding: 0;
-            transition: all 0.2s;
-            flex-shrink: 0;
+            opacity: 0.7;
+            transition: opacity 0.2s;
         }
 
-        .mini-player-btn:hover {
-            border-color: var(--color-accent);
+        .discreet-btn:hover {
+            opacity: 1;
             color: var(--color-accent);
         }
 
-        .mini-player-progress {
-            width: 180px;
-            height: 3px;
-            background: var(--color-border);
-            border-radius: 2px;
-            cursor: pointer;
-            position: relative;
+        @keyframes pulse-red {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 6px rgba(255, 0, 0, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+            }
         }
 
-        .mini-player-progress-fill {
+        .mini-player-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Centered content again */
+            gap: 60px;
+            /* Large gap for spacing without compaction */
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            padding: 0 16px;
+        }
+
+        .mini-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* Center text info specifically */
+            text-align: center;
+            overflow: hidden;
+            flex: 0 1 auto;
+            /* Use natural width */
+            min-width: 200px;
+            /* Ensure some minimum width for titles */
+        }
+
+        .mini-track-name {
+            font-family: 'Akira Expanded', sans-serif;
+            font-size: 11px;
+            /* Slightly larger */
+            color: var(--color-text);
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .mini-artist {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            color: var(--color-accent);
+            /* Make artist pop */
+            font-weight: 700;
+        }
+
+        .mini-time {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--color-text-secondary);
+            margin-right: 16px;
+        }
+
+        .mini-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .mini-play-btn {
+            background: none;
+            border: 1px solid var(--color-accent);
+            color: var(--color-accent);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mini-play-btn:hover {
+            background: var(--color-accent);
+            color: var(--color-bg);
+        }
+
+        .mini-progress-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            border-radius: 0;
+        }
+
+        .mini-progress-bar {
             height: 100%;
             background: var(--color-accent);
-            border-radius: 2px;
             width: 0%;
+            border-radius: 0;
             transition: width 0.1s linear;
         }
+
+
 
         footer {
             position: fixed;
@@ -566,42 +794,46 @@
             left: 0;
             right: 0;
             width: 100%;
-            z-index: 998; /* Below mini-player */
+            z-index: 998;
+            /* Below mini-player */
             border-top: 1px solid var(--color-border);
             padding: var(--space-32) var(--space-24);
             text-align: center;
-            background: var(--color-bg); /* Ensure footer has background to cover content */
-            pointer-events: auto; /* Ensure clickable */
+            background: var(--color-bg);
+            /* Ensure footer has background to cover content */
+            pointer-events: auto;
+            /* Ensure clickable */
         }
 
-        /* Adjust footer position when mini-player is visible */
-        body.has-mini-player footer {
-            bottom: 64px; /* Push footer up when mini-player is visible (mini-player height ~64px with padding) */
-        }
+
 
         .poem {
             font-size: 10px;
-            color: var(--color-text); /* Made white for numbers */
+            color: var(--color-text);
+            /* Made white for numbers */
             margin: 0 0 var(--space-16) 0;
             line-height: 1.4;
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
             font-family: 'Space Mono', monospace;
-            font-weight: 700; /* Make everything bold like previous strong tags */
+            font-weight: 700;
+            /* Make everything bold like previous strong tags */
         }
-        
+
         .poem a {
-            color: var(--color-text); /* White by default */
+            color: var(--color-text);
+            /* White by default */
             text-decoration: none;
             transition: color 0.2s;
             cursor: pointer;
         }
 
         .poem a:hover {
-            color: #ff0000; /* Red on hover */
+            color: #ff0000;
+            /* Red on hover */
         }
-        
+
         .poem br {
             content: " • ";
         }
@@ -734,7 +966,8 @@
         }
 
         .amount-btn.active {
-            background: rgba(179, 0, 0, 0.1); /* Red tint */
+            background: rgba(179, 0, 0, 0.1);
+            /* Red tint */
             border-color: var(--color-accent);
             color: var(--color-accent);
         }
@@ -758,7 +991,7 @@
             color: var(--color-text-secondary);
             font-family: 'Space Mono', monospace;
         }
-    
+
         /* Shift logo down when music view is active to avoid overlap with back button */
         /* REMOVED: Logo is now fixed at top left */
         /* body.music-active .logo { top: 64px; } */
@@ -774,39 +1007,43 @@
             /* body.music-active .logo { top: 56px; } REMOVED */
 
             .back-button {
-                top: 48px !important; /* Adjusted for smaller screens below logo */
+                top: 48px !important;
+                /* Adjusted for smaller screens below logo */
                 left: 16px !important;
                 font-size: 12px;
                 padding: 6px 10px;
-                padding-left: 0; /* Align text with logo */
+                padding-left: 0;
+                /* Align text with logo */
             }
         }
-
     </style>
 
-<style>
-/* CRT Effect & Header Transition */
-.message h1 {
-    transition: opacity 1.5s cubic-bezier(0.23, 1, 0.32, 1);
-}
+    <style>
+        /* CRT Effect & Header Transition */
+        .message h1 {
+            transition: opacity 1.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
 
-.message.clicked h1 {
-    opacity: 0;
-}
-</style>
+        .message.clicked h1 {
+            opacity: 0;
+        }
+    </style>
 
     <style>
         /* New Layout Styles */
         .music-content {
             display: flex;
             flex-direction: column;
-            justify-content: center; /* Center vertically on mobile */
-            flex: 1; /* Take up available space */
+            justify-content: center;
+            align-items: center;
+            /* Center vertically on mobile */
+            /* flex: 1; Removed to compact layout */
+            /* Take up available space */
             gap: var(--space-32);
             max-width: 1000px;
-            width: 100%; 
+            width: 100%;
             margin: 0 auto;
-            opacity: 0; 
+            opacity: 0;
             transition: opacity 1s ease;
         }
 
@@ -814,8 +1051,18 @@
             opacity: 1;
         }
 
+        .content-columns {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            gap: var(--space-32);
+            align-items: center;
+        }
+
         .release-info {
             width: 100%;
+            display: flex;
+            justify-content: center;
         }
 
         .tracks-area {
@@ -823,80 +1070,61 @@
         }
 
         @media (min-width: 768px) {
-            /* Apply layout to all music-content - archive view will override */
-            .music-content {
+
+            /* Desktop: Side-by-side layout, centered on page */
+            .content-columns {
                 flex-direction: row;
-                align-items: stretch; /* Stretch both columns to same height */
+                align-items: center;
                 justify-content: center;
-                gap: 60px;
-                height: 560px; /* Increased height for better fit */
-                margin-top: 40px; /* Additional push down */
+                gap: 48px;
+                width: 100%;
+                padding: 0 var(--space-32);
             }
 
             .release-info {
-                flex: 0 0 320px;
+                flex: 0 0 485px;
+                width: 485px;
                 display: flex;
                 flex-direction: column;
-                justify-content: flex-start; /* Align to top */
-                align-items: flex-start;
+                align-items: center;
+            }
+
+            .ep-artwork {
+                width: 485px;
+                max-width: 485px;
+                margin-bottom: var(--space-16);
             }
 
             .tracks-area {
-                flex: 1;
-                max-width: 500px;
-                height: 100%; /* Match parent height */
-                overflow: hidden;
+                flex: 0 1 650px;
+                max-width: 650px;
                 display: flex;
                 flex-direction: column;
-                justify-content: flex-start; /* Align tracks to top */
+                justify-content: center;
             }
-            
+
             .release-header {
                 text-align: center;
                 display: flex;
                 flex-direction: column;
-                align-items: center; /* Center all children relative to cover art */
+                align-items: center;
                 width: 100%;
-                margin-bottom: var(--space-24); /* Consistent spacing */
+                margin-bottom: 0;
             }
-            
+
             .release-header h2 {
                 margin-top: 0;
                 margin-bottom: var(--space-16);
             }
-            
+
             .release-header p {
-                margin-bottom: var(--space-24); /* Space before button */
-            }
-            
-            .ep-artwork {
-                margin-bottom: var(--space-24); /* Space before EP text */
-            }
-            
-            .download-full-ep-btn {
-                width: 100%;
-                max-width: 300px; /* Match cover art width */
-            }
-            
-            .track-list {
-                height: 100%;
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-start; /* Align to top */
-            }
-            
-            .ep-artwork {
-                margin-left: 0;
-                margin-right: 0; 
-                width: 100%; /* Fill the 300px container */
-                flex-shrink: 0; /* Prevent artwork shrinking */
+                margin-bottom: var(--space-16);
             }
 
             .download-full-ep-btn {
-                margin-left: 0;
-                margin-right: 0;
-                width: auto; /* Allow button to be smaller */
-                margin-top: auto; /* Push to bottom */
+                width: auto;
+                min-width: 200px;
+                margin-top: 60px;
             }
         }
 
@@ -905,7 +1133,7 @@
             /* Initial disorganized state */
             opacity: 0;
             transform: translate(var(--tx), var(--ty)) rotate(var(--r));
-            transition: 
+            transition:
                 opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1),
                 transform 1.2s cubic-bezier(0.23, 1, 0.32, 1);
         }
@@ -915,48 +1143,48 @@
             opacity: 1;
             transform: translate(0, 0) rotate(0);
         }
-        
+
         .release-info {
             transition: opacity 1s ease, transform 1s ease;
             opacity: 0;
             transform: translateX(-20px);
         }
-        
+
         .music-view.organized .release-info {
             opacity: 1;
             transform: none;
         }
-        
+
         .player {
-             transition: opacity 1s ease 0.5s; /* Delay player fade in */
-             opacity: 0;
+            transition: opacity 1s ease 0.5s;
+            /* Delay player fade in */
+            opacity: 0;
         }
-        
+
         .music-view.organized .player {
-             opacity: 1;
+            opacity: 1;
         }
 
         /* Older Music Section */
         .older-music-section {
-            width: 100%;
-            text-align: center;
-            margin-top: auto;
-            padding-top: 0;
-            padding-bottom: 0;
+            width: auto !important;
+            text-align: right;
+            margin-top: 0;
+            padding: 0;
             opacity: 0;
             transition: opacity 1s ease 0.5s, bottom 0.4s cubic-bezier(0.23, 1, 0.32, 1);
             position: fixed;
-            bottom: 140px; /* Default: attached to top of footer when no mini-player */
-            left: 0;
-            right: 0;
-            z-index: 997; /* Above content, below footer/mini-player */
-            flex-shrink: 0;
+            bottom: 124px;
+            /* Footer is ~112px, giving ~12px gap */
+            right: var(--space-24) !important;
+            left: auto !important;
+            z-index: 997;
+            pointer-events: auto;
+            background: none;
+            /* Ensure no background covers anything */
         }
-        
-        /* When mini-player is visible, attach Past Moods button to top of mini-player */
-        body.has-mini-player .older-music-section {
-            bottom: 204px; /* Attached to top of mini-player (64px mini-player + 140px footer = 204px) */
-        }
+
+
 
         .music-view.organized .older-music-section {
             opacity: 1;
@@ -983,11 +1211,14 @@
             padding: 0;
             height: auto;
             max-height: 100%;
-            overflow-y: visible; /* Allow scrolling */
+            overflow-y: visible;
+            /* Allow scrolling */
             border: none;
-            justify-content: center; /* Center the grid items */
+            justify-content: center;
+            /* Center the grid items */
             max-width: 900px;
-            margin: 0 auto; /* Center the grid container */
+            margin: 0 auto;
+            /* Center the grid container */
         }
 
         /* Archive View Specific Layout overrides */
@@ -1003,12 +1234,13 @@
 
         #archiveView .tracks-area {
             width: 100%;
-            max-width: 1000px; /* Expand to full width */
+            max-width: 1000px;
+            /* Expand to full width */
             flex: unset;
             height: auto;
             overflow: visible;
         }
-        
+
         /* Override archive view in media query to prevent layout conflicts */
         @media (min-width: 768px) {
             #archiveView .music-content {
@@ -1016,7 +1248,7 @@
                 height: auto;
                 margin-top: 0;
             }
-            
+
             #archiveView .tracks-area {
                 max-width: 1000px;
                 height: auto;
@@ -1043,12 +1275,17 @@
             margin: 0;
             min-height: 0;
             padding: 0;
-            opacity: 0; /* Handled by JS animation */
+            opacity: 0;
+            /* Handled by JS animation */
         }
 
         #archiveList .track-item:hover {
             background: transparent;
             opacity: 1;
+            border: none !important;
+            border-bottom: none !important;
+            box-shadow: none;
+            outline: none;
         }
 
         .archive-item {
@@ -1061,7 +1298,8 @@
 
         .archive-thumb {
             width: 100%;
-            aspect-ratio: 1; /* Square */
+            aspect-ratio: 1;
+            /* Square */
             overflow: hidden;
             border-radius: var(--radius-base);
             background: #222;
@@ -1102,6 +1340,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="logo">ROCHÈ</div>
 
@@ -1112,81 +1351,97 @@
     </div>
 
     <div class="music-view" id="musicView">
+        <audio id="audioPlayer"></audio>
         <button class="back-button" onclick="goHome()">← Back</button>
-        
-        <div class="music-content">
-            <div class="release-info">
-                <div class="release-header">
-                    <div class="ep-artwork">
-                        <img src="doomedtolivecoverart.png" alt="Doomed To Live EP Cover">
-                    </div>
-                    <p id="releaseType">EP</p>
-                    <button class="download-full-ep-btn" onclick="downloadFullEP()">Download Full EP</button>
-                </div>
-            </div>
 
-            <div class="tracks-area">
-                <div class="track-list" id="trackList"></div>
-                <!-- Hidden Player Template that will be moved around -->
-                <div id="playerTemplate" style="display: none;">
-                    <div class="player" id="player">
-                        <div class="player-title">Now Playing</div>
-                        <div class="player-track" id="playerTrack">—</div>
-                        <audio id="audioPlayer"></audio>
-                        <div class="player-controls">
-                            <button id="playBtn" onclick="togglePlay(event)">▶ Play</button>
-                            <button class="download-btn" onclick="downloadTrack(event)">☕ Support & Download</button>
+        <div class="music-content">
+            <div class="content-columns">
+                <div class="release-info">
+                    <div class="release-header">
+                        <div class="ep-artwork">
+                            <img src="doomedtolivecoverart.png" alt="Doomed to Live EP Cover">
                         </div>
-                        <div class="player-progress" onclick="seek(event)">
-                            <div class="player-progress-fill" id="progressFill"></div>
-                        </div>
-                        <div class="player-time">
-                            <span id="currentTime">0:00</span>
-                            <span id="duration">3:00</span>
+                        <!-- Removed EP text -->
+                    </div>
+                </div>
+
+                <div class="tracks-area">
+                    <div class="track-list" id="trackList"></div>
+                    <!-- Hidden Player Template that will be moved around -->
+                    <div id="playerTemplate" style="display: none;">
+                        <div class="player" id="player">
+                            <div class="player-title">Now Playing</div>
+                            <div class="player-track" id="playerTrack">—</div>
+                            <!-- Audio element moved to root -->
+                            <div class="player-controls">
+                                <button id="playBtn" onclick="togglePlay(event)">▶ Play</button>
+                                <button class="download-btn" onclick="downloadTrack(event)">☕ Support &
+                                    Download</button>
+                            </div>
+                            <div class="player-progress" onclick="seek(event)">
+                                <div class="player-progress-fill" id="progressFill"></div>
+                            </div>
+                            <div class="player-time">
+                                <span id="currentTime">0:00</span>
+                                <span id="duration">3:00</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <button class="download-full-ep-btn" onclick="downloadFullEP()">Download Full EP</button>
         </div>
-        
+
         <!-- Older Music Section (Outside the 2-column layout) -->
+        <!-- Temporarily Deactivated
         <div class="older-music-section">
             <button class="older-music-btn" onclick="goToArchive()">PAST MOODS</button>
         </div>
+        -->
     </div>
 
     <!-- Archive View (Reusing layout structure) -->
+    <!-- Temporarily Deactivated
     <div class="music-view" id="archiveView">
         <button class="back-button" onclick="returnToLatest()">← Latest</button>
-        
+
         <div class="music-content">
             <div class="tracks-area">
                 <div class="track-list" id="archiveList">
-                    <!-- Populated by JS -->
+                    Populated by JS
                 </div>
             </div>
         </div>
     </div>
+    -->
 
     <!-- Mini Player (appears above footer when playing) -->
-    <div class="mini-player" id="miniPlayer">
-        <div class="mini-player-content">
-            <div class="mini-player-info">
-                <div class="mini-player-track" id="miniPlayerTrack">—</div>
-                <div class="mini-player-time" id="miniPlayerTime">0:00 / 0:00</div>
-            </div>
-            <div class="mini-player-controls">
-                <button class="mini-player-btn" id="miniPlayBtn" onclick="togglePlayFromMini()">▶</button>
-                <div class="mini-player-progress" onclick="seekMini(event)">
-                    <div class="mini-player-progress-fill" id="miniProgressFill"></div>
-                </div>
-            </div>
+    <!-- Mini Player (appears above footer when playing) -->
+    <!-- Discreet Player Info (Bottom Right) -->
+    <div class="discreet-player-info" id="discreetPlayer">
+        <div class="discreet-status"></div>
+        <div class="discreet-text">
+            <span id="discreetTrackName" style="margin-right: 8px;">Doomed to Live</span>
+            <span id="discreetTime" style="color: var(--color-text-secondary); font-size: 9px;">0:00 / 0:00</span>
+        </div>
+        <div class="discreet-controls">
+            <button class="discreet-btn" id="discreetPlayBtn" onclick="togglePlay()">▶</button>
         </div>
     </div>
 
     <footer>
+        <!-- Progress Bar Integrated into Footer Top Border -->
+        <div class="footer-progress-container" id="footerProgressContainer" onclick="seekFooter(event)">
+            <div class="footer-progress-bar" id="footerProgressBar"></div>
+        </div>
         <div class="poem">
-            <a href="https://www.samaritans.org/" target="_blank" rel="noopener noreferrer">Samaritans</a> 116 123 • <a href="https://www.thecalmzone.net/" target="_blank" rel="noopener noreferrer">CALM</a> 0800 58 58 58 • <a href="https://www.papyrus-uk.org/" target="_blank" rel="noopener noreferrer">Papyrus</a> 0800 068 4141 • <a href="https://www.crisis.org.uk/get-help/" target="_blank" rel="noopener noreferrer">Crisis</a> 85258
+            <a href="https://www.samaritans.org/" target="_blank" rel="noopener noreferrer">SAMARITANS</a> <span
+                style="color: var(--color-accent)">116 123</span> • <a href="https://www.thecalmzone.net/"
+                target="_blank" rel="noopener noreferrer">CALM</a> <span style="color: var(--color-accent)">0800 58 58
+                58</span> • <a href="https://www.papyrus-uk.org/" target="_blank" rel="noopener noreferrer">PAPYRUS</a>
+            <span style="color: var(--color-accent)">0800 068 4141</span> • <a
+                href="https://www.crisis.org.uk/get-help/" target="_blank" rel="noopener noreferrer">CRISIS</a> <span
+                style="color: var(--color-accent)">85258</span>
         </div>
         <div class="socials">
             <a href="https://tiktok.com/@rocheofficiel" class="social-link">TikTok</a>
@@ -1370,46 +1625,49 @@
         function goToMusic() {
             const message = document.querySelector('.message');
             message.classList.add('clicked');
-            
+
             previousView = 'home';
 
             setTimeout(() => {
                 document.body.classList.add('music-active');
                 document.getElementById('homeView').style.display = 'none';
-                document.getElementById('archiveView').style.display = 'none'; // Ensure archive is hidden
-                
+                document.getElementById('homeView').style.display = 'none';
+                const archiveView = document.getElementById('archiveView');
+                if (archiveView) archiveView.style.display = 'none'; // Ensure archive is hidden
+
                 const musicView = document.getElementById('musicView');
-                musicView.style.display = 'flex'; 
-                
+                musicView.style.display = 'flex';
+
                 // Trigger reflow
                 void musicView.offsetWidth;
-                
+
                 musicView.classList.add('visible');
                 loadEP('doomed'); // Default load
-                
+
                 setTimeout(() => {
                     musicView.classList.add('organized');
                 }, 100);
-            }, 1500); 
+            }, 1500);
         }
 
         function goToArchive() {
             const musicView = document.getElementById('musicView');
             const archiveView = document.getElementById('archiveView');
-            
+            if (!archiveView) return; // Safety check
+
             // Hide Music View
             musicView.classList.remove('visible', 'organized');
-            
+
             setTimeout(() => {
                 musicView.style.display = 'none';
-                
+
                 // Show Archive View
                 archiveView.style.display = 'flex';
                 void archiveView.offsetWidth;
                 archiveView.classList.add('visible');
-                
+
                 loadArchive();
-                
+
                 setTimeout(() => {
                     archiveView.classList.add('organized');
                 }, 100);
@@ -1420,17 +1678,17 @@
             // Go back to the main Music View (Doomed to Live)
             const musicView = document.getElementById('musicView');
             const archiveView = document.getElementById('archiveView');
-            
-            archiveView.classList.remove('visible', 'organized');
-            
+
+            if (archiveView) archiveView.classList.remove('visible', 'organized');
+
             setTimeout(() => {
-                archiveView.style.display = 'none';
-                
+                if (archiveView) archiveView.style.display = 'none';
+
                 musicView.style.display = 'flex';
                 void musicView.offsetWidth;
                 musicView.classList.add('visible');
                 loadEP('doomed'); // Reset to latest
-                
+
                 setTimeout(() => {
                     musicView.classList.add('organized');
                 }, 100);
@@ -1441,28 +1699,30 @@
             document.body.classList.remove('music-active');
             const musicView = document.getElementById('musicView');
             const archiveView = document.getElementById('archiveView');
-            
+
             // Stop audio and hide mini-player
             audioPlayer.pause();
             isPlaying = false;
             currentTrack = null;
             updateMiniPlayer();
-            
+
             // Handle closing whichever view is open
-            if(musicView.style.display !== 'none') {
+            if (musicView.style.display !== 'none') {
                 musicView.classList.remove('visible', 'organized');
                 setTimeout(() => { musicView.style.display = 'none'; finishHomeTransition(); }, 500);
-            } else {
+            } else if (archiveView) {
                 archiveView.classList.remove('visible', 'organized');
                 setTimeout(() => { archiveView.style.display = 'none'; finishHomeTransition(); }, 500);
+            } else {
+                finishHomeTransition();
             }
         }
-        
+
         function finishHomeTransition() {
             document.getElementById('homeView').style.display = 'flex';
             audioPlayer.pause();
             isPlaying = false;
-            if(document.getElementById('playBtn')) document.getElementById('playBtn').textContent = '▶ Play';
+            if (document.getElementById('playBtn')) document.getElementById('playBtn').textContent = '▶ Play';
 
             const message = document.querySelector('.message');
             message.classList.remove('clicked');
@@ -1471,11 +1731,11 @@
         function loadEP(epKey) {
             const data = musicData[epKey];
             const musicView = document.getElementById('musicView');
-            
+
             // Reset player state - move player back to template if it's in an old track
             const player = document.getElementById('player');
             const playerTemplate = document.getElementById('playerTemplate');
-            
+
             // Remove active states from old tracks before clearing
             document.querySelectorAll('.track-item').forEach(item => {
                 item.classList.remove('active');
@@ -1484,7 +1744,7 @@
                     wrapper.classList.remove('expanded');
                 }
             });
-            
+
             // Ensure player is in template before clearing track list
             if (player && player.parentElement) {
                 const currentParent = player.parentElement;
@@ -1499,7 +1759,7 @@
                     player.style.display = 'none';
                 }
             }
-            
+
             // Reset current track state
             currentTrack = null;
             isPlaying = false;
@@ -1510,14 +1770,17 @@
                 audioPlayer.load();
             }
             updateMiniPlayer();
-            
+
             // Update Header Info
             // Title removed - only showing type now
-            musicView.querySelector('#releaseType').textContent = data.type;
-            
+            const releaseTypeEl = musicView.querySelector('#releaseType');
+            if (releaseTypeEl) {
+                releaseTypeEl.textContent = data.type;
+            }
+
             // Update Cover Art
             const artworkImg = musicView.querySelector('.ep-artwork img');
-            if(data.cover) {
+            if (data.cover) {
                 artworkImg.src = data.cover;
             } else {
                 artworkImg.src = 'doomedtolivecoverart.png'; // Fallback
@@ -1525,7 +1788,7 @@
 
             const trackList = document.getElementById('trackList');
             trackList.innerHTML = '';
-            
+
             // Handle Download Button Visibility
             const downloadBtn = musicView.querySelector('.download-full-ep-btn');
             if (epKey === 'doomed') {
@@ -1535,88 +1798,91 @@
                 musicView.querySelector('.back-button').textContent = "← Back";
                 // Show Archive Button
                 const olderMusicSection = musicView.querySelector('.older-music-section');
-                if(olderMusicSection) olderMusicSection.style.display = 'block';
+                if (olderMusicSection) olderMusicSection.style.display = 'block';
             } else {
                 // If viewing an older release inside the main player view
                 downloadBtn.style.display = 'none'; // Only Doomed has full EP download logic for now
-                
+
                 // Change Back button to return to Archive
                 musicView.querySelector('.back-button').onclick = goToArchive;
                 musicView.querySelector('.back-button').textContent = "← Archives";
-                
+
                 // Hide Archive Button (we are already in a sub-view)
                 const olderMusicSection = musicView.querySelector('.older-music-section');
-                if(olderMusicSection) olderMusicSection.style.display = 'none';
+                if (olderMusicSection) olderMusicSection.style.display = 'none';
             }
 
             data.tracks.forEach((track, index) => {
                 const trackEl = document.createElement('div');
                 trackEl.className = 'track-item';
-                
+
                 // Random values for disorganization effect
                 const tx = (Math.random() * 60 - 30) + 'px';
                 const ty = (Math.random() * 60 + 20) + 'px';
                 const r = (Math.random() * 10 - 5) + 'deg';
-                
+
                 trackEl.style.setProperty('--tx', tx);
                 trackEl.style.setProperty('--ty', ty);
                 trackEl.style.setProperty('--r', r);
                 // Stagger transition delays
                 trackEl.style.transitionDelay = (index * 0.05) + 's';
 
-                // New HTML structure for inline player
+                // Static HTML structure for inline player
                 trackEl.innerHTML = `
                     <div class="track-item-content">
-                        <div class="track-info">
-                            <div class="track-title">${track.title}</div>
-                            <div class="track-meta">${track.duration}</div>
+                        <div class="track-left">
+                            <div class="play-icon-btn">▶</div>
+                            <div class="track-text-container">
+                                <span class="track-title">${track.title}</span>
+                                <span class="track-duration-inline">${track.duration}</span>
+                            </div>
+                        </div>
+                        <div class="track-right">
+                            <button class="inline-support-btn" onclick="downloadTrack(event)">Download</button>
                         </div>
                     </div>
-                    <div class="track-player-wrapper">
-                        <div class="track-player-inner"></div>
-                    </div>
                 `;
-                
-                // Pass event to prevent bubbling if clicking player controls
+
+                // Pass event to prevent bubbles handled by buttons
                 trackEl.onclick = (e) => {
-                    // Don't trigger if clicking inside the player controls
-                    if (e.target.closest('.player') || e.target.closest('button')) return;
+                    // If clicked explicitly on support button, it's handled there
+                    if (e.target.closest('.inline-support-btn')) return;
                     selectTrack(track, trackEl);
                 };
-                
+
                 trackList.appendChild(trackEl);
             });
         }
-        
+
         function loadArchive() {
             const list = document.getElementById('archiveList');
             list.innerHTML = '';
-            
+
             // Filter keys (excluding 'doomed') and assume they are in chronological order (or user provided order)
             // If explicit sorting is needed based on year, we can do:
             // const keys = Object.keys(musicData)
             //    .filter(k => k !== 'doomed')
             //    .sort((a, b) => parseInt(musicData[b].year || 0) - parseInt(musicData[a].year || 0));
             // But preserving object definition order usually works if defined correctly.
-            const keys = Object.keys(musicData).filter(k => k !== 'doomed'); 
-            
+            const keys = Object.keys(musicData).filter(k => k !== 'doomed');
+
             keys.forEach((key, index) => {
                 const item = musicData[key];
                 const el = document.createElement('div');
                 el.className = 'track-item'; // Reuse animation class for fade in
-                
+
                 // Simplified animation for grid
                 el.style.opacity = '0';
                 el.style.transform = 'translateY(20px)';
                 el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
                 el.style.transitionDelay = (index * 0.05) + 's';
-                
+
                 // Add organized class logic
                 setTimeout(() => {
                     el.style.opacity = '1';
                     el.style.transform = 'translateY(0)';
                 }, 50);
-                
+
                 el.innerHTML = `
                     <div class="archive-item" onclick="viewRelease('${key}')">
                         <div class="archive-thumb">
@@ -1633,23 +1899,23 @@
                 list.appendChild(el);
             });
         }
-        
+
         function viewRelease(key) {
             // Switch from Archive View to Music View (populated with release)
             const archiveView = document.getElementById('archiveView');
             const musicView = document.getElementById('musicView');
-            
+
             archiveView.classList.remove('visible', 'organized');
-            
+
             setTimeout(() => {
                 archiveView.style.display = 'none';
-                
+
                 musicView.style.display = 'flex';
                 void musicView.offsetWidth;
                 musicView.classList.add('visible');
-                
+
                 loadEP(key);
-                
+
                 setTimeout(() => {
                     musicView.classList.add('organized');
                 }, 100);
@@ -1657,119 +1923,70 @@
         }
 
         function selectTrack(track, trackEl) {
-            // Get the player element - ensure it exists
-            const player = document.getElementById('player');
             const audioPlayer = document.getElementById('audioPlayer');
-            
-            if (!player) {
-                console.error('Player element not found!');
-                return;
-            }
-            
-            if (!audioPlayer) {
-                console.error('Audio player element not found!');
-                return;
-            }
 
-            // Check if clicking the same track that's already expanded - if so, collapse it
-            const currentParent = player.parentNode;
-            const isSameTrack = currentTrack === track && currentParent && currentParent.closest('.track-item') === trackEl;
-            const isCurrentlyExpanded = trackEl.classList.contains('active');
-            
-            if (isSameTrack && isCurrentlyExpanded) {
-                // Toggle off - collapse the track
-                trackEl.classList.remove('active');
-                const wrapper = trackEl.querySelector('.track-player-wrapper');
-                if (wrapper) {
-                    wrapper.classList.remove('expanded');
+            if (!audioPlayer) return;
+
+            // Check if clicking the same track
+            if (currentTrack === track) {
+                // Toggle Play/Pause
+                if (isPlaying) {
+                    audioPlayer.pause();
+                    isPlaying = false;
+                } else {
+                    audioPlayer.play();
+                    isPlaying = true;
                 }
-                
-                // Reset audio
-                audioPlayer.pause();
-                isPlaying = false;
-                document.getElementById('playBtn').textContent = '▶ Play';
-                if (document.getElementById('miniPlayBtn')) {
-                    document.getElementById('miniPlayBtn').textContent = '▶';
-                }
-                
-                // Clear current track and hide mini-player
-                currentTrack = null;
+                updateTrackIcons();
                 updateMiniPlayer();
-                
-                return; // Exit early - track is now collapsed
+                return;
             }
 
-            // Remove active class from all items and collapse wrappers
-            document.querySelectorAll('.track-item').forEach(item => {
-                item.classList.remove('active');
-                const wrapper = item.querySelector('.track-player-wrapper');
-                if (wrapper) wrapper.classList.remove('expanded');
-            });
+            // New Track Selection
+            // Reset previous active class
+            document.querySelectorAll('.track-item').forEach(item => item.classList.remove('active'));
+            trackEl.classList.add('active');
 
             currentTrack = track;
-            trackEl.classList.add('active');
-            
-            // Update Info
-            const playerTrackEl = document.getElementById('playerTrack');
-            if (playerTrackEl) {
-                playerTrackEl.textContent = track.title;
-            }
-            
-            // Move player to new location
-            const newWrapper = trackEl.querySelector('.track-player-wrapper');
-            const newInner = trackEl.querySelector('.track-player-inner');
-            
-            if (!newWrapper || !newInner) {
-                console.error('Track player wrapper or inner not found!');
-                return;
-            }
-            
-            // If player is already in a different container, remove it first
-            if (player.parentElement && player.parentElement !== newInner) {
-                player.parentElement.removeChild(player);
-            }
-            
-            // Ensure player is visible
-            player.style.display = 'block';
 
-            // Append player to the inner container of the clicked track
-            newInner.appendChild(player);
-            
-            // Force a reflow to ensure the browser registers the move before animating
-            void newWrapper.offsetWidth; 
-            
-            // Trigger animation
-            requestAnimationFrame(() => {
-                newWrapper.classList.add('expanded');
-            });
-
-            // Reset Audio logic
+            // Audio Logic
             audioPlayer.pause();
             isPlaying = false;
-            document.getElementById('playBtn').textContent = '▶ Play';
-            document.getElementById('currentTime').textContent = '0:00';
-            document.getElementById('progressFill').style.width = '0%';
-            
-            // Generate placeholder audio for this specific track based on duration
+
+            // Placeholder generation logic
             const durationParts = track.duration.split(':');
             const minutes = parseInt(durationParts[0]) || 0;
             const seconds = parseInt(durationParts[1]) || 0;
             const totalSeconds = minutes * 60 + seconds;
-            const duration = totalSeconds || 180; // Default to 3 minutes if duration invalid
-            
+            const duration = totalSeconds || 180;
+
             if (!trackPlaceholders[track.title]) {
                 trackPlaceholders[track.title] = generatePlaceholderAudio(duration);
             }
             audioPlayer.src = trackPlaceholders[track.title];
             audioPlayer.load();
-            
-            // Update duration display (will be updated when audio loads)
-            
-            // Update mini-player to show current track
-            updateMiniPlayer();
-            
-            // Auto play on selection? User asked to "open the new one", implies showing it. 
-            // We won't auto-play to avoid jarring noise, but we reset state.
+
+            // Auto play
+            audioPlayer.play().then(() => {
+                isPlaying = true;
+                updateTrackIcons();
+                updateMiniPlayer();
+            }).catch(e => console.log('Autoplay prevented', e));
+        }
+
+        function updateTrackIcons() {
+            document.querySelectorAll('.track-item').forEach(item => {
+                const btn = item.querySelector('.play-icon-btn');
+                if (item.classList.contains('active') && isPlaying) {
+                    btn.textContent = '⏸';
+                } else {
+                    btn.textContent = '▶';
+                }
+            });
+
+            // Update mini player button if exists
+            const miniBtn = document.getElementById('miniPlayBtn');
+            if (miniBtn) miniBtn.textContent = isPlaying ? '⏸' : '▶';
         }
 
         function generatePlaceholderAudio(durationSeconds = 180) {
@@ -1848,34 +2065,14 @@
             if (!currentTrack) return;
             const audioPlayer = document.getElementById('audioPlayer');
 
-            // Ensure we have placeholder audio for this track
-            if (!audioPlayer.src || audioPlayer.src === '') {
-                if (!trackPlaceholders[currentTrack.title]) {
-                    const durationParts = currentTrack.duration.split(':');
-                    const minutes = parseInt(durationParts[0]) || 0;
-                    const seconds = parseInt(durationParts[1]) || 0;
-                    const totalSeconds = minutes * 60 + seconds || 180;
-                    trackPlaceholders[currentTrack.title] = generatePlaceholderAudio(totalSeconds);
-                }
-                audioPlayer.src = trackPlaceholders[currentTrack.title];
-                audioPlayer.load();
-            }
-
             if (isPlaying) {
                 audioPlayer.pause();
-                document.getElementById('playBtn').textContent = '▶ Play';
-                if (document.getElementById('miniPlayBtn')) {
-                    document.getElementById('miniPlayBtn').textContent = '▶';
-                }
                 isPlaying = false;
             } else {
                 audioPlayer.play();
-                document.getElementById('playBtn').textContent = '⏸ Pause';
-                if (document.getElementById('miniPlayBtn')) {
-                    document.getElementById('miniPlayBtn').textContent = '⏸';
-                }
                 isPlaying = true;
             }
+            updateTrackIcons();
             updateMiniPlayer();
         }
 
@@ -1883,37 +2080,31 @@
             togglePlay(null);
         }
 
-        function seekMini(event) {
-            seek(event);
+        function seekFooter(event) {
+            if (!audioPlayer.src || !audioPlayer.duration) return;
+            const container = event.currentTarget;
+            const rect = container.getBoundingClientRect();
+            const percent = (event.clientX - rect.left) / rect.width;
+            audioPlayer.currentTime = percent * audioPlayer.duration;
         }
 
         function updateMiniPlayer() {
-            const miniPlayer = document.getElementById('miniPlayer');
-            // Only show mini-player when a song is actually playing
-            if (currentTrack && isPlaying) {
-                miniPlayer.classList.add('visible');
-                document.body.classList.add('has-mini-player');
-                document.getElementById('miniPlayerTrack').textContent = currentTrack.title;
-                
-                // Update time display
-                const audioPlayer = document.getElementById('audioPlayer');
-                if (audioPlayer && audioPlayer.duration) {
-                    const current = Math.floor(audioPlayer.currentTime || 0);
-                    const total = Math.floor(audioPlayer.duration);
-                    const currentMinutes = Math.floor(current / 60);
-                    const currentSeconds = current % 60;
-                    const totalMinutes = Math.floor(total / 60);
-                    const totalSeconds = total % 60;
-                    document.getElementById('miniPlayerTime').textContent = 
-                        `${currentMinutes}:${currentSeconds.toString().padStart(2, '0')} / ${totalMinutes}:${totalSeconds.toString().padStart(2, '0')}`;
-                } else {
-                    document.getElementById('miniPlayerTime').textContent = '0:00 / 0:00';
-                }
-            } else {
-                // Hide mini-player when not playing
-                miniPlayer.classList.remove('visible');
+            const discreetPlayer = document.getElementById('discreetPlayer');
+            const trackName = document.getElementById('discreetTrackName');
+            const playBtn = document.getElementById('discreetPlayBtn');
+
+            if (!currentTrack) {
+                discreetPlayer.classList.remove('visible');
                 document.body.classList.remove('has-mini-player');
+                return;
             }
+
+            // Show discreet player
+            discreetPlayer.classList.add('visible');
+            document.body.classList.add('has-mini-player');
+
+            if (trackName) trackName.textContent = currentTrack.title;
+            if (playBtn) playBtn.textContent = isPlaying ? '⏸' : '▶';
         }
 
         function downloadTrack(event) {
@@ -1943,53 +2134,77 @@
             const minutes = Math.floor(current / 60);
             const seconds = current % 60;
             const currentTimeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-            
+
             document.getElementById('currentTime').textContent = currentTimeStr;
-            
-            // Update mini-player time
-            if (document.getElementById('miniPlayerTime')) {
+
+            // Update mini-player time (Legacy)
+            if (document.getElementById('miniTime')) {
                 const totalMinutes = Math.floor(audioPlayer.duration / 60) || 0;
                 const totalSeconds = Math.floor(audioPlayer.duration % 60) || 0;
                 const durationStr = `${totalMinutes}:${totalSeconds.toString().padStart(2, '0')}`;
-                document.getElementById('miniPlayerTime').textContent = `${currentTimeStr} / ${durationStr}`;
+                document.getElementById('miniTime').textContent = `${currentTimeStr} / ${durationStr}`;
             }
-            
+
+            // Update Discreet Time
+            if (document.getElementById('discreetTime')) {
+                const totalMinutes = Math.floor(audioPlayer.duration / 60) || 0;
+                const totalSeconds = Math.floor(audioPlayer.duration % 60) || 0;
+                const durationStr = `${totalMinutes}:${totalSeconds.toString().padStart(2, '0')}`;
+                document.getElementById('discreetTime').textContent = `${currentTimeStr} / ${durationStr}`;
+            }
+
             const percent = audioPlayer.duration ? (audioPlayer.currentTime / audioPlayer.duration) * 100 : 0;
             document.getElementById('progressFill').style.width = percent + '%';
-            if (document.getElementById('miniProgressFill')) {
-                document.getElementById('miniProgressFill').style.width = percent + '%';
-            }
-        });
 
-        audioPlayer.addEventListener('loadedmetadata', () => {
-            // Update duration when audio loads
-            const totalMinutes = Math.floor(audioPlayer.duration / 60) || 0;
-            const totalSeconds = Math.floor(audioPlayer.duration % 60) || 0;
-            document.getElementById('duration').textContent = `${totalMinutes}:${totalSeconds.toString().padStart(2, '0')}`;
-            updateMiniPlayer();
+            // Sync Footer Progress
+            const footerProgressBar = document.getElementById('footerProgressBar');
+            if (footerProgressBar) footerProgressBar.style.width = percent + '%';
         });
 
         audioPlayer.addEventListener('ended', () => {
-            document.getElementById('playBtn').textContent = '▶ Play';
-            if (document.getElementById('miniPlayBtn')) {
-                document.getElementById('miniPlayBtn').textContent = '▶';
-            }
+            if (document.getElementById('playBtn')) document.getElementById('playBtn').textContent = '▶ Play';
+            if (document.getElementById('discreetPlayBtn')) document.getElementById('discreetPlayBtn').textContent = '▶';
             isPlaying = false;
+            updateTrackIcons();
             updateMiniPlayer();
         });
 
-        audioPlayer.addEventListener('play', () => {
-            updateMiniPlayer();
-        });
+        // Setup Mini Player Scrubbing
+        function setupMiniScrubbing() {
+            const container = document.getElementById('miniProgressContainer');
+            if (!container) return;
 
-        audioPlayer.addEventListener('pause', () => {
+            container.addEventListener('click', (e) => {
+                if (!audioPlayer.duration) return;
+                const rect = container.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const percentage = x / rect.width;
+                audioPlayer.currentTime = percentage * audioPlayer.duration;
+            });
+        }
+
+        // Call this on init
+        setupMiniScrubbing();
+
+        function togglePlay() {
+            if (!currentTrack) return;
+            const audioPlayer = document.getElementById('audioPlayer');
+
+            if (isPlaying) {
+                audioPlayer.pause();
+                isPlaying = false;
+            } else {
+                audioPlayer.play();
+                isPlaying = true;
+            }
+            updateTrackIcons();
             updateMiniPlayer();
-        });
+        }
 
         function setAmount(amount, event) {
             selectedAmount = amount;
             const customInput = document.getElementById('customAmount');
-            
+
             if (amount === 0) {
                 // Hide custom amount input for Free option
                 customInput.value = '';
@@ -2025,7 +2240,7 @@
             const name = document.getElementById('donorName').value;
             const customAmount = document.getElementById('customAmount').value;
             const amount = customAmount ? parseFloat(customAmount) : selectedAmount;
-            
+
             const itemTitle = isFullEPDownload ? "Doomed to Live (Full EP)" : currentTrack.title;
             const downloadUrl = isFullEPDownload ? "https://your-bunny-cdn.b-cdn.net/doomed-to-live-full-ep.zip" : currentTrack.downloadUrl; // Example URL
 
@@ -2136,8 +2351,8 @@
         */
 
         async function processStripePayment(email, name, amount, trackTitle) {
-             // Deprecated in favor of the simpler redirection logic above for static sites
-             // unless you deploy a backend server.
+            // Deprecated in favor of the simpler redirection logic above for static sites
+            // unless you deploy a backend server.
         }
 
         async function captureEmail(email, name, track, amount) {
@@ -2199,4 +2414,5 @@
         });
     </script>
 </body>
+
 </html>
