@@ -8,6 +8,14 @@
     <title>ROCHE - DOOMED TO LIVE</title>
     <link href="https://fonts.googleapis.com/css2?family=Overpass+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="glitch.css">
+    <link rel="icon" type="image/png" href="doomed2livefavicon.png">
+
+    <!-- Apple devices (iOS, macOS) -->
+    <link rel="apple-touch-icon" href="doomed2livefavicon.png">
+
+    <!-- Windows tiles -->
+    <meta name="msapplication-TileImage" content="doomed2livefavicon.png">
+    <meta name="msapplication-TileColor" content="#0a0a0a">
     <style>
         .roche-glitch {
             font-size: clamp(2.5rem, 8vw, 6rem);
@@ -69,7 +77,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: var(--space-32) var(--space-32) 180px var(--space-32);
+            padding: var(--space-32);
             /* Added bottom padding for fixed footer */
             width: 100%;
             height: 100vh;
@@ -606,7 +614,7 @@
 
         .discreet-player-info {
             position: fixed;
-            bottom: 120px;
+            bottom: 160px;
             /* Just above footer */
             left: 50%;
             /* Center horizontally */
@@ -808,7 +816,7 @@
 
 
         .poem {
-            font-size: 10px;
+            font-size: 13px;
             color: var(--color-text);
             /* Made white for numbers */
             margin: 0 0 var(--space-16) 0;
@@ -846,7 +854,7 @@
         }
 
         .social-link {
-            font-size: 11px;
+            font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--color-text-secondary);
@@ -1448,6 +1456,81 @@
             font-family: 'Space Mono', monospace;
             text-transform: uppercase;
         }
+
+        .lyrics-container {
+            width: 100%;
+            text-align: center;
+            margin-top: var(--space-32);
+            font-family: 'Akira Expanded', sans-serif;
+            font-size: clamp(14px, 2vw, 18px);
+            /* Responsive size */
+            color: var(--color-text);
+            min-height: 1.5em;
+            /* Reserve space for one line */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.3s ease;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            padding: 0 20px;
+        }
+
+        .lyrics-line {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .lyrics-line.visible {
+            opacity: 1;
+        }
+
+        .volume-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 60px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .volume-slider:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--color-text);
+            cursor: pointer;
+            border: none;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .volume-slider::-webkit-slider-thumb:hover {
+            background: var(--color-accent);
+            transform: scale(1.2);
+        }
+
+        .volume-slider::-moz-range-thumb {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--color-text);
+            cursor: pointer;
+            border: none;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .volume-slider::-moz-range-thumb:hover {
+            background: var(--color-accent);
+            transform: scale(1.2);
+        }
     </style>
 </head>
 
@@ -1498,12 +1581,21 @@
                         </div>
                     </div>
                 </div>
+                <!-- Download Full EP Button Moved Here -->
+                <div style="width: 100%; display: flex; justify-content: center; margin-top: 32px;">
+                    <button class="download-full-ep-btn" onclick="downloadFullEP()">Download Full EP</button>
+                </div>
             </div>
-            <button class="download-full-ep-btn" onclick="downloadFullEP()">Download Full EP</button>
         </div>
 
-        <!-- Older Music Section (Outside the 2-column layout) -->
-        <!-- Temporarily Deactivated
+        <!-- Lyrics Container -->
+        <div id="lyricsContainer" class="lyrics-container">
+            <div id="currentLyricLine" class="lyrics-line"></div>
+        </div>
+    </div>
+
+    <!-- Older Music Section (Outside the 2-column layout) -->
+    <!-- Temporarily Deactivated
         <div class="older-music-section">
             <button class="older-music-btn" onclick="goToArchive()">PAST MOODS</button>
         </div>
@@ -1535,6 +1627,8 @@
             <span id="discreetTime" style="color: var(--color-text-secondary); font-size: 9px;">0:00 / 0:00</span>
         </div>
         <div class="discreet-controls">
+            <input type="range" id="volumeSlider" class="volume-slider" min="0" max="1" step="0.05" value="1"
+                oninput="setVolume(this.value)">
             <button class="discreet-btn" id="discreetPlayBtn" onclick="togglePlay()">▶</button>
         </div>
     </div>
@@ -1565,19 +1659,19 @@
     <div class="modal" id="sympathyModal">
         <div class="modal-content" style="text-align: center;">
             <button class="modal-close" onclick="closeModal('sympathyModal')">×</button>
-            <h3 style="margin-bottom: 32px; font-size: 20px;">Support Roche</h3>
+            <h3 style="margin-bottom: 32px; font-size: 20px;">1 Second Mate!</h3>
             <p style="font-size: 14px; line-height: 1.6; margin-bottom: 24px;">
-                "Don't walk on by, kind sir/lady! Toss a penny in the hat for the poor noisemaker. A warm meal buys a
+                Toss a penny in the hat for the poor noisemaker. A warm meal buys a
                 sweeter beat, it does.
             </p>
             <p style="font-size: 14px; line-height: 1.6; margin-bottom: 32px; color: var(--color-icon);">
-                Or take the tune for naught, if fortune hasn't favored ye this week."
+                Or take the tune for naught, if fortune hasn't favored ye this week.
             </p>
             <div style="display: flex; flex-direction: column; gap: 16px;">
-                <button class="submit-btn" onclick="openPaymentModal()">Toss a Penny (Support & Download WAV)</button>
+                <button class="submit-btn" onclick="openPaymentModal()">Toss a Penny</button>
                 <button class="submit-btn"
                     style="background: transparent; border: 1px solid var(--color-text-secondary); color: var(--color-text-secondary);"
-                    onclick="openContactModal()">Take for Naught (Free MP3)</button>
+                    onclick="openContactModal()">JUST FUCKING DOWNLOAD!</button>
             </div>
         </div>
     </div>
@@ -1784,6 +1878,11 @@
         let previousView = 'home'; // Track where we came from
         let placeholderAudio = null; // Cache for placeholder audio
         const trackPlaceholders = {}; // Cache placeholders per track
+
+        // Lyrics State
+        let lyricsData = [];
+        let currentLyricIndex = -1;
+        let lyricTimeout = null;
 
         function goToMusic() {
             const message = document.querySelector('.message');
@@ -2111,6 +2210,7 @@
             trackEl.classList.add('active');
 
             currentTrack = track;
+            loadLyrics(track.title);
 
             // Audio Logic
             audioPlayer.pause();
@@ -2330,6 +2430,8 @@
             // Sync Footer Progress
             const footerProgressBar = document.getElementById('footerProgressBar');
             if (footerProgressBar) footerProgressBar.style.width = percent + '%';
+
+            syncLyrics();
         });
 
         audioPlayer.addEventListener('ended', () => {
@@ -2398,6 +2500,8 @@
             // If specific track args provided, update context
             if (epKey && typeof index === 'number') {
                 const track = musicData[epKey].tracks[index];
+
+
                 if (track) {
                     currentTrack = track;
                     // Note: We update currentTrack for metadata context, 
@@ -2595,6 +2699,108 @@
 
             // Trigger download
             downloadFile(downloadUrl, itemTitle);
+        }
+
+        // --- Helper Functions for Lyrics and Volume ---
+
+        function setVolume(value) {
+            const audio = document.getElementById('audioPlayer');
+            if (audio) audio.volume = Math.max(0, Math.min(1, value));
+        }
+
+        async function loadLyrics(title) {
+            lyricsData = [];
+            currentLyricIndex = -1;
+            const container = document.getElementById('currentLyricLine');
+            if (container) {
+                container.textContent = '';
+                container.classList.remove('visible');
+            }
+
+            // Convert Title to filename format (Sentence case + .lrc)
+            // "Doomed to Live" -> "Doomed to live.lrc"
+            let filename = title.charAt(0).toUpperCase() + title.slice(1).toLowerCase() + '.lrc';
+
+            try {
+                const res = await fetch('lyrics/' + filename);
+                if (!res.ok) throw new Error('No lyrics');
+                const text = await res.text();
+                parseLyrics(text);
+            } catch (e) {
+                console.log('Lyrics not found for:', title, e);
+                // Fallback: Try exact title
+                try {
+                    const res2 = await fetch('lyrics/' + title + '.lrc');
+                    if (res2.ok) {
+                        const text2 = await res2.text();
+                        parseLyrics(text2);
+                    }
+                } catch (e2) { }
+            }
+        }
+
+        function parseLyrics(text) {
+            const lines = text.split('\n');
+            const regex = /^\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/;
+
+            lyricsData = lines.map(line => {
+                const match = line.match(regex);
+                if (!match) return null;
+                const min = parseInt(match[1]);
+                const sec = parseInt(match[2]);
+                const msPart = match[3];
+                const content = match[4].trim();
+
+                // Calculate time in seconds
+                let ms = parseInt(msPart);
+                if (msPart.length === 2) ms = ms / 100;
+                else if (msPart.length === 3) ms = ms / 1000;
+
+                return {
+                    time: min * 60 + sec + ms,
+                    text: content
+                };
+            }).filter(item => item !== null && item.text !== '');
+        }
+
+        function syncLyrics() {
+            if (!lyricsData.length) return;
+
+            const audio = document.getElementById('audioPlayer');
+            const time = audio.currentTime;
+
+            // Find current line (last line passed)
+            let activeIndex = -1;
+            for (let i = 0; i < lyricsData.length; i++) {
+                if (time >= lyricsData[i].time) {
+                    activeIndex = i;
+                } else {
+                    break;
+                }
+            }
+
+            if (activeIndex !== currentLyricIndex) {
+                currentLyricIndex = activeIndex;
+                const line = lyricsData[activeIndex];
+                const text = line ? line.text : ''; // Empty if before first timestamp
+                updateLyricDisplay(text);
+            }
+        }
+
+        function updateLyricDisplay(text) {
+            const el = document.getElementById('currentLyricLine');
+            if (!el) return;
+
+            // Fade out
+            el.classList.remove('visible');
+
+            if (lyricTimeout) clearTimeout(lyricTimeout);
+
+            // Wait for fade out, then swap text and fade in
+            lyricTimeout = setTimeout(() => {
+                el.textContent = text;
+                if (text) el.classList.add('visible');
+            }, 500); // Matches CSS transition duration
         }
 
         /* 
