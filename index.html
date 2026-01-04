@@ -1105,8 +1105,10 @@
             /* 2. Lyrics - Centered */
             .lyrics-container {
                 order: 2;
-                font-size: 11px;
-                line-height: 1.2;
+                font-size: 9px;
+                /* Reduced specific size as requested */
+                line-height: normal;
+                /* Allow natural flow */
                 margin: 4px 0;
                 min-height: 1.5em;
                 flex-grow: 0;
@@ -1116,6 +1118,8 @@
                 padding: 0 4px;
                 text-align: center;
                 width: 100%;
+                white-space: normal;
+                /* Allow wrapping if needed */
             }
 
             /* 3. Tracks - WIDER (85%) & LEFT ALIGNED */
@@ -1148,13 +1152,23 @@
 
             .track-title {
                 font-size: 11px;
-                max-width: 200px;
-                /* Allow more text space */
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 text-align: left;
-                /* LEFT ALIGN TITLE */
+                flex: 1;
+                /* Take available space */
+                min-width: 0;
+                /* Allow shrinking */
+            }
+
+            .track-text-container {
+                flex: 1;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                min-width: 0;
+                margin-right: 0;
             }
 
             .track-item {
@@ -1178,20 +1192,24 @@
                 margin: 0;
             }
 
-            /* Download Button matches Track width (85%) */
+            /* Download Button Reduced Width (70%) & Centered */
             .download-full-ep-btn {
-                width: 100%;
-                margin-top: 0;
+                width: 70% !important;
+                /* Reduced by 30% from 100% */
+                margin: 0 auto;
+                /* Center it */
                 padding: 10px;
                 font-size: 10px;
+                opacity: 0.9;
+                /* Reduced opacity by 10% */
+                display: block;
             }
 
-            /* Button Container Left Aligned or Full Width */
-            /* Button Container Left Aligned or Full Width */
+            /* Button Container must allow centering */
             .tracks-area>div[style*="flex"] {
                 padding-left: 0 !important;
-                justify-content: flex-start !important;
-                /* Start of container */
+                justify-content: center !important;
+                /* Center the button */
                 margin-top: 16px !important;
                 width: 85%;
                 max-width: 320px;
@@ -1200,7 +1218,8 @@
             }
 
             .tracks-area>div[style*="flex"]>button {
-                width: 100% !important;
+                width: 70% !important;
+                /* Redundant but safe */
             }
 
             .track-list {
