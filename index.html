@@ -1115,8 +1115,8 @@
                 order: 4;
                 margin: 0;
                 padding: 0;
-                /* Use margin to push up from bottom content boundary */
-                margin-bottom: 100px;
+                /* Reduced margin to let content sit lower (was 100px) */
+                margin-bottom: 50px;
                 flex-grow: 1;
                 display: flex;
                 flex-direction: column;
@@ -1124,8 +1124,9 @@
                 align-items: center;
                 width: 100%;
                 min-height: 50px;
-                /* Reserve space for 2 lines to prevent jolt */
             }
+
+
 
             .lyrics-container .lyrics-line {
                 font-size: 16px;
@@ -1285,21 +1286,26 @@
                 display: block !important;
             }
 
-            /* Footer Scrolling Animation - Entire line scrolls together */
+            /* Footer Scrolling Animation */
             .poem {
-                white-space: nowrap !important;
+                width: 100%;
                 overflow: hidden;
+                white-space: nowrap;
                 box-sizing: border-box;
                 padding: 0;
-                width: 100%;
                 display: block;
-                animation: marquee 20s linear infinite;
                 font-size: 11px;
+            }
+
+            .poem span {
+                display: inline-block;
+                padding-left: 100%;
+                animation: marquee 25s linear infinite;
             }
 
             @keyframes marquee {
                 0% {
-                    transform: translateX(100%);
+                    transform: translateX(0);
                 }
 
                 100% {
