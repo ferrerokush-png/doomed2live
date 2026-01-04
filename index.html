@@ -1140,6 +1140,19 @@
                 /* Explicit readable size for mobile */
                 margin-top: 24px;
             }
+
+            /* Prevent footer text from forcing scroll on mobile */
+            .poem {
+                white-space: normal !important;
+                padding: 0 10px;
+            }
+
+            /* Global safety for mobile scroll */
+            html,
+            body {
+                overflow-x: hidden;
+                width: 100%;
+            }
         }
     </style>
 
@@ -1591,8 +1604,7 @@
                         </div>
                     </div>
                     <!-- Download Full EP Button Moved Here -->
-                    <div
-                        style="width: 100%; display: flex; justify-content: flex-start; margin-top: 4px; padding-left: var(--space-16);">
+                    <div style="width: 100%; display: flex; justify-content: center; margin-top: 4px; padding-left: 0;">
                         <button class="download-full-ep-btn" onclick="downloadFullEP()">Download Full EP</button>
                     </div>
                 </div>
