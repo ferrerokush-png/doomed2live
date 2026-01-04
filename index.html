@@ -1035,58 +1035,84 @@
             .back-button {
                 top: 60px !important;
                 left: 20px !important;
-                font-size: 12px;
+                font-size: 11px;
                 opacity: 1 !important;
             }
 
             .music-view {
-                padding-top: 100px;
-                padding-bottom: 140px;
-                /* Increased for footer clearance */
-                padding-left: 20px;
-                padding-right: 20px;
+                /* Reduce top/bottom padding to fit everything on one screen */
+                padding-top: 80px;
+                padding-bottom: 60px;
+                /* Reduced since footer is smaller */
+                padding-left: 16px;
+                padding-right: 16px;
                 justify-content: flex-start;
+                /* Still flex-start, but content will be compact */
+                min-height: 100dvh;
+                /* Use dynamic height */
             }
 
             .music-content {
-                gap: var(--space-24);
+                gap: 16px;
+                /* Tighter gap */
                 width: 100%;
                 max-width: 100%;
+                flex: 1;
+                /* Allow content to grow/shrink */
+                display: flex;
+                flex-direction: column;
             }
 
             .ep-artwork {
-                max-width: 280px;
-                /* Constrain artwork width */
-                margin-bottom: var(--space-24);
+                /* Reduce size by 20% from 280px -> ~220px */
+                max-width: 220px;
+                /* Also limit by screen height percentage to avoid pushing content off */
+                max-height: 25vh;
+                margin-bottom: 16px;
                 margin-left: auto;
                 margin-right: auto;
             }
 
             .release-header h2 {
-                font-size: 22px;
-                /* Adjusted size */
+                font-size: 20px;
+                /* Smaller title */
+                margin-bottom: 8px;
+            }
+
+            .release-header p {
+                display: none;
+                /* Hide 'EP • 2025' on mobile to save space if needed, or keep small */
             }
 
             .track-item-content {
-                padding: 16px 0;
-                /* Larger touch targets */
+                /* Reduced padding for compact list */
+                padding: 8px 0;
             }
 
             .track-title {
-                font-size: 14px;
+                font-size: 11px;
+                /* Reduced from 14px */
+                max-width: 150px;
+                /* Force truncation for long titles like 'Why Do Fools...' */
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
 
             .download-full-ep-btn {
                 width: 100%;
-                /* Full width for easier tapping */
                 margin-top: 0;
+                padding: 10px;
+                /* Slightly more compact */
+                font-size: 10px;
             }
 
-            /* Ensure download container is centered/full width on mobile */
+            /* Center download container */
             .tracks-area>div[style*="flex"] {
                 padding-left: 0 !important;
                 justify-content: center !important;
-                margin-top: 32px !important;
+                margin-top: 16px !important;
+                /* Tighter spacing */
             }
 
             .container {
@@ -1100,20 +1126,22 @@
             }
 
             .track-right {
-                margin-left: 12px;
+                margin-left: 8px;
                 gap: 8px;
             }
 
             .inline-support-btn {
-                padding: 8px 12px;
-                /* Slightly larger targets */
-                font-size: 10px;
+                padding: 6px 10px;
+                /* Smaller button */
+                font-size: 9px;
             }
 
             .content-columns {
                 align-items: center;
-                gap: var(--space-24);
+                gap: 16px;
                 width: 100%;
+                flex: 1;
+                /* Allow columns to take available space */
             }
 
             .track-list {
@@ -1127,24 +1155,50 @@
                 justify-content: center;
             }
 
-            .track-item-content {
-                padding: 0 8px;
-            }
-
             .track-duration-inline {
                 display: none;
             }
 
+            /* Promote Lyrics */
             .lyrics-container {
-                font-size: 14px;
-                /* Explicit readable size for mobile */
-                margin-top: 24px;
+                font-size: 16px;
+                /* Larger focal point */
+                margin-top: 16px;
+                /* Tighter spacing */
+                min-height: 3em;
+                /* Reserve space */
+                flex-grow: 2;
+                /* Push to fill remaining space */
+                display: flex;
+                align-items: center;
             }
 
-            /* Prevent footer text from forcing scroll on mobile */
+            /* Footer Optimization */
             .poem {
                 white-space: normal !important;
                 padding: 0 10px;
+                /* Reduce text size by 35% (13px * 0.65 ~= 8.5px) */
+                font-size: 9px;
+                line-height: 1.2;
+                margin-bottom: 8px;
+            }
+
+            .socials {
+                gap: 16px;
+            }
+
+            .social-link {
+                font-size: 9px;
+            }
+
+            footer {
+                padding: 16px;
+                /* Reduce footer padding */
+            }
+
+            /* Hide Mini Player on Mobile */
+            .discreet-player-info {
+                display: none !important;
             }
 
             /* Global safety for mobile scroll */
