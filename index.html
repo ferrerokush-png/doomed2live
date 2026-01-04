@@ -1115,24 +1115,24 @@
                 order: 4;
                 margin: 0;
                 padding: 0;
-                padding-bottom: 70px;
-                /* Push up significantly to center visually */
+                /* Align to bottom to ensure distance from footer, then push up */
+                justify-content: flex-end;
+                padding-bottom: 110px;
                 flex-grow: 1;
                 display: flex;
                 flex-direction: column;
-                justify-content: center;
                 align-items: center;
                 width: 100%;
             }
 
             .lyrics-container .lyrics-line {
-                font-size: 14px;
-                /* Increased by 40% from 10px */
-                line-height: 1.3;
+                font-size: 18px;
+                /* Increased by 25% from 14px */
+                line-height: 1.2;
                 text-align: center;
-                max-width: 260px;
-                /* Wider to allow ~20 chars at larger size */
-                width: 90%;
+                max-width: 320px;
+                /* Allow wider text before wrap */
+                width: 95%;
                 white-space: normal;
                 word-wrap: break-word;
                 overflow-wrap: break-word;
