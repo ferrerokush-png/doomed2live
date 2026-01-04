@@ -1810,32 +1810,12 @@
             text-align: center;
             opacity: 0;
             display: flex;
-            flex-direction: column;
+            /* Kept flex for centering */
             justify-content: center;
             align-items: center;
-            min-height: 100px;
-            position: relative;
-            animation: fadeInDoors 1s ease forwards, breathing 8s ease-in-out infinite;
-        }
-
-        @keyframes breathing {
-
-            0%,
-            100% {
-                transform: scale(1);
-                border-color: rgba(255, 255, 255, 0.2);
-            }
-
-            50% {
-                transform: scale(1.015);
-                border-color: rgba(255, 255, 255, 0.3);
-            }
-        }
-
-        @keyframes fadeInDoors {
-            to {
-                opacity: 1;
-            }
+            min-height: 80px;
+            /* Reduced height back to original feel */
+            animation: fadeInDoors 1s ease forwards;
         }
 
         /* Shut Door Animation */
@@ -1847,55 +1827,18 @@
             transition: all 0.1s ease;
         }
 
-        .door-title {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 8px;
-            font-size: 15px;
+        @keyframes fadeInDoors {
+            to {
+                opacity: 1;
+            }
         }
 
-        .subline-wrapper {
-            position: relative;
-            height: 16px;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .sub-default,
-        .sub-reveal {
-            position: absolute;
-            width: 100%;
-            text-align: center;
-            font-size: 11px;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .sub-default {
-            opacity: 0.5;
-            transform: translateY(0);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .sub-reveal {
-            opacity: 0;
-            transform: translateY(10px);
-            color: var(--color-accent);
-            font-style: italic;
-        }
-
-        .door-card:hover .sub-default,
-        .door-card:focus-visible .sub-default {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-
-        .door-card:hover .sub-reveal,
-        .door-card:focus-visible .sub-reveal {
-            opacity: 1;
-            transform: translateY(0);
+        .door-card:hover,
+        .door-card:focus-visible {
+            border-color: var(--color-accent);
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.05);
+            outline: none;
         }
 
         /* Artist Reply Section */
@@ -1967,41 +1910,16 @@
 
     <div class="container" id="homeView">
         <div class="doors-container">
-            <button class="door-card" onclick="enterVoid(this)" data-reply="Yeah. I see it too.">
-                <span class="door-title">The system is rigged</span>
-                <span class="subline-wrapper">
-                    <span class="sub-default">Click to enter</span>
-                    <span class="sub-reveal">Yeah. I see it too.</span>
-                </span>
-            </button>
-            <button class="door-card" onclick="enterVoid(this)" data-reply="Then let me hold the weight for a second.">
-                <span class="door-title">I feel powerless</span>
-                <span class="subline-wrapper">
-                    <span class="sub-default">Click to enter</span>
-                    <span class="sub-reveal">Then let me hold the weight for a second.</span>
-                </span>
-            </button>
-            <button class="door-card" onclick="enterVoid(this)" data-reply="Me neither. Not the clean kind.">
-                <span class="door-title">I don't believe in love</span>
-                <span class="subline-wrapper">
-                    <span class="sub-default">Click to enter</span>
-                    <span class="sub-reveal">Me neither. Not the clean kind.</span>
-                </span>
-            </button>
-            <button class="door-card" onclick="enterVoid(this)" data-reply="Okay. Hide here with me.">
-                <span class="door-title">I want to disappear</span>
-                <span class="subline-wrapper">
-                    <span class="sub-default">Click to enter</span>
-                    <span class="sub-reveal">Okay. Hide here with me.</span>
-                </span>
-            </button>
-            <button class="door-card" onclick="enterVoid(this)" data-reply="Then we’ll settle for honest ones.">
-                <span class="door-title">There are no happy endings</span>
-                <span class="subline-wrapper">
-                    <span class="sub-default">Click to enter</span>
-                    <span class="sub-reveal">Then we’ll settle for honest ones.</span>
-                </span>
-            </button>
+            <button class="door-card" onclick="enterVoid(this)" data-reply="Yeah. I see it too.">The system is
+                rigged</button>
+            <button class="door-card" onclick="enterVoid(this)" data-reply="Then let me hold the weight for a second.">I
+                feel powerless</button>
+            <button class="door-card" onclick="enterVoid(this)" data-reply="Me neither. Not the clean kind.">I don't
+                believe in love</button>
+            <button class="door-card" onclick="enterVoid(this)" data-reply="Okay. Hide here with me.">I want to
+                disappear</button>
+            <button class="door-card" onclick="enterVoid(this)" data-reply="Then we’ll settle for honest ones.">There
+                are no happy endings</button>
         </div>
     </div>
 
@@ -2022,7 +1940,6 @@
                         <div class="ep-artwork">
                             <img src="doomedtolivecoverart.webp" alt="Doomed to Live EP Cover">
                         </div>
-                        <div id="artistReply"></div>
                     </div>
                 </div>
 
@@ -2123,7 +2040,7 @@
         </div>
         <div class="socials">
             <a href="https://tiktok.com/@rocheofficiel" class="social-link">TikTok</a>
-            <a href="https://instagram.com/rocheofficiel" class="social-link">Instagram</a>
+            <a href="https://instagram.com/@rocheofficiel" class="social-link">Instagram</a>
             <a href="https://youtube.com/@rocheofficiel" class="social-link">YouTube</a>
             <a href="https://open.spotify.com/artist/2EJmFMBLaeIYrmKK15iQ3M" class="social-link">Spotify</a>
         </div>
@@ -2390,11 +2307,10 @@
             // Interaction: Shut Door (Visual Feedback)
             if (btn) btn.classList.add('shutting');
 
-            // Persist Reply
-            const replyText = btn ? btn.getAttribute('data-reply') : '';
-            if (replyText) {
-                sessionStorage.setItem('voidReply', replyText);
-            }
+            // Update Overlay Text with Whisper
+            const replyText = btn ? btn.getAttribute('data-reply') : 'You are not alone';
+            const voidTextEl = overlay.querySelector('.void-text');
+            if (voidTextEl) voidTextEl.textContent = replyText;
 
             // Short delay for button animation
             setTimeout(() => {
@@ -2435,13 +2351,6 @@
             void musicView.offsetWidth;
             musicView.classList.add('visible');
 
-            // Set Reply from Session
-            const savedReply = sessionStorage.getItem('voidReply');
-            const replyEl = document.getElementById('artistReply');
-            if (replyEl && savedReply) {
-                replyEl.textContent = savedReply;
-            }
-
             // Load content if not loaded
             if (!currentTrack) {
                 loadEP('doomed');
@@ -2454,7 +2363,6 @@
                 const epAnchor = document.getElementById('ep');
                 if (epAnchor) {
                     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-                    epAnchor.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth" });
                 }
             }, 100);
         }
