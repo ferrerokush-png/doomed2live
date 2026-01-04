@@ -2050,13 +2050,13 @@
     <div class="modal" id="sympathyModal">
         <div class="modal-content" style="text-align: center;">
             <button class="modal-close" onclick="closeModal('sympathyModal')">×</button>
-            <h3 style="margin-bottom: 32px; font-size: 20px;">1 Second Mate!</h3>
+            <h3 style="margin-bottom: 32px; font-size: 20px;">ONE SECOND MATE</h3>
             <p style="font-size: 14px; line-height: 1.6; margin-bottom: 24px;">
                 Toss a penny in the hat for the poor noisemaker. A warm meal buys a
                 sweeter beat, it does.
             </p>
             <p style="font-size: 14px; line-height: 1.6; margin-bottom: 32px; color: var(--color-icon);">
-                Or take the tune for naught, if fortune hasn't favored ye this week.
+                Or take the tune for free, if fortune hasn't favored ye this week.
             </p>
             <div style="display: flex; flex-direction: column; gap: 16px;">
                 <button class="submit-btn" onclick="openPaymentModal()">💰 Toss a Penny</button>
@@ -2866,11 +2866,7 @@
 
 
 
-        function downloadFullEP() {
-            isFullEPDownload = true;
-            document.querySelector('#sympathyModal h3').textContent = "1 Second Mate!";
-            document.getElementById('sympathyModal').classList.add('active');
-        }
+
 
         function seek(event) {
             if (!audioPlayer.src || !audioPlayer.duration) return;
