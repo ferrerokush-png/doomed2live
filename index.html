@@ -1461,8 +1461,9 @@
             width: 100%;
             text-align: center;
             margin-top: var(--space-32);
+            font-family: 'Akira Expanded', sans-serif;
             /* Font size increased ~30% */
-            font-size: clamp(18px, 2.5vw, 24px);
+            font-size: clamp(16px, 2.5vw, 24px);
             color: var(--color-text);
             min-height: 1.5em;
             display: flex;
@@ -1473,6 +1474,8 @@
             padding: 0 20px;
             /* Allow container to fill remaining vertical space to center lyrics */
             flex-grow: 1;
+            /* Prevent wrapping */
+            white-space: nowrap;
         }
 
         .lyrics-line {
