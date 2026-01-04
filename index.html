@@ -1109,13 +1109,14 @@
                 padding: 0 4px;
             }
 
-            /* 3. Tracks - Narrower and Centered */
+            /* 3. Tracks - Narrower 65% */
             .tracks-area {
                 order: 3;
-                width: 85%;
-                /* Make column less wide */
+                width: 65%;
+                /* Requested 65% */
                 margin: 0 auto;
-                /* Center it */
+                flex-grow: 1;
+                /* Allow to take available space */
             }
 
             .track-item-content {
@@ -1124,7 +1125,7 @@
 
             .track-title {
                 font-size: 9px;
-                max-width: 140px;
+                max-width: 120px;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -1154,7 +1155,7 @@
 
             .download-full-ep-btn {
                 width: 100%;
-                /* Matches tracks-area width */
+                /* Matches tracks-area width (which is 65% of screen) */
                 margin-top: 0;
                 padding: 6px;
                 font-size: 9px;
@@ -1163,7 +1164,17 @@
             .tracks-area>div[style*="flex"] {
                 padding-left: 0 !important;
                 justify-content: center !important;
-                margin-top: 4px !important;
+                /* Add padding so it's not right underneath */
+                margin-top: 16px !important;
+                width: 65%;
+                /* Explicitly set container width to match tracks */
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            /* Explicitly set button width to 100% of this 65% container */
+            .tracks-area>div[style*="flex"]>button {
+                width: 100% !important;
             }
 
             .track-list {
@@ -1185,7 +1196,7 @@
                 padding: 0 16px;
             }
 
-            /* Fixed Footer - Ensure stability */
+            /* Fixed Footer - High Z-index */
             footer {
                 position: fixed;
                 bottom: 0;
@@ -1194,10 +1205,12 @@
                 width: 100%;
                 padding: 8px 12px;
                 background: var(--color-bg);
-                z-index: 2000;
-                /* Higher z-index */
+                z-index: 9999;
+                /* Max Z-index to ensure visibility */
                 border-top: 1px solid rgba(255, 255, 255, 0.05);
                 box-sizing: border-box;
+                display: block !important;
+                /* Force display */
             }
 
             .poem {
@@ -1681,17 +1694,18 @@
                         </div>
                     </div>
                     <!-- Download Full EP Button Moved Here -->
-                    <div style="width: 100%; display: flex; justify-content: center; margin-top: 4px; padding-left: 0;">
+                    <div
+                        style="width: 100%; display: flex; justify-content: center; margin-top: 24px; padding-left: 0;">
                         <button class="download-full-ep-btn" onclick="downloadFullEP()">Download Full EP</button>
                     </div>
                 </div>
             </div>
+
+            <!-- Lyrics Container Inside music-content -->
+            <div id="lyricsContainer" class="lyrics-container">
+                <div id="currentLyricLine" class="lyrics-line"></div>
+            </div>
         </div>
-    </div>
-    <!-- Lyrics Container Moved Inside music-content for Flex Ordering -->
-    <div id="lyricsContainer" class="lyrics-container">
-        <div id="currentLyricLine" class="lyrics-line"></div>
-    </div>
     </div>
 
     <!-- Older Music Section (Outside the 2-column layout) -->
