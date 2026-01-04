@@ -1809,42 +1809,74 @@
             transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
             text-align: center;
             opacity: 0;
-            animation: fadeInDoors 1s ease forwards;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 80px;
+            animation: fadeInDoors 1s ease forwards, breathing 6s ease-in-out infinite;
         }
 
-        /* Stagger animations */
-        .door-card:nth-child(1) {
-            animation-delay: 0.1s;
-        }
+        @keyframes breathing {
 
-        .door-card:nth-child(2) {
-            animation-delay: 0.2s;
-        }
+            0%,
+            100% {
+                transform: scale(1);
+                border-color: rgba(255, 255, 255, 0.2);
+            }
 
-        .door-card:nth-child(3) {
-            animation-delay: 0.3s;
-        }
-
-        .door-card:nth-child(4) {
-            animation-delay: 0.4s;
-        }
-
-        .door-card:nth-child(5) {
-            animation-delay: 0.5s;
-        }
-
-        @keyframes fadeInDoors {
-            to {
-                opacity: 1;
+            50% {
+                transform: scale(1.02);
+                border-color: rgba(255, 255, 255, 0.3);
             }
         }
 
-        .door-card:hover,
-        .door-card:focus-visible {
-            border-color: var(--color-accent);
-            transform: translateY(-2px);
-            background: rgba(255, 255, 255, 0.05);
-            outline: none;
+        /* Shut Door Animation */
+        .door-card.shutting {
+            background: #000 !important;
+            transform: scale(0.95) !important;
+            border-color: #333 !important;
+            color: #555 !important;
+            transition: all 0.1s ease;
+        }
+
+        .door-title {
+            font-weight: bold;
+            display: block;
+        }
+
+        .door-subline {
+            display: block;
+            font-size: 11px;
+            margin-top: 8px;
+            opacity: 0;
+            transform: translateY(5px);
+            transition: all 0.3s ease;
+            color: #a0a0a0;
+            font-style: italic;
+        }
+
+        .door-card:hover .door-subline,
+        .door-card:focus-visible .door-subline {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .artist-reply {
+            margin-top: 24px;
+            font-family: 'Space Mono', monospace;
+            font-size: 13px;
+            color: #a0a0a0;
+            text-align: center;
+            font-style: italic;
+            opacity: 0;
+            animation: replyFadeIn 2s ease forwards 1s;
+        }
+
+        @keyframes replyFadeIn {
+            to {
+                opacity: 1;
+            }
         }
 
         .void-overlay {
@@ -1897,11 +1929,26 @@
 
     <div class="container" id="homeView">
         <div class="doors-container">
-            <button class="door-card" onclick="enterVoid(this)">The system is rigged</button>
-            <button class="door-card" onclick="enterVoid(this)">I feel powerless</button>
-            <button class="door-card" onclick="enterVoid(this)">I don't believe in love</button>
-            <button class="door-card" onclick="enterVoid(this)">I want to disappear</button>
-            <button class="door-card" onclick="enterVoid(this)">There are no happy endings</button>
+            <button class="door-card" onclick="enterVoid(this)" data-reply="Yeah. I see it too.">
+                <span class="door-title">The system is rigged</span>
+                <span class="door-subline">Yeah. I see it too.</span>
+            </button>
+            <button class="door-card" onclick="enterVoid(this)" data-reply="Then let me hold the weight for a second.">
+                <span class="door-title">I feel powerless</span>
+                <span class="door-subline">Then let me hold the weight for a second.</span>
+            </button>
+            <button class="door-card" onclick="enterVoid(this)" data-reply="Me neither. Not the clean kind.">
+                <span class="door-title">I don't believe in love</span>
+                <span class="door-subline">Me neither. Not the clean kind.</span>
+            </button>
+            <button class="door-card" onclick="enterVoid(this)" data-reply="Okay. Hide here with me.">
+                <span class="door-title">I want to disappear</span>
+                <span class="door-subline">Okay. Hide here with me.</span>
+            </button>
+            <button class="door-card" onclick="enterVoid(this)" data-reply="Then we’ll settle for honest ones.">
+                <span class="door-title">There are no happy endings</span>
+                <span class="door-subline">Then we’ll settle for honest ones.</span>
+            </button>
         </div>
     </div>
 
@@ -1921,7 +1968,7 @@
                         <div class="ep-artwork">
                             <img src="doomedtolivecoverart.webp" alt="Doomed to Live EP Cover">
                         </div>
-                        <!-- Removed EP text -->
+                        <div id="voidReply" class="artist-reply"></div>
                     </div>
                 </div>
 
@@ -2286,24 +2333,38 @@
         function enterVoid(btn) {
             const overlay = document.getElementById('voidOverlay');
 
-            // Show Overlay
-            overlay.classList.add('active');
-            overlay.setAttribute('aria-hidden', 'false');
+            // Interaction: Shut Door
+            if (btn) btn.classList.add('shutting');
 
-            // Determine Delay (Respect Reduced Motion)
-            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            const delay = prefersReducedMotion ? 0 : 900;
+            // Get Reply
+            const replyText = btn ? btn.getAttribute('data-reply') : '';
+            if (replyText) {
+                const replyEl = document.getElementById('voidReply');
+                if (replyEl) replyEl.textContent = replyText;
+            }
 
+            // Short delay for button animation before overlay
             setTimeout(() => {
-                transitionToMusic();
+                // Show Overlay
+                overlay.classList.add('active');
+                overlay.setAttribute('aria-hidden', 'false');
 
-                // Hide Overlay after transition starts
+                // Determine Delay (Respect Reduced Motion)
+                const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                const delay = prefersReducedMotion ? 0 : 900;
+
                 setTimeout(() => {
-                    overlay.classList.remove('active');
-                    overlay.setAttribute('aria-hidden', 'true');
-                }, 500);
+                    transitionToMusic();
 
-            }, delay);
+                    // Hide Overlay after transition starts
+                    setTimeout(() => {
+                        overlay.classList.remove('active');
+                        overlay.setAttribute('aria-hidden', 'true');
+                        if (btn) btn.classList.remove('shutting'); // Reset
+                    }, 500);
+
+                }, delay);
+            }, 100);
         }
 
         function transitionToMusic() {
