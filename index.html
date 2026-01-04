@@ -414,11 +414,8 @@
 
         .download-full-ep-btn {
             display: inline-block;
-            margin-top: 5vh;
-            /* Evenly spaced between content and footer */
-            margin-bottom: 5vh;
-            margin-left: auto;
-            margin-right: auto;
+            margin-top: 0;
+            margin-bottom: 0;
             background: #b30000;
             /* Dark red matching theme */
             color: white;
@@ -821,7 +818,9 @@
             /* Made white for numbers */
             margin: 0 0 var(--space-16) 0;
             line-height: 1.4;
-            max-width: 600px;
+            width: 100%;
+            white-space: nowrap;
+            /* Force one line */
             margin-left: auto;
             margin-right: auto;
             font-family: 'Space Mono', monospace;
@@ -1583,10 +1582,11 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- Download Full EP Button Moved Here -->
-                <div style="width: 100%; display: flex; justify-content: center; margin-top: 32px;">
-                    <button class="download-full-ep-btn" onclick="downloadFullEP()">Download Full EP</button>
+                    <!-- Download Full EP Button Moved Here -->
+                    <div
+                        style="width: 100%; display: flex; justify-content: flex-start; margin-top: 24px; padding-left: var(--space-16);">
+                        <button class="download-full-ep-btn" onclick="downloadFullEP()">Download Full EP</button>
+                    </div>
                 </div>
             </div>
         </div>
