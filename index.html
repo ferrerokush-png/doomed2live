@@ -1461,23 +1461,23 @@
             width: 100%;
             text-align: center;
             margin-top: var(--space-32);
-            font-family: 'Akira Expanded', sans-serif;
-            font-size: clamp(14px, 2vw, 18px);
-            /* Responsive size */
+            /* Font size increased ~30% */
+            font-size: clamp(18px, 2.5vw, 24px);
             color: var(--color-text);
             min-height: 1.5em;
-            /* Reserve space for one line */
             display: flex;
             align-items: center;
             justify-content: center;
             transition: opacity 0.3s ease;
             text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             padding: 0 20px;
+            /* Allow container to fill remaining vertical space to center lyrics */
+            flex-grow: 1;
         }
 
         .lyrics-line {
             opacity: 0;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.1s ease-out;
         }
 
         .lyrics-line.visible {
@@ -2800,7 +2800,7 @@
             lyricTimeout = setTimeout(() => {
                 el.textContent = text;
                 if (text) el.classList.add('visible');
-            }, 500); // Matches CSS transition duration
+            }, 100); // Matches CSS transition duration
         }
 
         /* 
