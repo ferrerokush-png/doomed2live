@@ -1813,8 +1813,9 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 80px;
-            animation: fadeInDoors 1s ease forwards, breathing 6s ease-in-out infinite;
+            min-height: 100px;
+            position: relative;
+            animation: fadeInDoors 1s ease forwards, breathing 8s ease-in-out infinite;
         }
 
         @keyframes breathing {
@@ -1826,7 +1827,7 @@
             }
 
             50% {
-                transform: scale(1.02);
+                transform: scale(1.015);
                 border-color: rgba(255, 255, 255, 0.3);
             }
         }
@@ -1839,44 +1840,75 @@
 
         /* Shut Door Animation */
         .door-card.shutting {
-            background: #000 !important;
-            transform: scale(0.95) !important;
+            background: #0a0a0a !important;
+            transform: scale(0.96) !important;
             border-color: #333 !important;
-            color: #555 !important;
+            color: #444 !important;
             transition: all 0.1s ease;
         }
 
         .door-title {
             font-weight: bold;
             display: block;
+            margin-bottom: 8px;
+            font-size: 15px;
         }
 
-        .door-subline {
-            display: block;
+        .subline-wrapper {
+            position: relative;
+            height: 16px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .sub-default,
+        .sub-reveal {
+            position: absolute;
+            width: 100%;
+            text-align: center;
             font-size: 11px;
-            margin-top: 8px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .sub-default {
+            opacity: 0.5;
+            transform: translateY(0);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sub-reveal {
             opacity: 0;
-            transform: translateY(5px);
-            transition: all 0.3s ease;
-            color: #a0a0a0;
+            transform: translateY(10px);
+            color: var(--color-accent);
             font-style: italic;
         }
 
-        .door-card:hover .door-subline,
-        .door-card:focus-visible .door-subline {
+        .door-card:hover .sub-default,
+        .door-card:focus-visible .sub-default {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        .door-card:hover .sub-reveal,
+        .door-card:focus-visible .sub-reveal {
             opacity: 1;
             transform: translateY(0);
         }
 
-        .artist-reply {
+        /* Artist Reply Section */
+        #artistReply {
             margin-top: 24px;
             font-family: 'Space Mono', monospace;
             font-size: 13px;
-            color: #a0a0a0;
+            color: var(--color-accent);
             text-align: center;
             font-style: italic;
             opacity: 0;
             animation: replyFadeIn 2s ease forwards 1s;
+            min-height: 20px;
         }
 
         @keyframes replyFadeIn {
@@ -1937,23 +1969,38 @@
         <div class="doors-container">
             <button class="door-card" onclick="enterVoid(this)" data-reply="Yeah. I see it too.">
                 <span class="door-title">The system is rigged</span>
-                <span class="door-subline">Yeah. I see it too.</span>
+                <span class="subline-wrapper">
+                    <span class="sub-default">Click to enter</span>
+                    <span class="sub-reveal">Yeah. I see it too.</span>
+                </span>
             </button>
             <button class="door-card" onclick="enterVoid(this)" data-reply="Then let me hold the weight for a second.">
                 <span class="door-title">I feel powerless</span>
-                <span class="door-subline">Then let me hold the weight for a second.</span>
+                <span class="subline-wrapper">
+                    <span class="sub-default">Click to enter</span>
+                    <span class="sub-reveal">Then let me hold the weight for a second.</span>
+                </span>
             </button>
             <button class="door-card" onclick="enterVoid(this)" data-reply="Me neither. Not the clean kind.">
                 <span class="door-title">I don't believe in love</span>
-                <span class="door-subline">Me neither. Not the clean kind.</span>
+                <span class="subline-wrapper">
+                    <span class="sub-default">Click to enter</span>
+                    <span class="sub-reveal">Me neither. Not the clean kind.</span>
+                </span>
             </button>
             <button class="door-card" onclick="enterVoid(this)" data-reply="Okay. Hide here with me.">
                 <span class="door-title">I want to disappear</span>
-                <span class="door-subline">Okay. Hide here with me.</span>
+                <span class="subline-wrapper">
+                    <span class="sub-default">Click to enter</span>
+                    <span class="sub-reveal">Okay. Hide here with me.</span>
+                </span>
             </button>
             <button class="door-card" onclick="enterVoid(this)" data-reply="Then we’ll settle for honest ones.">
                 <span class="door-title">There are no happy endings</span>
-                <span class="door-subline">Then we’ll settle for honest ones.</span>
+                <span class="subline-wrapper">
+                    <span class="sub-default">Click to enter</span>
+                    <span class="sub-reveal">Then we’ll settle for honest ones.</span>
+                </span>
             </button>
         </div>
     </div>
@@ -1964,6 +2011,7 @@
     </div>
 
     <div class="music-view" id="musicView">
+        <div id="ep"></div> <!-- Anchor Target -->
         <audio id="audioPlayer"></audio>
         <button class="back-button" onclick="goHome()">← Back</button>
 
@@ -1974,7 +2022,7 @@
                         <div class="ep-artwork">
                             <img src="doomedtolivecoverart.webp" alt="Doomed to Live EP Cover">
                         </div>
-                        <div id="voidReply" class="artist-reply"></div>
+                        <div id="artistReply"></div>
                     </div>
                 </div>
 
@@ -2339,17 +2387,16 @@
         function enterVoid(btn) {
             const overlay = document.getElementById('voidOverlay');
 
-            // Interaction: Shut Door
+            // Interaction: Shut Door (Visual Feedback)
             if (btn) btn.classList.add('shutting');
 
-            // Get Reply
+            // Persist Reply
             const replyText = btn ? btn.getAttribute('data-reply') : '';
             if (replyText) {
-                const replyEl = document.getElementById('voidReply');
-                if (replyEl) replyEl.textContent = replyText;
+                sessionStorage.setItem('voidReply', replyText);
             }
 
-            // Short delay for button animation before overlay
+            // Short delay for button animation
             setTimeout(() => {
                 // Show Overlay
                 overlay.classList.add('active');
@@ -2366,7 +2413,7 @@
                     setTimeout(() => {
                         overlay.classList.remove('active');
                         overlay.setAttribute('aria-hidden', 'true');
-                        if (btn) btn.classList.remove('shutting'); // Reset
+                        if (btn) btn.classList.remove('shutting');
                     }, 500);
 
                 }, delay);
@@ -2385,8 +2432,15 @@
 
             const musicView = document.getElementById('musicView');
             musicView.style.display = 'flex';
-            void musicView.offsetWidth; // Reflow
+            void musicView.offsetWidth;
             musicView.classList.add('visible');
+
+            // Set Reply from Session
+            const savedReply = sessionStorage.getItem('voidReply');
+            const replyEl = document.getElementById('artistReply');
+            if (replyEl && savedReply) {
+                replyEl.textContent = savedReply;
+            }
 
             // Load content if not loaded
             if (!currentTrack) {
@@ -2395,7 +2449,13 @@
 
             setTimeout(() => {
                 musicView.classList.add('organized');
-                // Scroll to EP content anchor if needed, though we hide homeView so it's top
+
+                // Scroll to EP Anchor
+                const epAnchor = document.getElementById('ep');
+                if (epAnchor) {
+                    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    epAnchor.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth" });
+                }
             }, 100);
         }
 
