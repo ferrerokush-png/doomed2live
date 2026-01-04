@@ -1066,19 +1066,21 @@
                 display: contents;
             }
 
-            /* 1. Artwork */
+            /* 1. Artwork - Shifted up */
             .release-info {
                 order: 1;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 margin-bottom: 2px;
+                margin-top: -20px;
+                /* Move artwork up */
             }
 
             .ep-artwork {
                 max-width: 130px;
                 max-height: 18vh;
-                margin-bottom: 2px;
+                margin-bottom: 4px;
                 margin-left: auto;
                 margin-right: auto;
             }
@@ -1092,24 +1094,28 @@
                 display: none;
             }
 
-            /* 2. Lyrics */
+            /* 2. Lyrics - Centered between Artwork and Songs */
             .lyrics-container {
                 order: 2;
                 font-size: 10px;
                 line-height: 1.1;
-                margin: 2px 0;
+                margin: 4px 0;
                 min-height: 1.5em;
-                flex-grow: 0;
+                flex-grow: 1;
+                /* Allow it to take space and center itself */
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 padding: 0 4px;
             }
 
-            /* 3. Tracks */
+            /* 3. Tracks - Narrower and Centered */
             .tracks-area {
                 order: 3;
-                width: 100%;
+                width: 85%;
+                /* Make column less wide */
+                margin: 0 auto;
+                /* Center it */
             }
 
             .track-item-content {
@@ -1148,6 +1154,7 @@
 
             .download-full-ep-btn {
                 width: 100%;
+                /* Matches tracks-area width */
                 margin-top: 0;
                 padding: 6px;
                 font-size: 9px;
@@ -1178,16 +1185,19 @@
                 padding: 0 16px;
             }
 
-            /* Fixed Footer */
+            /* Fixed Footer - Ensure stability */
             footer {
                 position: fixed;
                 bottom: 0;
                 left: 0;
                 right: 0;
-                padding: 6px 8px;
+                width: 100%;
+                padding: 8px 12px;
                 background: var(--color-bg);
-                z-index: 1000;
+                z-index: 2000;
+                /* Higher z-index */
                 border-top: 1px solid rgba(255, 255, 255, 0.05);
+                box-sizing: border-box;
             }
 
             .poem {
