@@ -1066,13 +1066,15 @@
             }
 
             .music-content {
-                gap: 2px;
+                gap: 0;
+                /* No gap between items */
                 width: 100%;
                 max-width: 100%;
                 flex: 1;
                 display: flex;
                 flex-direction: column;
-                justify-content: center;
+                justify-content: flex-start;
+                /* Stack from top, not centered */
                 align-items: center;
             }
 
@@ -1100,13 +1102,9 @@
                 margin-right: auto;
             }
 
-            .release-header h2 {
-                font-size: 14px;
-                margin-bottom: 0;
-            }
-
-            .release-header p {
+            .release-header {
                 display: none;
+                /* Hide entire header on mobile */
             }
 
             /* Lyrics - Positioned at bottom, between Download button and Footer */
