@@ -1117,13 +1117,14 @@
                 padding: 0;
                 /* Use margin to push up from bottom content boundary */
                 margin-bottom: 100px;
-                /* Moved up slightly from 90px */
                 flex-grow: 1;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
                 width: 100%;
+                min-height: 50px;
+                /* Reserve space for 2 lines to prevent jolt */
             }
 
             .lyrics-container .lyrics-line {
