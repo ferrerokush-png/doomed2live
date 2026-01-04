@@ -1074,6 +1074,8 @@
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
+                position: relative;
+                /* Anchor for absolute lyrics */
             }
 
             .content-columns {
@@ -1086,7 +1088,8 @@
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                margin-top: 50px;
+                margin-top: 10px;
+                /* Reduced from 50px to move everything back UP */
                 margin-bottom: 0;
                 /* Reduced gap below artwork */
             }
@@ -1114,12 +1117,12 @@
             .lyrics-container {
                 order: 4;
                 position: absolute;
-                bottom: 100px;
-                /* Higher up to be clearly between button and footer */
+                bottom: 85px;
+                /* Fixed spot above footer (footer is ~40-50px) */
                 left: 0;
                 width: 100%;
                 height: 40px;
-                /* Fixed height reservation */
+                /* Reserve space */
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
@@ -1129,15 +1132,17 @@
             }
 
             .lyrics-container .lyrics-line {
-                font-size: 14px;
-                /* Back to reasonable size (was 10px originally, 22px was too big) */
-                line-height: 1.3;
+                font-size: 15px;
+                /* Moderate size */
+                line-height: 1.25;
                 text-align: center;
-                max-width: 280px;
-                width: 90%;
+                max-width: 300px;
+                width: 95%;
                 white-space: normal;
                 word-wrap: break-word;
                 overflow-wrap: break-word;
+                margin: 0;
+                padding: 0;
             }
 
             /* Tracks - Pull up closer to artwork */
