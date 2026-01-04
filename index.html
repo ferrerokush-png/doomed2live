@@ -1030,7 +1030,6 @@
                 top: 20px;
                 left: 20px;
                 font-size: 14px;
-                /* Keep legible */
             }
 
             .back-button {
@@ -1038,36 +1037,39 @@
                 left: 20px !important;
                 font-size: 12px;
                 opacity: 1 !important;
-                /* Always show if active */
             }
 
             .music-view {
                 padding-top: 100px;
-                /* Reduced from 22vh */
-                padding-bottom: 120px;
-                /* Space for footer/player */
+                padding-bottom: 140px;
+                /* Increased for footer clearance */
+                padding-left: 20px;
+                padding-right: 20px;
                 justify-content: flex-start;
             }
 
             .music-content {
                 gap: var(--space-24);
                 width: 100%;
+                max-width: 100%;
             }
 
             .ep-artwork {
-                max-width: 85%;
-                /* Make slightly smaller on mobile */
+                max-width: 280px;
+                /* Constrain artwork width */
                 margin-bottom: var(--space-24);
+                margin-left: auto;
+                margin-right: auto;
             }
 
             .release-header h2 {
-                font-size: 24px;
-                /* Smaller title */
+                font-size: 22px;
+                /* Adjusted size */
             }
 
             .track-item-content {
-                padding: 12px 0;
-                /* Less padding */
+                padding: 16px 0;
+                /* Larger touch targets */
             }
 
             .track-title {
@@ -1075,20 +1077,24 @@
             }
 
             .download-full-ep-btn {
-                width: 90%;
-                /* Full width button */
-                margin-top: 32px;
+                width: 100%;
+                /* Full width for easier tapping */
+                margin-top: 0;
             }
 
-            /* Center main page text perfectly */
+            /* Ensure download container is centered/full width on mobile */
+            .tracks-area>div[style*="flex"] {
+                padding-left: 0 !important;
+                justify-content: center !important;
+                margin-top: 32px !important;
+            }
+
             .container {
                 height: 100dvh;
-                /* Use dynamic viewport height */
             }
 
             .message h1 {
                 font-size: clamp(2rem, 10vw, 3.5rem);
-                /* Adjusted scaling */
                 width: 100%;
                 padding: 0 20px;
             }
@@ -1099,11 +1105,11 @@
             }
 
             .inline-support-btn {
-                padding: 6px 12px;
+                padding: 8px 12px;
+                /* Slightly larger targets */
                 font-size: 10px;
             }
 
-            /* Symmetry Upgrades */
             .content-columns {
                 align-items: center;
                 gap: var(--space-24);
@@ -1112,25 +1118,27 @@
 
             .track-list {
                 width: 100%;
-                /* Use nearly full width but with padding from container */
-                padding: 0 12px;
-                box-sizing: border-box;
+                padding: 0;
             }
 
             .track-item {
                 border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-                padding: 12px 0;
+                padding: 0;
                 justify-content: center;
             }
 
             .track-item-content {
                 padding: 0 8px;
-                /* Inner padding */
             }
 
             .track-duration-inline {
                 display: none;
-                /* Cleaner mobile look */
+            }
+
+            .lyrics-container {
+                font-size: 14px;
+                /* Explicit readable size for mobile */
+                margin-top: 24px;
             }
         }
     </style>
