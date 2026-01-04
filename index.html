@@ -1066,15 +1066,13 @@
             }
 
             .music-content {
-                gap: 0;
-                /* No gap between items */
+                gap: 2px;
                 width: 100%;
                 max-width: 100%;
                 flex: 1;
                 display: flex;
                 flex-direction: column;
-                justify-content: flex-start;
-                /* Stack from top, not centered */
+                justify-content: center;
                 align-items: center;
             }
 
@@ -1102,9 +1100,13 @@
                 margin-right: auto;
             }
 
-            .release-header {
+            .release-header h2 {
+                font-size: 14px;
+                margin-bottom: 0;
+            }
+
+            .release-header p {
                 display: none;
-                /* Hide entire header on mobile */
             }
 
             /* Lyrics - Positioned at bottom, between Download button and Footer */
@@ -1129,14 +1131,14 @@
                 word-break: break-word;
             }
 
-            /* Tracks - Directly below artwork */
+            /* Tracks - Pull up closer to artwork */
             .tracks-area {
                 order: 2;
                 width: 85%;
                 max-width: 320px;
                 margin: 0 auto;
-                margin-top: 0;
-                /* No gap above */
+                margin-top: -15px;
+                /* Pull up to reduce gap */
                 flex-grow: 0;
             }
 
