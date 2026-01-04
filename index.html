@@ -1113,32 +1113,34 @@
 
             .lyrics-container {
                 order: 4;
-                position: absolute;
-                bottom: 60px;
-                /* Fixed distance above bottom (footer is ~40px) */
-                left: 0;
-                width: 100%;
-                height: 60px;
-                /* Fixed height to prevent shifting */
+                /* Push to bottom of header/track stack */
+                margin-top: auto;
+                /* Fixed distance from bottom/footer */
+                margin-bottom: 50px;
+
+                /* Fixed height to prevent shifting when text appears */
+                height: 80px;
+                flex-shrink: 0;
+
                 display: flex;
                 flex-direction: column;
-                /* Center text vertically */
                 justify-content: center;
                 align-items: center;
-                pointer-events: none;
-                /* Let clicks pass through if needed */
-                z-index: 10;
+                width: 100%;
             }
 
             .lyrics-container .lyrics-line {
-                font-size: 18px;
-                line-height: 1.2;
+                font-size: 22px;
+                /* Increased by 25% from 18px */
+                line-height: 1.1;
                 text-align: center;
-                max-width: 320px;
+                max-width: 340px;
                 width: 95%;
                 white-space: normal;
                 word-wrap: break-word;
                 overflow-wrap: break-word;
+                /* Ensure text doesn't overflow the fixed container */
+                margin: 0;
             }
 
             /* Tracks - Pull up closer to artwork */
