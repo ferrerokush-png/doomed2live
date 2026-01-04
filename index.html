@@ -1027,139 +1027,134 @@
         /* Responsive tweaks for mobile */
         @media (max-width: 768px) {
             .logo {
-                top: 16px;
-                left: 16px;
-                font-size: 14px;
+                top: 10px;
+                left: 12px;
+                font-size: 12px;
             }
 
             .back-button {
-                top: 50px !important;
-                left: 16px !important;
-                font-size: 11px;
+                top: 38px !important;
+                left: 12px !important;
+                font-size: 10px;
                 opacity: 1 !important;
+                padding: 4px 8px;
             }
 
             .music-view {
-                /* Extreme compacting */
-                padding-top: 80px;
-                padding-bottom: 30px;
-                padding-left: 12px;
-                padding-right: 12px;
+                padding-top: 60px;
+                padding-bottom: 70px;
+                /* Space for fixed footer */
+                padding-left: 8px;
+                padding-right: 8px;
                 justify-content: flex-start;
                 min-height: 100dvh;
                 height: 100dvh;
-                overflow-y: hidden;
+                overflow: hidden;
             }
 
             .music-content {
-                gap: 4px;
+                gap: 2px;
                 width: 100%;
                 max-width: 100%;
                 flex: 1;
                 display: flex;
                 flex-direction: column;
+                justify-content: space-between;
             }
 
-            /* Unwrap the columns container to allow reordering */
             .content-columns {
                 display: contents;
             }
 
-            /* 1. Artwork High */
+            /* 1. Artwork */
             .release-info {
                 order: 1;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                margin-bottom: 4px;
+                margin-bottom: 2px;
             }
 
             .ep-artwork {
-                max-width: 160px;
-                max-height: 20vh;
-                margin-bottom: 4px;
+                max-width: 130px;
+                max-height: 18vh;
+                margin-bottom: 2px;
                 margin-left: auto;
                 margin-right: auto;
             }
 
             .release-header h2 {
-                font-size: 18px;
-                margin-bottom: 2px;
+                font-size: 14px;
+                margin-bottom: 0;
             }
 
             .release-header p {
                 display: none;
             }
 
-            /* 2. Lyrics Middle */
+            /* 2. Lyrics */
             .lyrics-container {
                 order: 2;
-                font-size: 11px;
-                /* Small enough for full line */
-                line-height: 1.2;
-                margin-top: 4px;
-                margin-bottom: 8px;
-                min-height: 2.5em;
-                flex-grow: 1;
+                font-size: 10px;
+                line-height: 1.1;
+                margin: 2px 0;
+                min-height: 1.5em;
+                flex-grow: 0;
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                padding: 0 4px;
             }
 
-            /* 3. Tracks Bottom */
+            /* 3. Tracks */
             .tracks-area {
                 order: 3;
                 width: 100%;
             }
 
-            .tracks-area>div[style*="flex"] {
-                margin-top: 8px !important;
-            }
-
             .track-item-content {
-                padding: 4px 0;
+                padding: 2px 0;
             }
 
             .track-title {
-                font-size: 11px;
-                max-width: 160px;
+                font-size: 9px;
+                max-width: 140px;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
 
-            .download-full-ep-btn {
-                width: 100%;
-                margin-top: 0;
-                padding: 8px;
-                font-size: 10px;
-            }
-
-            /* Center download container */
-            .tracks-area>div[style*="flex"] {
-                padding-left: 0 !important;
-                justify-content: center !important;
-                margin-top: 8px !important;
-            }
-
-            .container {
-                height: 100dvh;
-            }
-
-            .message h1 {
-                font-size: clamp(2rem, 10vw, 3.5rem);
-                width: 100%;
-                padding: 0 20px;
+            .track-item {
+                border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
+                padding: 0;
             }
 
             .track-right {
-                margin-left: 8px;
-                gap: 8px;
+                margin-left: 4px;
+                gap: 4px;
             }
 
             .inline-support-btn {
-                padding: 6px 10px;
+                padding: 4px 6px;
+                font-size: 8px;
+            }
+
+            .play-icon-btn {
+                min-width: 16px;
+                font-size: 12px;
+            }
+
+            .download-full-ep-btn {
+                width: 100%;
+                margin-top: 0;
+                padding: 6px;
                 font-size: 9px;
+            }
+
+            .tracks-area>div[style*="flex"] {
+                padding-left: 0 !important;
+                justify-content: center !important;
+                margin-top: 4px !important;
             }
 
             .track-list {
@@ -1167,48 +1162,55 @@
                 padding: 0;
             }
 
-            .track-item {
-                border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-                padding: 0;
-                justify-content: center;
-            }
-
             .track-duration-inline {
                 display: none;
             }
 
-            /* Footer Optimization */
+            .container {
+                height: 100dvh;
+            }
+
+            .message h1 {
+                font-size: clamp(1.8rem, 9vw, 3rem);
+                width: 100%;
+                padding: 0 16px;
+            }
+
+            /* Fixed Footer */
+            footer {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 6px 8px;
+                background: var(--color-bg);
+                z-index: 1000;
+                border-top: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
             .poem {
                 white-space: normal !important;
-                padding: 0 10px;
-                font-size: 8px;
-                line-height: 1.2;
+                padding: 0 8px;
+                font-size: 9px;
+                /* Larger than socials */
+                line-height: 1.1;
                 margin-bottom: 4px;
             }
 
             .socials {
-                gap: 12px;
+                gap: 10px;
             }
 
             .social-link {
-                font-size: 9px;
-            }
-
-            footer {
-                padding: 8px;
+                font-size: 7px;
+                /* Smaller than charity */
             }
 
             .discreet-player-info {
                 display: none !important;
             }
 
-            /* Fix Play Icon sizing */
-            .play-icon-btn {
-                min-width: 20px;
-                font-size: 14px;
-            }
-
-            /* Global safety for mobile scroll */
+            /* Global scroll lock */
             html,
             body {
                 overflow: hidden;
