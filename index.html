@@ -1041,12 +1041,14 @@
             }
 
             .music-view {
-                padding-top: 60px;
-                padding-bottom: 70px;
-                /* Space for fixed footer */
+                padding-top: 0;
+                /* Centered, so minimal fixed padding */
+                padding-bottom: 60px;
+                /* Space for footer */
                 padding-left: 8px;
                 padding-right: 8px;
-                justify-content: flex-start;
+                justify-content: center;
+                /* Center Vertically */
                 min-height: 100dvh;
                 height: 100dvh;
                 overflow: hidden;
@@ -1059,7 +1061,8 @@
                 flex: 1;
                 display: flex;
                 flex-direction: column;
-                justify-content: space-between;
+                justify-content: center;
+                /* Center Vertically */
             }
 
             .content-columns {
@@ -1073,8 +1076,7 @@
                 flex-direction: column;
                 align-items: center;
                 margin-bottom: 2px;
-                margin-top: -20px;
-                /* Move artwork up */
+                margin-top: 0;
             }
 
             .ep-artwork {
@@ -1094,41 +1096,55 @@
                 display: none;
             }
 
-            /* 2. Lyrics - Centered between Artwork and Songs */
+            /* 2. Lyrics - Centered */
             .lyrics-container {
                 order: 2;
                 font-size: 10px;
                 line-height: 1.1;
                 margin: 4px 0;
                 min-height: 1.5em;
-                flex-grow: 1;
-                /* Allow it to take space and center itself */
+                flex-grow: 0;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 padding: 0 4px;
             }
 
-            /* 3. Tracks - Narrower 65% */
+            /* 3. Tracks - Significantly Narrower (45%) */
             .tracks-area {
                 order: 3;
-                width: 65%;
-                /* Requested 65% */
+                width: 45%;
                 margin: 0 auto;
-                flex-grow: 1;
-                /* Allow to take available space */
+                flex-grow: 0;
             }
 
             .track-item-content {
                 padding: 0;
+                justify-content: center;
+                /* Center Content */
+                position: relative;
+            }
+
+            .track-left {
+                justify-content: center;
+                /* Center Play + Title */
+                width: 100%;
+                gap: 8px;
+                /* Slight gap between play and text */
+            }
+
+            /* HIDE small download buttons */
+            .track-right {
+                display: none !important;
             }
 
             .track-title {
                 font-size: 9px;
-                max-width: 120px;
+                max-width: 100px;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
+                text-align: center;
             }
 
             .track-item {
@@ -1138,24 +1154,19 @@
                 min-height: 22px;
             }
 
-            .track-right {
-                margin-left: 4px;
-                gap: 4px;
-            }
-
             .inline-support-btn {
-                padding: 4px 6px;
-                font-size: 8px;
+                display: none;
             }
 
             .play-icon-btn {
                 min-width: 16px;
                 font-size: 12px;
+                margin: 0;
             }
 
             .download-full-ep-btn {
                 width: 100%;
-                /* Matches tracks-area width (which is 65% of screen) */
+                /* Matches 45% tracks-area */
                 margin-top: 0;
                 padding: 6px;
                 font-size: 9px;
@@ -1164,10 +1175,8 @@
             .tracks-area>div[style*="flex"] {
                 padding-left: 0 !important;
                 justify-content: center !important;
-                /* Add padding so it's not right underneath */
-                margin-top: 16px !important;
-                width: 65%;
-                /* Explicitly set container width to match tracks */
+                margin-top: 12px !important;
+                width: 45%;
                 margin-left: auto;
                 margin-right: auto;
             }
@@ -1196,8 +1205,10 @@
                 padding: 0 16px;
             }
 
-            /* Fixed Footer - High Z-index */
+            /* Footer - Hidden by default, Visible on Music Page */
             footer {
+                display: none;
+                /* Hide on Home */
                 position: fixed;
                 bottom: 0;
                 left: 0;
@@ -1206,11 +1217,13 @@
                 padding: 8px 12px;
                 background: var(--color-bg);
                 z-index: 9999;
-                /* Max Z-index to ensure visibility */
                 border-top: 1px solid rgba(255, 255, 255, 0.05);
                 box-sizing: border-box;
+            }
+
+            /* Show footer when music is active */
+            body.music-active footer {
                 display: block !important;
-                /* Force display */
             }
 
             .poem {
