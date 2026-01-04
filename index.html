@@ -1842,13 +1842,18 @@
             <div class="footer-progress-bar" id="footerProgressBar"></div>
         </div>
         <div class="poem">
-            <a href="https://www.samaritans.org/" target="_blank" rel="noopener noreferrer">SAMARITANS</a> <span
-                style="color: var(--color-accent)">116 123</span> • <a href="https://www.thecalmzone.net/"
-                target="_blank" rel="noopener noreferrer">CALM</a> <span style="color: var(--color-accent)">0800 58 58
-                58</span> • <a href="https://www.papyrus-uk.org/" target="_blank" rel="noopener noreferrer">PAPYRUS</a>
-            <span style="color: var(--color-accent)">0800 068 4141</span> • <a
-                href="https://www.crisis.org.uk/get-help/" target="_blank" rel="noopener noreferrer">CRISIS</a> <span
-                style="color: var(--color-accent)">85258</span>
+            <span>
+                <a href="https://www.samaritans.org/" target="_blank" rel="noopener noreferrer">SAMARITANS</a> <span
+                    style="color: var(--color-accent)">116 123</span> •
+                <a href="https://www.thecalmzone.net/" target="_blank" rel="noopener noreferrer">CALM</a> <span
+                    style="color: var(--color-accent)">0800 58 58 58</span> •
+                <a href="https://www.papyrus-uk.org/" target="_blank" rel="noopener noreferrer">PAPYRUS</a> <span
+                    style="color: var(--color-accent)">0800 068 4141</span> •
+                <a href="https://www.crisis.org.uk/get-help/" target="_blank" rel="noopener noreferrer">CRISIS</a> <span
+                    style="color: var(--color-accent)">85258</span> •
+                <a href="https://www.helpmusicians.org.uk/" target="_blank" rel="noopener noreferrer">HELP MUSICIANS
+                    UK</a> <span style="color: var(--color-accent)">0808 802 8008</span>
+            </span>
         </div>
         <div class="socials">
             <a href="https://tiktok.com/@rocheofficiel" class="social-link">TikTok</a>
@@ -1871,10 +1876,10 @@
                 Or take the tune for naught, if fortune hasn't favored ye this week.
             </p>
             <div style="display: flex; flex-direction: column; gap: 16px;">
-                <button class="submit-btn" onclick="openPaymentModal()">Toss a Penny</button>
+                <button class="submit-btn" onclick="openPaymentModal()">💰 Toss a Penny</button>
                 <button class="submit-btn"
                     style="background: transparent; border: 1px solid var(--color-text-secondary); color: var(--color-text-secondary);"
-                    onclick="openContactModal()">JUST FUCKING DOWNLOAD!</button>
+                    onclick="openContactModal()">⬇️ JUST FUCKING DOWNLOAD!</button>
             </div>
         </div>
     </div>
@@ -2648,6 +2653,27 @@
             if (footerProgressBar) footerProgressBar.style.width = percent + '%';
 
             syncLyrics();
+        });
+
+        // Dynamic Duration Fix: Update track list duration when file loads
+        audioPlayer.addEventListener('loadedmetadata', () => {
+            if (currentTrack) {
+                const totalMinutes = Math.floor(audioPlayer.duration / 60);
+                const totalSeconds = Math.floor(audioPlayer.duration % 60);
+                const durationStr = `${totalMinutes}:${totalSeconds.toString().padStart(2, '0')}`;
+
+                // Update the specific track item in the DOM if visible
+                // We look for titles that match currentTrack.title
+                // This assumes titles are unique enough for this purpose
+                const trackItems = document.querySelectorAll('.track-item');
+                trackItems.forEach(item => {
+                    const titleEl = item.querySelector('.track-title');
+                    if (titleEl && titleEl.textContent === currentTrack.title) {
+                        const timeEl = item.querySelector('.track-time');
+                        if (timeEl) timeEl.textContent = durationStr;
+                    }
+                });
+            }
         });
 
         audioPlayer.addEventListener('ended', () => {
