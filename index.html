@@ -1026,6 +1026,8 @@
         /* Responsive tweaks for small screens */
         /* Responsive tweaks for mobile */
         @media (max-width: 768px) {
+
+            /* ... Logo/Back Button ... */
             .logo {
                 top: 10px;
                 left: 12px;
@@ -1040,18 +1042,20 @@
                 padding: 4px 8px;
             }
 
+            /* Music View - Centered Layout with Footer Space */
             .music-view {
                 padding-top: 0;
-                /* Centered, so minimal fixed padding */
-                padding-bottom: 60px;
+                padding-bottom: 70px;
                 /* Space for footer */
-                padding-left: 8px;
-                padding-right: 8px;
+                padding-left: 16px;
+                padding-right: 16px;
                 justify-content: center;
                 /* Center Vertically */
                 min-height: 100dvh;
                 height: 100dvh;
                 overflow: hidden;
+                /* Prevent body scroll */
+                display: flex;
             }
 
             .music-content {
@@ -1059,29 +1063,34 @@
                 width: 100%;
                 max-width: 100%;
                 flex: 1;
+                /* Take available space */
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
-                /* Center Vertically */
+                /* Vertically center content */
+                align-items: center;
+                /* Horizontally center content */
             }
 
             .content-columns {
                 display: contents;
             }
 
-            /* 1. Artwork - Shifted up */
+            /* 1. Artwork - Shifted up slightly */
             .release-info {
                 order: 1;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
+                margin-top: -10px;
+                /* Subtle lift */
                 margin-bottom: 2px;
-                margin-top: 0;
             }
 
             .ep-artwork {
-                max-width: 130px;
-                max-height: 18vh;
+                max-width: 140px;
+                /* Slightly larger for better visibility */
+                max-height: 20vh;
                 margin-bottom: 4px;
                 margin-left: auto;
                 margin-right: auto;
@@ -1096,11 +1105,12 @@
                 display: none;
             }
 
-            /* 2. Lyrics - Centered */
+            /* 2. Lyrics - Centered Focal Point */
             .lyrics-container {
                 order: 2;
-                font-size: 10px;
-                line-height: 1.1;
+                font-size: 11px;
+                /* Slightly larger text */
+                line-height: 1.2;
                 margin: 4px 0;
                 min-height: 1.5em;
                 flex-grow: 0;
@@ -1108,12 +1118,17 @@
                 align-items: center;
                 justify-content: center;
                 padding: 0 4px;
+                text-align: center;
+                width: 100%;
             }
 
-            /* 3. Tracks - Significantly Narrower (45%) */
+            /* 3. Tracks - WIDER for Industry Standard (85%) */
             .tracks-area {
                 order: 3;
-                width: 45%;
+                width: 85%;
+                /* Standard mobile width */
+                max-width: 320px;
+                /* Cap width */
                 margin: 0 auto;
                 flex-grow: 0;
             }
@@ -1121,26 +1136,25 @@
             .track-item-content {
                 padding: 0;
                 justify-content: center;
-                /* Center Content */
                 position: relative;
             }
 
             .track-left {
                 justify-content: center;
-                /* Center Play + Title */
                 width: 100%;
                 gap: 8px;
-                /* Slight gap between play and text */
             }
 
-            /* HIDE small download buttons */
+            /* Hide small download buttons */
             .track-right {
                 display: none !important;
             }
 
             .track-title {
-                font-size: 9px;
-                max-width: 100px;
+                font-size: 11px;
+                /* Readable size */
+                max-width: 160px;
+                /* Allow more text */
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -1151,7 +1165,11 @@
                 border-bottom: none !important;
                 padding: 0;
                 margin: 0;
-                min-height: 22px;
+                min-height: 28px;
+                /* Slightly taller touch target */
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             .inline-support-btn {
@@ -1164,24 +1182,25 @@
                 margin: 0;
             }
 
+            /* Download Button matches Track width (85%) */
             .download-full-ep-btn {
                 width: 100%;
-                /* Matches 45% tracks-area */
                 margin-top: 0;
-                padding: 6px;
-                font-size: 9px;
+                padding: 10px;
+                /* Better touch target */
+                font-size: 10px;
             }
 
             .tracks-area>div[style*="flex"] {
                 padding-left: 0 !important;
                 justify-content: center !important;
-                margin-top: 12px !important;
-                width: 45%;
+                margin-top: 16px !important;
+                width: 85%;
+                max-width: 320px;
                 margin-left: auto;
                 margin-right: auto;
             }
 
-            /* Explicitly set button width to 100% of this 65% container */
             .tracks-area>div[style*="flex"]>button {
                 width: 100% !important;
             }
@@ -1205,10 +1224,9 @@
                 padding: 0 16px;
             }
 
-            /* Footer - Hidden by default, Visible on Music Page */
+            /* Footer: Hidden on Home, Visible on Music Page */
             footer {
                 display: none;
-                /* Hide on Home */
                 position: fixed;
                 bottom: 0;
                 left: 0;
@@ -1216,12 +1234,12 @@
                 width: 100%;
                 padding: 8px 12px;
                 background: var(--color-bg);
-                z-index: 9999;
+                z-index: 2147483647;
+                /* MAX INT Z-Index */
                 border-top: 1px solid rgba(255, 255, 255, 0.05);
                 box-sizing: border-box;
             }
 
-            /* Show footer when music is active */
             body.music-active footer {
                 display: block !important;
             }
@@ -1230,7 +1248,6 @@
                 white-space: normal !important;
                 padding: 0 8px;
                 font-size: 9px;
-                /* Larger than socials */
                 line-height: 1.1;
                 margin-bottom: 4px;
             }
@@ -1241,7 +1258,6 @@
 
             .social-link {
                 font-size: 7px;
-                /* Smaller than charity */
             }
 
             .discreet-player-info {
