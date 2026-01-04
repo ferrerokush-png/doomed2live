@@ -2481,6 +2481,14 @@
             document.querySelectorAll('.track-item').forEach(item => item.classList.remove('active'));
             trackEl.classList.add('active');
 
+            // RESET FOCUS STATE
+            document.getElementById('musicView').classList.remove('lyrics-focused');
+            const lyricEl = document.getElementById('currentLyricLine');
+            if (lyricEl) {
+                lyricEl.classList.remove('visible');
+                lyricEl.textContent = '';
+            }
+
             currentTrack = track;
             loadLyrics(track.title);
 
@@ -2710,6 +2718,11 @@
             if (footerProgressBar) footerProgressBar.style.width = percent + '%';
 
             syncLyrics();
+        });
+
+        // Ensure focus mode is cleared on pause
+        audioPlayer.addEventListener('pause', () => {
+            document.getElementById('musicView').classList.remove('lyrics-focused');
         });
 
         // Dynamic Duration Fix: Update track list duration when file loads
