@@ -1770,7 +1770,124 @@
 
         .music-view.lyrics-focused .lyrics-container {
             z-index: 10;
-            /* Ensure lyrics sit on top if needed */
+        }
+
+        /* Doors Entrance Styles */
+        .doors-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            width: 100%;
+            max-width: 600px;
+            padding: 24px;
+            z-index: 2;
+        }
+
+        @media (min-width: 768px) {
+            .doors-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 24px;
+            }
+
+            .door-card:nth-last-child(1):nth-child(odd) {
+                grid-column: span 2;
+                max-width: 50%;
+                /* Nice centering touch */
+                margin: 0 auto;
+                width: 100%;
+            }
+        }
+
+        .door-card {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--color-text);
+            padding: 20px;
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            text-align: center;
+            opacity: 0;
+            animation: fadeInDoors 1s ease forwards;
+        }
+
+        /* Stagger animations */
+        .door-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .door-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .door-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .door-card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .door-card:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        @keyframes fadeInDoors {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .door-card:hover,
+        .door-card:focus-visible {
+            border-color: var(--color-accent);
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.05);
+            outline: none;
+        }
+
+        .void-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .void-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .void-text {
+            font-family: 'Overpass Mono', monospace;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            color: var(--color-text);
+            animation: pulseText 2s infinite;
+        }
+
+        @keyframes pulseText {
+            0% {
+                opacity: 0.7;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.7;
+            }
         }
     </style>
 </head>
@@ -1779,9 +1896,18 @@
     <div class="logo">ROCHÈ</div>
 
     <div class="container" id="homeView">
-        <div class="message" onclick="goToMusic()">
-            <h1 data-text="Welcome to the void">Welcome to the void</h1>
+        <div class="doors-container">
+            <button class="door-card" onclick="enterVoid(this)">The system is rigged</button>
+            <button class="door-card" onclick="enterVoid(this)">I feel powerless</button>
+            <button class="door-card" onclick="enterVoid(this)">I don't believe in love</button>
+            <button class="door-card" onclick="enterVoid(this)">I want to disappear</button>
+            <button class="door-card" onclick="enterVoid(this)">There are no happy endings</button>
         </div>
+    </div>
+
+    <!-- Interstitial Overlay -->
+    <div id="voidOverlay" class="void-overlay" aria-hidden="true">
+        <div class="void-text">You are not alone</div>
     </div>
 
     <div class="music-view" id="musicView">
@@ -2157,32 +2283,58 @@
         let currentLyricIndex = -1;
         let lyricTimeout = null;
 
-        function goToMusic() {
-            const message = document.querySelector('.message');
-            message.classList.add('clicked');
+        function enterVoid(btn) {
+            const overlay = document.getElementById('voidOverlay');
 
-            previousView = 'home';
+            // Show Overlay
+            overlay.classList.add('active');
+            overlay.setAttribute('aria-hidden', 'false');
+
+            // Determine Delay (Respect Reduced Motion)
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const delay = prefersReducedMotion ? 0 : 900;
 
             setTimeout(() => {
-                document.body.classList.add('music-active');
-                document.getElementById('homeView').style.display = 'none';
-                document.getElementById('homeView').style.display = 'none';
-                const archiveView = document.getElementById('archiveView');
-                if (archiveView) archiveView.style.display = 'none'; // Ensure archive is hidden
+                transitionToMusic();
 
-                const musicView = document.getElementById('musicView');
-                musicView.style.display = 'flex';
-
-                // Trigger reflow
-                void musicView.offsetWidth;
-
-                musicView.classList.add('visible');
-                loadEP('doomed'); // Default load
-
+                // Hide Overlay after transition starts
                 setTimeout(() => {
-                    musicView.classList.add('organized');
-                }, 100);
-            }, 1500);
+                    overlay.classList.remove('active');
+                    overlay.setAttribute('aria-hidden', 'true');
+                }, 500);
+
+            }, delay);
+        }
+
+        function transitionToMusic() {
+            previousView = 'home';
+            document.body.classList.add('music-active');
+
+            const homeView = document.getElementById('homeView');
+            if (homeView) homeView.style.display = 'none';
+
+            const archiveView = document.getElementById('archiveView');
+            if (archiveView) archiveView.style.display = 'none';
+
+            const musicView = document.getElementById('musicView');
+            musicView.style.display = 'flex';
+            void musicView.offsetWidth; // Reflow
+            musicView.classList.add('visible');
+
+            // Load content if not loaded
+            if (!currentTrack) {
+                loadEP('doomed');
+            }
+
+            setTimeout(() => {
+                musicView.classList.add('organized');
+                // Scroll to EP content anchor if needed, though we hide homeView so it's top
+            }, 100);
+        }
+
+        // Deprecated legacy function kept for safety if linked elsewhere (modified to use new flow)
+        function goToMusic() {
+            enterVoid(null);
         }
 
         function goToArchive() {
