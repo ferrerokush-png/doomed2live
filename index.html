@@ -1027,73 +1027,102 @@
         /* Responsive tweaks for mobile */
         @media (max-width: 768px) {
             .logo {
-                top: 20px;
-                left: 20px;
+                top: 16px;
+                left: 16px;
                 font-size: 14px;
             }
 
             .back-button {
-                top: 60px !important;
-                left: 20px !important;
+                top: 50px !important;
+                left: 16px !important;
                 font-size: 11px;
                 opacity: 1 !important;
             }
 
             .music-view {
-                /* Reduce top/bottom padding to fit everything on one screen */
+                /* Extreme compacting */
                 padding-top: 80px;
-                padding-bottom: 60px;
-                /* Reduced since footer is smaller */
-                padding-left: 16px;
-                padding-right: 16px;
+                padding-bottom: 30px;
+                padding-left: 12px;
+                padding-right: 12px;
                 justify-content: flex-start;
-                /* Still flex-start, but content will be compact */
                 min-height: 100dvh;
-                /* Use dynamic height */
+                height: 100dvh;
+                overflow-y: hidden;
             }
 
             .music-content {
-                gap: 16px;
-                /* Tighter gap */
+                gap: 4px;
                 width: 100%;
                 max-width: 100%;
                 flex: 1;
-                /* Allow content to grow/shrink */
                 display: flex;
                 flex-direction: column;
             }
 
+            /* Unwrap the columns container to allow reordering */
+            .content-columns {
+                display: contents;
+            }
+
+            /* 1. Artwork High */
+            .release-info {
+                order: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin-bottom: 4px;
+            }
+
             .ep-artwork {
-                /* Reduce size by 20% from 280px -> ~220px */
-                max-width: 220px;
-                /* Also limit by screen height percentage to avoid pushing content off */
-                max-height: 25vh;
-                margin-bottom: 16px;
+                max-width: 160px;
+                max-height: 20vh;
+                margin-bottom: 4px;
                 margin-left: auto;
                 margin-right: auto;
             }
 
             .release-header h2 {
-                font-size: 20px;
-                /* Smaller title */
-                margin-bottom: 8px;
+                font-size: 18px;
+                margin-bottom: 2px;
             }
 
             .release-header p {
                 display: none;
-                /* Hide 'EP • 2025' on mobile to save space if needed, or keep small */
+            }
+
+            /* 2. Lyrics Middle */
+            .lyrics-container {
+                order: 2;
+                font-size: 11px;
+                /* Small enough for full line */
+                line-height: 1.2;
+                margin-top: 4px;
+                margin-bottom: 8px;
+                min-height: 2.5em;
+                flex-grow: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            /* 3. Tracks Bottom */
+            .tracks-area {
+                order: 3;
+                width: 100%;
+            }
+
+            .tracks-area>div[style*="flex"] {
+                margin-top: 8px !important;
             }
 
             .track-item-content {
-                /* Reduced padding for compact list */
-                padding: 8px 0;
+                padding: 4px 0;
             }
 
             .track-title {
                 font-size: 11px;
-                /* Reduced from 14px */
-                max-width: 150px;
-                /* Force truncation for long titles like 'Why Do Fools...' */
+                max-width: 160px;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -1102,8 +1131,7 @@
             .download-full-ep-btn {
                 width: 100%;
                 margin-top: 0;
-                padding: 10px;
-                /* Slightly more compact */
+                padding: 8px;
                 font-size: 10px;
             }
 
@@ -1111,8 +1139,7 @@
             .tracks-area>div[style*="flex"] {
                 padding-left: 0 !important;
                 justify-content: center !important;
-                margin-top: 16px !important;
-                /* Tighter spacing */
+                margin-top: 8px !important;
             }
 
             .container {
@@ -1132,16 +1159,7 @@
 
             .inline-support-btn {
                 padding: 6px 10px;
-                /* Smaller button */
                 font-size: 9px;
-            }
-
-            .content-columns {
-                align-items: center;
-                gap: 16px;
-                width: 100%;
-                flex: 1;
-                /* Allow columns to take available space */
             }
 
             .track-list {
@@ -1159,32 +1177,17 @@
                 display: none;
             }
 
-            /* Promote Lyrics */
-            .lyrics-container {
-                font-size: 16px;
-                /* Larger focal point */
-                margin-top: 16px;
-                /* Tighter spacing */
-                min-height: 3em;
-                /* Reserve space */
-                flex-grow: 2;
-                /* Push to fill remaining space */
-                display: flex;
-                align-items: center;
-            }
-
             /* Footer Optimization */
             .poem {
                 white-space: normal !important;
                 padding: 0 10px;
-                /* Reduce text size by 35% (13px * 0.65 ~= 8.5px) */
-                font-size: 9px;
+                font-size: 8px;
                 line-height: 1.2;
-                margin-bottom: 8px;
+                margin-bottom: 4px;
             }
 
             .socials {
-                gap: 16px;
+                gap: 12px;
             }
 
             .social-link {
@@ -1192,20 +1195,26 @@
             }
 
             footer {
-                padding: 16px;
-                /* Reduce footer padding */
+                padding: 8px;
             }
 
-            /* Hide Mini Player on Mobile */
             .discreet-player-info {
                 display: none !important;
+            }
+
+            /* Fix Play Icon sizing */
+            .play-icon-btn {
+                min-width: 20px;
+                font-size: 14px;
             }
 
             /* Global safety for mobile scroll */
             html,
             body {
-                overflow-x: hidden;
+                overflow: hidden;
                 width: 100%;
+                height: 100%;
+                position: fixed;
             }
         }
     </style>
@@ -1664,11 +1673,11 @@
                 </div>
             </div>
         </div>
-
-        <!-- Lyrics Container -->
-        <div id="lyricsContainer" class="lyrics-container">
-            <div id="currentLyricLine" class="lyrics-line"></div>
-        </div>
+    </div>
+    <!-- Lyrics Container Moved Inside music-content for Flex Ordering -->
+    <div id="lyricsContainer" class="lyrics-container">
+        <div id="currentLyricLine" class="lyrics-line"></div>
+    </div>
     </div>
 
     <!-- Older Music Section (Outside the 2-column layout) -->
