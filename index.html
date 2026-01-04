@@ -2731,14 +2731,27 @@
                 parseLyrics(text);
             } catch (e) {
                 console.log('Lyrics not found for:', title, e);
-                // Fallback: Try exact title
+                // Fallback 1: Try exact title
                 try {
                     const res2 = await fetch('lyrics/' + title + '.lrc');
                     if (res2.ok) {
                         const text2 = await res2.text();
                         parseLyrics(text2);
+                        return; // Found it
                     }
-                } catch (e2) { }
+                    throw new Error('Not found exact');
+                } catch (e2) {
+                    // Fallback 2: Try slugified (lowercase, no spaces)
+                    // "Doomed to Live" -> "doomedtolive.lrc"
+                    try {
+                        const slug = title.replace(/\s+/g, '').toLowerCase() + '.lrc';
+                        const res3 = await fetch('lyrics/' + slug);
+                        if (res3.ok) {
+                            const text3 = await res3.text();
+                            parseLyrics(text3);
+                        }
+                    } catch (e3) { }
+                }
             }
         }
 
