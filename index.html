@@ -2146,6 +2146,7 @@
         let currentTrack = null;
         let selectedAmount = 0;
         let isPlaying = false;
+        let isSwitchingTrack = false;
         let isFullEPDownload = false;
         let previousView = 'home'; // Track where we came from
         let placeholderAudio = null; // Cache for placeholder audio
@@ -2477,12 +2478,13 @@
             }
 
             // New Track Selection
+            isSwitchingTrack = true; // Prevent pause handler from clearing focus
+
             // Reset previous active class
             document.querySelectorAll('.track-item').forEach(item => item.classList.remove('active'));
             trackEl.classList.add('active');
 
-            // RESET FOCUS STATE
-            document.getElementById('musicView').classList.remove('lyrics-focused');
+            // Reset text but KEEP focus mode (it prevents flash)
             const lyricEl = document.getElementById('currentLyricLine');
             if (lyricEl) {
                 lyricEl.classList.remove('visible');
@@ -2520,9 +2522,13 @@
             // Auto play
             audioPlayer.play().then(() => {
                 isPlaying = true;
+                isSwitchingTrack = false; // Reset flag after play starts
                 updateTrackIcons();
                 updateMiniPlayer();
-            }).catch(e => console.log('Autoplay prevented', e));
+            }).catch(e => {
+                console.log('Autoplay prevented', e);
+                isSwitchingTrack = false;
+            });
         }
 
         function updateTrackIcons() {
@@ -2720,9 +2726,11 @@
             syncLyrics();
         });
 
-        // Ensure focus mode is cleared on pause
+        // Ensure focus mode is cleared on pause (unless switching tracks)
         audioPlayer.addEventListener('pause', () => {
-            document.getElementById('musicView').classList.remove('lyrics-focused');
+            if (!isSwitchingTrack) {
+                document.getElementById('musicView').classList.remove('lyrics-focused');
+            }
         });
 
         // Dynamic Duration Fix: Update track list duration when file loads
