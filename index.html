@@ -1116,7 +1116,8 @@
                 margin: 0;
                 padding: 0;
                 /* Use margin to push up from bottom content boundary */
-                margin-bottom: 90px;
+                margin-bottom: 100px;
+                /* Moved up slightly from 90px */
                 flex-grow: 1;
                 display: flex;
                 flex-direction: column;
@@ -1126,12 +1127,14 @@
             }
 
             .lyrics-container .lyrics-line {
-                font-size: 18px;
-                /* Increased by 25% from 14px */
+                font-size: 16px;
+                /* Reduced from 18px to prevent 3 lines */
                 line-height: 1.3;
                 text-align: center;
-                max-width: 300px;
-                width: 90%;
+                max-width: 100%;
+                /* Allow full width of container */
+                width: 95%;
+                /* Use almost full screen width */
                 white-space: normal;
                 word-wrap: break-word;
                 overflow-wrap: break-word;
