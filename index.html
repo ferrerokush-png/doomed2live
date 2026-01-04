@@ -1113,25 +1113,28 @@
 
             .lyrics-container {
                 order: 4;
-                margin: 0;
-                padding: 0;
-                /* Align to bottom to ensure distance from footer, then push up */
-                justify-content: flex-end;
-                padding-bottom: 110px;
-                flex-grow: 1;
+                position: absolute;
+                bottom: 60px;
+                /* Fixed distance above bottom (footer is ~40px) */
+                left: 0;
+                width: 100%;
+                height: 60px;
+                /* Fixed height to prevent shifting */
                 display: flex;
                 flex-direction: column;
+                /* Center text vertically */
+                justify-content: center;
                 align-items: center;
-                width: 100%;
+                pointer-events: none;
+                /* Let clicks pass through if needed */
+                z-index: 10;
             }
 
             .lyrics-container .lyrics-line {
                 font-size: 18px;
-                /* Increased by 25% from 14px */
                 line-height: 1.2;
                 text-align: center;
                 max-width: 320px;
-                /* Allow wider text before wrap */
                 width: 95%;
                 white-space: normal;
                 word-wrap: break-word;
