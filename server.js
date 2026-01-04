@@ -2,6 +2,7 @@
 // Run this with: node server.js (requires: npm install express stripe cors dotenv)
 
 const express = require('express');
+require('dotenv').config();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY); // Get from Stripe Dashboard
 const cors = require('cors');
 const app = express();

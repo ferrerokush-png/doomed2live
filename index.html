@@ -1733,6 +1733,26 @@
             background: var(--color-accent);
             transform: scale(1.2);
         }
+
+        .toast {
+            background: var(--color-bg);
+            border: 1px solid var(--color-accent);
+            color: var(--color-text);
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-family: 'Space Mono', monospace;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            min-width: 250px;
+            text-align: center;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 
@@ -1754,7 +1774,7 @@
                 <div class="release-info">
                     <div class="release-header">
                         <div class="ep-artwork">
-                            <img src="doomedtolivecoverart.png" alt="Doomed to Live EP Cover">
+                            <img src="doomedtolivecoverart.webp" alt="Doomed to Live EP Cover">
                         </div>
                         <!-- Removed EP text -->
                     </div>
@@ -1948,13 +1968,38 @@
     </div>
 
     <script src="https://js.stripe.com/v3/"></script>
+    <div id="toast-container"
+        style="position: fixed; bottom: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; pointer-events: none;">
+    </div>
     <script>
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            if (!container) return; // Safety
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            container.appendChild(toast);
+
+            // Trigger animation
+            requestAnimationFrame(() => {
+                toast.classList.add('show');
+            });
+
+            // Remove after 3s
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) toast.parentNode.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
         const musicData = {
             doomed: {
                 title: 'Doomed to Live',
                 type: 'EP',
                 year: '2025',
-                cover: 'doomedtolivecoverart.png',
+                cover: 'doomedtolivecoverart.webp',
                 tracks: [
                     {
                         title: 'Doomed to Live',
@@ -2253,7 +2298,7 @@
             if (data.cover) {
                 artworkImg.src = data.cover;
             } else {
-                artworkImg.src = 'doomedtolivecoverart.png'; // Fallback
+                artworkImg.src = 'doomedtolivecoverart.webp'; // Fallback
             }
 
             const trackList = document.getElementById('trackList');
@@ -2356,9 +2401,9 @@
                 el.innerHTML = `
                     <div class="archive-item" onclick="viewRelease('${key}')">
                         <div class="archive-thumb">
-                            <img src="${item.cover || 'doomedtolivecoverart.png'}" 
+                            <img src="${item.cover || 'doomedtolivecoverart.webp'}" 
                                  alt="${item.title}" 
-                                 onerror="this.src='doomedtolivecoverart.png'">
+                                 onerror="this.src='doomedtolivecoverart.webp'">
                         </div>
                         <div class="archive-info">
                             <div class="archive-title">${item.title}</div>
@@ -2599,19 +2644,12 @@
             if (playBtn) playBtn.textContent = isPlaying ? '⏸' : '▶';
         }
 
-        function downloadTrack(event) {
-            if (event) event.stopPropagation();
-            if (!currentTrack) return;
-            isFullEPDownload = false;
-            document.getElementById('donationModal').classList.add('active');
-        }
+
 
         function downloadFullEP() {
             isFullEPDownload = true;
-            // Set a dummy "current track" for the modal title or logic if needed, 
-            // or modify modal logic to handle full EP text
-            document.querySelector('#donationModal h3').textContent = "Support Full EP";
-            document.getElementById('donationModal').classList.add('active');
+            document.querySelector('#sympathyModal h3').textContent = "1 Second Mate!";
+            document.getElementById('sympathyModal').classList.add('active');
         }
 
         function seek(event) {
@@ -2701,20 +2739,7 @@
         // Call this on init
         setupMiniScrubbing();
 
-        function togglePlay() {
-            if (!currentTrack) return;
-            const audioPlayer = document.getElementById('audioPlayer');
 
-            if (isPlaying) {
-                audioPlayer.pause();
-                isPlaying = false;
-            } else {
-                audioPlayer.play();
-                isPlaying = true;
-            }
-            updateTrackIcons();
-            updateMiniPlayer();
-        }
 
         // Initialize Stripe
         let stripe;
@@ -2832,7 +2857,7 @@
             const downloadUrl = isFullEPDownload ? musicData.doomed.fullEpZip : currentTrack.wavUrl;
 
             if (isNaN(amount) || amount < minAmount) {
-                alert(`Please enter a valid amount (Minimum £${minAmount})`);
+                showToast(`Please enter a valid amount (Minimum £${minAmount})`);
                 return;
             }
 
@@ -2860,7 +2885,7 @@
 
                 if (error) {
                     console.error('API Error:', error);
-                    alert('Error starting checkout: ' + error);
+                    showToast('Error starting checkout: ' + error);
                     closeModal('checkoutModal');
                     return;
                 }
@@ -2875,7 +2900,7 @@
 
             } catch (err) {
                 console.error('Checkout error:', err);
-                alert('Could not initiate checkout. Check console.');
+                showToast('Could not initiate checkout. Check console.');
                 closeModal('checkoutModal');
             }
         }
@@ -2937,7 +2962,7 @@
             const itemTitle = isFullEPDownload ? "Doomed to Live (Full EP)" : currentTrack.title;
             const downloadUrl = isFullEPDownload ? musicData.doomed.fullEpZip : currentTrack.mp3Url;
 
-            alert(`Thanks ${name}! Your details have been sent to the list.\n\nDownloading ${itemTitle}...`);
+            showToast(`Thanks ${name}! Your details have been sent to the list.\n\nDownloading ${itemTitle}...`);
 
             // Trigger download
             downloadFile(downloadUrl, itemTitle);
@@ -3083,13 +3108,7 @@
             document.body.removeChild(a);
         }
 
-        window.addEventListener('click', (e) => {
-            const modal = document.getElementById('donationModal');
-            if (e.target === modal) {
-                // closeDonation(); // Legacy function, ignoring for now or should call closeModal?
-                // The new modals have their own listeners usually or use the generic closeModal
-            }
-        });
+
 
         // Check for completed checkout session on page load
         window.addEventListener('DOMContentLoaded', async () => {
@@ -3105,7 +3124,7 @@
                     if (status === 'complete') {
                         // Clean up URL
                         window.history.replaceState({}, document.title, window.location.pathname);
-                        alert(`Payment successful! Welcome to the club, ${customer_email || 'friend'}.`);
+                        showToast(`Payment successful! Welcome to the club, ${customer_email || 'friend'}.`);
                     }
                 } catch (error) {
                     console.error('Error checking session status:', error);
