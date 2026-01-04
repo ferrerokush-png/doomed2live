@@ -1034,50 +1034,83 @@
                 font-size: 12px;
             }
 
-            /* 1. Artwork - Increased Size (120%) & Shifted Down */
+            .back-button {
+                top: 38px !important;
+                left: 12px !important;
+                font-size: 10px;
+                opacity: 1 !important;
+                padding: 4px 8px;
+            }
+
+            /* Music View - Centered Layout with Header Clearance */
+            .music-view {
+                padding-top: 50px;
+                /* Push content down from fixed header */
+                padding-bottom: 70px;
+                /* Space for footer */
+                padding-left: 16px;
+                padding-right: 16px;
+                justify-content: center;
+                /* Center Vertically */
+                min-height: 100dvh;
+                height: 100dvh;
+                overflow: hidden;
+                /* Prevent body scroll */
+                display: flex;
+            }
+
+            .music-content {
+                gap: 2px;
+                width: 100%;
+                max-width: 100%;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .content-columns {
+                display: contents;
+            }
+
+            /* 1. Artwork - Shifted down more & larger */
             .release-info {
                 order: 1;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                margin-top: 50px;
-                /* +25px from previous 25px */
+                margin-top: 25px;
+                /* Increased top margin by 15px */
                 margin-bottom: 2px;
             }
 
             .ep-artwork {
-                max-width: 250px;
-                /* 120% of previous ~200px visual target or substantial increase */
-                /* Assuming current visual was small (~154px), 250px is a major increase while fitting mobile */
-                max-height: 35vh;
+                max-width: 154px;
+                /* Increased by 10% (140 * 1.1) */
+                max-height: 22vh;
                 margin-bottom: 4px;
                 margin-left: auto;
                 margin-right: auto;
             }
 
-            /* 2. Download Button Reduced 20% */
-            .download-full-ep-btn {
-                width: 56% !important;
-                /* 80% of previous 70% is ~56% */
-                margin: 0 auto;
-                padding: 10px;
-                font-size: 10px;
-                opacity: 0.9;
-                display: block;
+            .release-header h2 {
+                font-size: 14px;
+                margin-bottom: 0;
             }
 
-            .tracks-area>div[style*="flex"]>button {
-                width: 56% !important;
+            .release-header p {
+                display: none;
             }
 
-            /* 5. Lyrics - Move up & Line Limit */
+            /* 2. Lyrics - Centered */
             .lyrics-container {
                 order: 2;
                 font-size: 9px;
+                /* Reduced specific size as requested */
                 line-height: normal;
+                /* Allow natural flow */
                 margin: 4px 0;
-                margin-top: -10px;
-                /* Move up by 10px */
                 min-height: 1.5em;
                 flex-grow: 0;
                 display: flex;
@@ -1085,92 +1118,207 @@
                 justify-content: center;
                 padding: 0 4px;
                 text-align: center;
-                width: 85%;
-                /* Constrain width to force wrap */
-                margin-left: auto;
-                margin-right: auto;
+                width: 100%;
                 white-space: normal;
+                /* Allow wrapping if needed */
             }
 
-            /* ... (other existing styles) ... */
+            /* 3. Tracks - WIDER (85%) & LEFT ALIGNED */
+            .tracks-area {
+                order: 3;
+                width: 85%;
+                max-width: 320px;
+                margin: 0 auto;
+                /* Centered Column */
+                flex-grow: 0;
+            }
 
-            /* 3. Footer Scrolling Animation Fix */
-            .poem {
-                width: 100%;
-                overflow: hidden;
-                white-space: nowrap !important;
-                box-sizing: border-box;
+            .track-item-content {
                 padding: 0;
+                justify-content: flex-start;
+                /* LEFT ALIGN */
                 position: relative;
             }
 
-            /* Target direct text nodes handling for marquees usually requires a span wrapper */
-            /* Ensure the span inside .poem is what animates */
-            .poem>span,
-            .poem>* {
-                display: inline-block;
-                padding-left: 100%;
-                animation: marquee 20s linear infinite;
-                /* Slower for readability */
-                font-size: 11px;
+            .track-left {
+                justify-content: flex-start;
+                /* LEFT ALIGN */
+                width: 100%;
+                gap: 12px;
             }
 
-            /* 4. Fix Back Button Visibility on Home */
-            .back-button {
-                display: none;
-                /* Hidden by default */
-            }
-
-            /* Only show back button when music view is active */
-            /* Note: JavaScript toggles display on it, but CSS override might be needed if inline styles persist */
-        }
-
-        /* Ensure Back Button is hidden on Home globally, shown only in music view via JS/CSS class */
-        /* But specifically for mobile overrides: */
-        @media (max-width: 768px) {
-            body:not(.music-active) .back-button {
+            .track-right {
                 display: none !important;
             }
 
-            body.music-active .back-button {
-                display: block !important;
-                top: 38px !important;
-                left: 12px !important;
+            .track-title {
+                font-size: 11px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                text-align: left;
+                flex: 1;
+                /* Take available space */
+                min-width: 0;
+                /* Allow shrinking */
+            }
+
+            .track-text-container {
+                flex: 1;
+                display: flex;
+                justify-content: space-between;
+                /* Crucial for right align */
+                align-items: center;
+                min-width: 0;
+                margin-right: 0;
+                width: 100%;
+                /* Ensure full width */
+            }
+
+            .track-item {
+                border-bottom: none !important;
+                padding: 0;
+                margin: 0;
+                min-height: 28px;
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                /* LEFT ALIGN ITEM */
+            }
+
+            .inline-support-btn {
+                display: none;
+            }
+
+            .play-icon-btn {
+                min-width: 16px;
+                font-size: 12px;
+                margin: 0;
+            }
+
+            /* Download Button Reduced Width (70%) & Centered */
+            .download-full-ep-btn {
+                width: 70% !important;
+                /* Reduced by 30% from 100% */
+                margin: 0 auto;
+                /* Center it */
+                padding: 10px;
                 font-size: 10px;
-                opacity: 1 !important;
-                padding: 4px 8px;
-            }
-        }
-
-        @keyframes marquee {
-            0% {
-                transform: translate(0, 0);
+                opacity: 0.9;
+                /* Reduced opacity by 10% */
+                display: block;
             }
 
-            100% {
-                transform: translate(-100%, 0);
+            /* Button Container must allow centering */
+            .tracks-area>div[style*="flex"] {
+                padding-left: 0 !important;
+                justify-content: center !important;
+                /* Center the button */
+                margin-top: 16px !important;
+                width: 85%;
+                max-width: 320px;
+                margin-left: auto;
+                margin-right: auto;
             }
-        }
 
-        .socials {
-            gap: 10px;
-        }
+            .tracks-area>div[style*="flex"]>button {
+                width: 70% !important;
+                /* Redundant but safe */
+            }
 
-        .social-link {
-            font-size: 7px;
-        }
+            .track-list {
+                width: 100%;
+                padding: 0;
+            }
 
-        .discreet-player-info {
-            display: none !important;
-        }
+            .track-duration-inline {
+                display: block !important;
+                font-size: 10px;
+                color: var(--color-text-secondary);
+                margin-left: 8px;
+                flex-shrink: 0;
+                text-align: right;
+                /* Explicit right align */
+            }
 
-        /* Global scroll lock */
-        html,
-        body {
-            overflow: hidden;
-            width: 100%;
-            height: 100%;
-            position: fixed;
+            .container {
+                height: 100dvh;
+            }
+
+            .message h1 {
+                font-size: clamp(1.8rem, 9vw, 3rem);
+                width: 100%;
+                padding: 0 16px;
+            }
+
+            /* Footer: Hidden on Home, Visible on Music Page */
+            footer {
+                display: none;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                padding: 8px 12px;
+                background: var(--color-bg);
+                z-index: 2147483647;
+                /* MAX INT Z-Index */
+                border-top: 1px solid rgba(255, 255, 255, 0.05);
+                box-sizing: border-box;
+            }
+
+            body.music-active footer {
+                display: block !important;
+            }
+
+            /* Footer Scrolling Animation */
+            .poem {
+                white-space: nowrap !important;
+                /* Force single line */
+                overflow: hidden;
+                box-sizing: border-box;
+                padding: 0;
+            }
+
+            .poem span {
+                display: inline-block;
+                padding-left: 100%;
+                /* Start off screen */
+                animation: marquee 15s linear infinite;
+                font-size: 11px;
+                /* Slightly larger for readability */
+            }
+
+            @keyframes marquee {
+                0% {
+                    transform: translate(0, 0);
+                }
+
+                100% {
+                    transform: translate(-100%, 0);
+                }
+            }
+
+            .socials {
+                gap: 10px;
+            }
+
+            .social-link {
+                font-size: 7px;
+            }
+
+            .discreet-player-info {
+                display: none !important;
+            }
+
+            /* Global scroll lock */
+            html,
+            body {
+                overflow: hidden;
+                width: 100%;
+                height: 100%;
+                position: fixed;
+            }
         }
     </style>
 
