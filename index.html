@@ -1276,31 +1276,25 @@
                 display: block !important;
             }
 
-            /* Footer Scrolling Animation */
+            /* Footer Scrolling Animation - Entire line scrolls together */
             .poem {
                 white-space: nowrap !important;
-                /* Force single line */
                 overflow: hidden;
                 box-sizing: border-box;
                 padding: 0;
-            }
-
-            .poem span {
-                display: inline-block;
-                padding-left: 100%;
-                /* Start off screen */
-                animation: marquee 15s linear infinite;
+                width: 100%;
+                display: block;
+                animation: marquee 20s linear infinite;
                 font-size: 11px;
-                /* Slightly larger for readability */
             }
 
             @keyframes marquee {
                 0% {
-                    transform: translate(0, 0);
+                    transform: translateX(100%);
                 }
 
                 100% {
-                    transform: translate(-100%, 0);
+                    transform: translateX(-100%);
                 }
             }
 
@@ -2454,14 +2448,8 @@
                 // If this is the active track
                 if (item.classList.contains('active')) {
                     if (isPlaying) {
-                        // Desktop logic: Keep standard pause. Mobile request: "not the same icon".
-                        // Assuming USER wants a standard pause signal on mobile too, or specifically requested a fix.
-                        // "the icon that shows when the play button is pressed is not the same icon that shows on the dekstop version"
-                        // This implies they want consistency. Currently both use text content.
-                        // We will enforce the standard pause symbol for both to ensure consistency, 
-                        // unless they are currently seeing something else.
-                        // To be safe, we explicitly set it.
-                        btn.textContent = '⏸';
+                        // Use universally supported pause bars (II) instead of emoji
+                        btn.textContent = '❚❚';
                     } else {
                         btn.textContent = '▶';
                     }
@@ -2473,7 +2461,7 @@
 
             // Update mini player button if exists
             const miniBtn = document.getElementById('miniPlayBtn');
-            if (miniBtn) miniBtn.textContent = isPlaying ? '⏸' : '▶';
+            if (miniBtn) miniBtn.textContent = isPlaying ? '❚❚' : '▶';
         }
 
         // Ensure icon updates on resize if needed
