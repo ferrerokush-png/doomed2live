@@ -1087,8 +1087,8 @@
                 flex-direction: column;
                 align-items: center;
                 margin-top: 50px;
-                /* +25px from previous */
-                margin-bottom: 2px;
+                margin-bottom: 0;
+                /* Reduced gap below artwork */
             }
 
             .ep-artwork {
@@ -1109,23 +1109,20 @@
                 display: none;
             }
 
-            /* 2. Lyrics - Positioned between Download button and Footer */
+            /* Lyrics - Positioned at bottom, between Download button and Footer */
             .lyrics-container {
                 order: 4;
-                /* After tracks area */
+                /* After tracks */
                 font-size: 9px;
                 line-height: 1.3;
                 margin: 0;
-                margin-top: auto;
-                /* Push to bottom of flex container */
-                margin-bottom: 10px;
-                /* Space above footer */
+                padding: 8px;
                 min-height: 2.5em;
-                flex-grow: 0;
+                flex-grow: 1;
+                /* Take remaining space */
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 0 8px;
                 text-align: center;
                 width: 90%;
                 margin-left: auto;
@@ -1134,15 +1131,14 @@
                 word-break: break-word;
             }
 
-            /* 3. Tracks - Move up to reduce gap with artwork */
+            /* Tracks - Moved up closer to artwork */
             .tracks-area {
                 order: 2;
-                /* Now order 2 (lyrics is 4) */
                 width: 85%;
                 max-width: 320px;
                 margin: 0 auto;
-                margin-top: -5px;
-                /* Pull up slightly */
+                margin-top: 5px;
+                /* Small gap after artwork */
                 flex-grow: 0;
             }
 
