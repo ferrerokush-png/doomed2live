@@ -1759,6 +1759,19 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* Lyrics Focus Mode - Global */
+        .music-view.lyrics-focused .content-columns,
+        .music-view.lyrics-focused .back-button {
+            opacity: 0.15;
+            /* Slightly dimmed */
+            transition: opacity 0.5s ease;
+        }
+
+        .music-view.lyrics-focused .lyrics-container {
+            z-index: 10;
+            /* Ensure lyrics sit on top if needed */
+        }
     </style>
 </head>
 
@@ -3083,9 +3096,19 @@
             if (lyricTimeout) clearTimeout(lyricTimeout);
 
             // Wait for fade out, then swap text and fade in
+            // Wait for fade out, then swap text and fade in
             lyricTimeout = setTimeout(() => {
                 el.textContent = text;
-                if (text) el.classList.add('visible');
+                const musicView = document.getElementById('musicView');
+
+                if (text) {
+                    el.classList.add('visible');
+                    // Enable Focus Mode
+                    if (musicView) musicView.classList.add('lyrics-focused');
+                } else {
+                    // Disable Focus Mode if no lyrics
+                    if (musicView) musicView.classList.remove('lyrics-focused');
+                }
             }, 100); // Matches CSS transition duration
         }
 
