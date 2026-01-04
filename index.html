@@ -1112,27 +1112,22 @@
             /* Lyrics - Centered between Download button and Footer */
             .lyrics-container {
                 order: 4;
-                font-size: 10px;
-                line-height: 1.5;
                 margin: 0;
-                padding: 10px 20px;
+                padding: 0;
                 flex: 1;
-                /* Take all remaining space */
                 display: flex;
                 align-items: center;
-                /* Center text vertically */
                 justify-content: center;
-                /* Center text horizontally */
+                width: 100%;
+            }
+
+            .lyrics-container .lyrics-line {
+                font-size: 10px;
+                line-height: 1.5;
                 text-align: center;
-                width: 180px;
-                /* ~20 chars at 9px font */
-                max-width: 180px;
-                margin-left: auto;
-                margin-right: auto;
-                white-space: normal;
+                max-width: 150px;
                 word-wrap: break-word;
-                hyphens: none;
-                /* Don't break words */
+                overflow-wrap: break-word;
             }
 
             /* Tracks - Pull up closer to artwork */
