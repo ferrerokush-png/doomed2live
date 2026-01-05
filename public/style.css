@@ -1,0 +1,2250 @@
+.roche-glitch {
+    font-size: clamp(2.5rem, 8vw, 6rem);
+    font-family: 'Akira Expanded', sans-serif;
+    font-weight: 700;
+}
+
+
+
+
+
+@font-face {
+    font-family: 'Akira Expanded';
+    src: url('fonts/AkiraExpanded-SuperBold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --color-bg: #0a0a0a;
+    --color-text: #f5f5f5;
+    --color-text-secondary: #999;
+    --color-accent: #b30000;
+    /* Dark Red */
+    --color-accent-hover: #ff0000;
+    /* Brighter Red on hover */
+    --color-highlight: #00d4ff;
+    /* Blue for track highlights */
+    --color-border: #222;
+    --space-16: 16px;
+    --space-24: 24px;
+    --space-32: 32px;
+    --radius-base: 4px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-32);
+    /* Added bottom padding for fixed footer */
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 50;
+    /* Ensure container is above potential hidden views */
+    pointer-events: auto;
+    /* Ensure events work */
+}
+
+.logo {
+    /* removed transition for top/left */
+    position: fixed;
+    /* Fixed position to stay in place */
+    top: var(--space-24);
+    left: var(--space-24);
+    font-size: 14px;
+    font-weight: 900;
+    /* Maximum boldness */
+    letter-spacing: 2px;
+    color: #b30000;
+    text-transform: uppercase;
+    font-family: 'Space Mono', monospace;
+    z-index: 1000;
+    /* Ensure it stays on top */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-shadow: 0 0 0.5px #b30000;
+    /* Slight shadow to enhance boldness */
+}
+
+/* Ensure message is clickable */
+.message {
+    position: relative;
+    z-index: 100;
+    /* Bring above other elements */
+    text-align: center;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.message:hover {
+    opacity: 0.8;
+}
+
+.message h1 {
+    font-size: clamp(2.5rem, 8vw, 6rem);
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -1px;
+    line-height: 1.2;
+    font-family: 'Akira Expanded', sans-serif;
+    pointer-events: auto;
+    /* Ensure h1 specifically receives clicks */
+}
+
+
+
+.music-view {
+    display: none;
+    padding: 22vh 24px 10vh 24px;
+    /* Percentage based padding to push content lower */
+    min-height: 100vh;
+    align-items: center;
+    justify-content: flex-start;
+    /* Align to top with padding pushing it down */
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+
+.back-button {
+    position: fixed;
+    /* Fixed position to stay relative to fixed logo */
+    top: 60px;
+    /* Positioned below the logo (approx 24px + height + gap) */
+    left: var(--space-24);
+    background: none;
+    border: none;
+    color: var(--color-text);
+    font-size: 14px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: color 0.2s, opacity 1s ease;
+    /* Added opacity transition */
+    font-family: 'Space Mono', monospace;
+    z-index: 999;
+    opacity: 0;
+    /* Start hidden */
+}
+
+.music-view.organized .back-button {
+    opacity: 1;
+    /* Fade in when organized */
+}
+
+.back-button:hover {
+    color: var(--color-accent);
+}
+
+.release-header {
+    margin-bottom: var(--space-32);
+    text-align: center;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ep-artwork {
+    width: 100%;
+    max-width: 485px;
+    /* Set to 485px */
+    height: auto;
+    /* Allow height to adjust */
+    aspect-ratio: 1 / 1;
+    /* Square aspect ratio */
+    border-radius: var(--radius-base);
+    margin: 0 auto var(--space-32) auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    overflow: hidden;
+    /* Ensure image stays within radius */
+}
+
+.ep-artwork img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.release-header h2 {
+    font-size: 28px;
+    margin: 0 0 var(--space-16) 0;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Akira Expanded', sans-serif;
+}
+
+.release-header p {
+    color: var(--color-text-secondary);
+    margin: 0;
+    font-size: 12px;
+    font-family: 'Space Mono', monospace;
+}
+
+.track-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    /* Remove gap, use border/padding */
+    max-width: 100%;
+    margin: 0 auto;
+    height: auto;
+    width: 100%;
+    /* Ensure full width */
+}
+
+.track-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    cursor: default;
+    /* Cursor handled by buttons */
+    padding: 0;
+    border: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    /* Remove divider */
+    width: 100%;
+    min-height: 70px;
+    /* Fixed height */
+    background: transparent;
+}
+
+/* Ensure full width */
+
+.play-icon {
+    font-size: 10px;
+    color: var(--color-accent);
+    margin-right: var(--space-16);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--color-accent);
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.track-item:hover .play-icon {
+    background: var(--color-accent);
+    color: var(--color-bg);
+}
+
+.track-item:hover {
+    background: transparent;
+    border-color: transparent;
+    border-bottom: 1px solid transparent !important;
+    box-shadow: none;
+}
+
+.track-item.active {
+    background: transparent;
+    border-color: transparent;
+    border-bottom: 1px solid transparent !important;
+}
+
+.track-item:last-child {
+    border-bottom: 1px solid transparent;
+    /* Use transparent instead of none to maintain 1px spacing if needed, but none is fine for look. */
+    /* Actually, if we use none, height changes by 1px. Use transparent to keep layout stable. */
+    border-bottom-color: transparent;
+}
+
+.track-item:last-child:hover {
+    border-bottom-color: transparent;
+    /* Keep distinct from others if needed */
+}
+
+.track-item-content {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-16);
+}
+
+.track-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-16);
+    flex: 1;
+}
+
+.track-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-16);
+    margin-left: var(--space-32);
+    flex-shrink: 0;
+}
+
+.play-icon-btn {
+    color: var(--color-accent);
+    background: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: color 0.2s;
+    margin-right: 8px;
+    padding: 4px;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.play-icon-btn:hover {
+    color: var(--color-accent-hover);
+    background: none;
+}
+
+.inline-support-btn {
+    background: transparent;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    padding: 8px 16px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Space Mono', monospace;
+    transition: all 0.2s;
+}
+
+.inline-support-btn:hover {
+    border-color: #b30000;
+    color: #b30000;
+    background: rgba(179, 0, 0, 0.1);
+}
+
+.track-item:hover {
+    background: transparent;
+}
+
+.track-item.active {
+    background: transparent;
+    border-color: transparent;
+    /* Keep layout stable */
+}
+
+.track-duration-inline {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    font-family: 'Space Mono', monospace;
+    margin-left: var(--space-16);
+}
+
+.track-meta-right {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: var(--space-16);
+    flex-shrink: 0;
+}
+
+.track-meta-right .track-duration-inline {
+    margin-left: 0;
+}
+
+.duration-download-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+}
+
+.duration-download-btn svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+}
+
+.duration-download-btn:hover {
+    color: var(--color-accent);
+}
+
+/* Player Wrapper Animation */
+/* Hide expansion elements */
+.track-player-wrapper {
+    display: none !important;
+}
+
+/* Modified Player Styles for inline display */
+.player {
+    margin-top: 0;
+    background: none;
+    border: none;
+    border-top: 1px solid var(--color-border);
+    border-radius: 0;
+    padding: var(--space-16);
+    max-width: none;
+    display: block;
+    /* Always block, controlled by wrapper */
+    opacity: 1;
+    /* Remove fade in since wrapper animates height */
+}
+
+.download-full-ep-btn {
+    display: inline-block;
+    margin-top: 0;
+    margin-bottom: 0;
+    background: #b30000;
+    /* Dark red matching theme */
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    font-family: 'Space Mono', monospace;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    width: auto;
+    max-width: 100%;
+    box-shadow: 0 2px 4px rgba(179, 0, 0, 0.3);
+}
+
+.download-full-ep-btn:hover {
+    background: #ff0000;
+    /* Brighter red on hover */
+    box-shadow: 0 4px 8px rgba(179, 0, 0, 0.4);
+    transform: translateY(-1px);
+}
+
+.download-full-ep-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(179, 0, 0, 0.3);
+}
+
+.track-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.track-text-container {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    margin-right: var(--space-8);
+}
+
+.track-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--color-text);
+    font-family: 'Akira Expanded', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.track-duration-inline {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    font-family: 'Space Mono', monospace;
+    margin-left: var(--space-24);
+    flex-shrink: 0;
+}
+
+.player {
+    margin-top: var(--space-32);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-base);
+    padding: var(--space-24);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    display: none;
+}
+
+.player.active {
+    display: block;
+}
+
+.player-title,
+.player-track {
+    display: none;
+}
+
+.player-controls {
+    display: flex;
+    gap: var(--space-16);
+    align-items: center;
+    justify-content: space-between;
+    /* Push items to edges */
+    margin-bottom: var(--space-16);
+}
+
+button {
+    background: none;
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 12px;
+    border-radius: var(--radius-base);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+    font-family: 'Space Mono', monospace;
+}
+
+button:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+/* Specific class for download buttons - Dark red theme */
+.download-btn {
+    background: transparent !important;
+    color: var(--color-text) !important;
+    border: 1px solid var(--color-border) !important;
+    padding: 10px 20px !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    font-family: 'Space Mono', monospace !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+    transition: all 0.2s ease !important;
+}
+
+.download-btn:hover {
+    background: rgba(179, 0, 0, 0.1) !important;
+    border-color: #b30000 !important;
+    color: #b30000 !important;
+    box-shadow: 0 0 10px rgba(179, 0, 0, 0.2) !important;
+    transform: translateY(-1px);
+}
+
+.download-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(179, 0, 0, 0.3) !important;
+}
+
+.player-progress {
+    width: 100%;
+    height: 3px;
+    background: var(--color-border);
+    border-radius: 2px;
+    margin-bottom: var(--space-16);
+    cursor: pointer;
+    position: relative;
+}
+
+.player-progress-fill {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.1s linear;
+}
+
+.player-time {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-16);
+    font-family: 'Space Mono', monospace;
+}
+
+/* Updated Mini Player Styles - Pop up above footer */
+/* Updated Mini Player Styles - Full Width Bar */
+/* Updated Mini Player Styles - Full Width Bar Stacking on Footer */
+/* Discreet Player Styles */
+.footer-progress-container {
+    position: absolute;
+    top: -1px;
+    /* Overlap border */
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    z-index: 1001;
+}
+
+.footer-progress-bar {
+    height: 100%;
+    background: #ff0000;
+    /* Red Playhead */
+    width: 0%;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+}
+
+.discreet-player-info {
+    position: fixed;
+    bottom: 160px;
+    /* Just above footer */
+    left: 50%;
+    /* Center horizontally */
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(10, 10, 10, 0.85);
+    /* Slightly transparent */
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 8px 16px;
+    border-radius: 20px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    pointer-events: none;
+}
+
+.discreet-player-info.visible {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.discreet-status {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    animation: pulse-red 2s infinite;
+}
+
+.discreet-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--color-text);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.discreet-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: 8px;
+    padding-left: 12px;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.discreet-btn {
+    background: none;
+    border: none;
+    color: var(--color-text);
+    cursor: pointer;
+    font-size: 10px;
+    padding: 0;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.discreet-btn:hover {
+    opacity: 1;
+    color: var(--color-accent);
+}
+
+@keyframes pulse-red {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 6px rgba(255, 0, 0, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+    }
+}
+
+.mini-player-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Centered content again */
+    gap: 60px;
+    /* Large gap for spacing without compaction */
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    padding: 0 16px;
+}
+
+.mini-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Center text info specifically */
+    text-align: center;
+    overflow: hidden;
+    flex: 0 1 auto;
+    /* Use natural width */
+    min-width: 200px;
+    /* Ensure some minimum width for titles */
+}
+
+.mini-track-name {
+    font-family: 'Akira Expanded', sans-serif;
+    font-size: 11px;
+    /* Slightly larger */
+    color: var(--color-text);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mini-artist {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--color-accent);
+    /* Make artist pop */
+    font-weight: 700;
+}
+
+.mini-time {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    margin-right: 16px;
+}
+
+.mini-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.mini-play-btn {
+    background: none;
+    border: 1px solid var(--color-accent);
+    color: var(--color-accent);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mini-play-btn:hover {
+    background: var(--color-accent);
+    color: var(--color-bg);
+}
+
+.mini-progress-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    border-radius: 0;
+}
+
+.mini-progress-bar {
+    height: 100%;
+    background: var(--color-accent);
+    width: 0%;
+    border-radius: 0;
+    transition: width 0.1s linear;
+}
+
+
+
+footer {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 998;
+    /* Below mini-player */
+    border-top: 1px solid var(--color-border);
+    padding: var(--space-32) var(--space-24);
+    text-align: center;
+    background: var(--color-bg);
+    /* Ensure footer has background to cover content */
+    pointer-events: auto;
+    /* Ensure clickable */
+}
+
+body.music-active footer {
+    display: block;
+}
+
+.home-splash {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    pointer-events: none;
+}
+
+.home-splash-text {
+    font-family: 'Akira Expanded', sans-serif;
+    font-size: clamp(20px, 4vw, 42px);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--color-text);
+}
+
+.site-footer {
+    background: #070707;
+}
+
+.footer-row {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-24);
+}
+
+.support-link {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.2s ease;
+}
+
+.support-link:hover {
+    color: var(--color-text);
+}
+
+.socials--icons {
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.social-icon-link {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-secondary);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    text-decoration: none;
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.social-icon-link svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
+
+.social-icon-link:hover {
+    color: var(--color-text);
+    border-color: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.support-modal-content {
+    max-width: 560px;
+    width: min(92vw, 560px);
+}
+
+.support-modal .modal-content.support-modal-content {
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+.support-finder {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    overflow: hidden;
+    background: #0a0a0a;
+}
+
+.support-finder-header {
+    padding: 22px 20px;
+    background: #000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: center;
+}
+
+.support-finder-header h3 {
+    margin: 0 0 8px 0;
+}
+
+.support-finder-header p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+}
+
+.support-finder-content {
+    padding: 18px 20px 20px;
+}
+
+.support-finder-content > * + * {
+    margin-top: 14px;
+}
+
+.support-finder-content > .support-hotline-section {
+    margin-top: 16px;
+}
+
+.support-finder-content > .support-worldwide {
+    margin-top: 12px;
+}
+
+.support-region-info {
+    background: #111;
+    border-left: 2px solid rgba(179, 0, 0, 0.6);
+    padding: 10px 12px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--color-text);
+}
+
+.support-region-info strong {
+    color: var(--color-accent);
+}
+
+.support-hotline-section { }
+
+.support-section-title {
+    margin: 0 0 10px 0;
+    font-size: 13px;
+    font-family: 'Space Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-text);
+}
+
+.support-hotline-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.support-hotline-card {
+    background: #111;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 14px;
+}
+
+.support-hotline-name {
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 4px;
+    color: var(--color-text);
+}
+
+.support-hotline-details {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+    margin-bottom: 12px;
+}
+
+.support-contact-methods {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.support-contact-btn {
+    flex: 1;
+    min-width: 140px;
+    padding: 9px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: 12px;
+    font-family: 'Space Mono', monospace;
+    text-align: center;
+}
+
+.support-contact-btn:hover {
+    border-color: rgba(179, 0, 0, 0.6);
+    color: var(--color-text);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.support-emergency-banner {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 12px;
+    color: var(--color-text);
+    text-align: center;
+}
+
+.support-region-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin: 0;
+}
+
+.support-region-row label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-text-secondary);
+    font-family: 'Space Mono', monospace;
+}
+
+.support-region-row select {
+    flex: 1;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    border-radius: var(--radius-base);
+    font-family: 'Space Mono', monospace;
+}
+
+
+.support-worldwide {
+    margin-top: var(--space-16);
+    margin-bottom: 0;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+}
+
+.support-worldwide a {
+    color: var(--color-text-secondary);
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+button:focus-visible,
+a:focus-visible,
+select:focus-visible,
+input:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .social-icon-link,
+    .support-link {
+        transition: none;
+    }
+}
+
+
+
+.poem {
+    font-size: 13px;
+    color: var(--color-text);
+    /* Made white for numbers */
+    margin: 0 0 var(--space-16) 0;
+    line-height: 1.4;
+    width: 100%;
+    white-space: nowrap;
+    /* Force one line */
+    margin-left: auto;
+    margin-right: auto;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    /* Make everything bold like previous strong tags */
+}
+
+.poem a {
+    color: var(--color-text);
+    /* White by default */
+    text-decoration: none;
+    transition: color 0.2s;
+    cursor: pointer;
+}
+
+.poem a:hover {
+    color: #ff0000;
+    /* Red on hover */
+}
+
+.poem br {
+    content: " • ";
+}
+
+.socials {
+    display: flex;
+    gap: var(--space-24);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.social-link {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: color 0.2s;
+    font-family: 'Space Mono', monospace;
+}
+
+.social-link:hover {
+    color: var(--color-accent);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    padding: var(--space-32);
+    max-width: 500px;
+    width: 90%;
+    border-radius: var(--radius-base);
+    position: relative;
+}
+
+#checkoutContent {
+    max-width: 600px;
+    padding: var(--space-24);
+}
+
+#checkout {
+    margin-top: var(--space-16);
+}
+
+.modal-close {
+    position: absolute;
+    top: var(--space-16);
+    right: var(--space-16);
+    background: none;
+    border: none;
+    color: var(--color-text);
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.modal-close:hover {
+    color: var(--color-accent);
+}
+
+.modal h3 {
+    margin: 0 0 var(--space-24) 0;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Akira Expanded', sans-serif;
+}
+
+.form-group {
+    margin-bottom: var(--space-16);
+}
+
+.form-group label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    color: var(--color-text-secondary);
+    font-family: 'Space Mono', monospace;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px var(--space-16);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    font-size: 14px;
+    border-radius: var(--radius-base);
+    transition: border-color 0.2s;
+    font-family: 'Space Mono', monospace;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+}
+
+.amount-buttons {
+    display: flex;
+    gap: var(--space-16);
+    margin-bottom: var(--space-16);
+    flex-wrap: wrap;
+}
+
+.amount-btn {
+    flex: 1;
+    min-width: 70px;
+    padding: 10px 8px;
+    text-align: center;
+    font-size: 12px;
+}
+
+.amount-btn.active {
+    background: rgba(179, 0, 0, 0.1);
+    /* Red tint */
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+.amount-option-btn {
+    flex: 1;
+    padding: 10px;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    cursor: pointer;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    border-radius: var(--radius-base);
+    transition: all 0.2s;
+}
+
+.amount-option-btn.active {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    background: rgba(179, 0, 0, 0.1);
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--color-accent);
+    color: var(--color-bg);
+    font-weight: 700;
+    margin-top: var(--space-16);
+    border: none;
+}
+
+.submit-btn:hover {
+    background: var(--color-accent-hover);
+}
+
+.modal p {
+    margin: 0 0 var(--space-16) 0;
+    color: var(--color-text-secondary);
+    font-family: 'Space Mono', monospace;
+}
+
+/* Shift logo down when music view is active to avoid overlap with back button */
+/* REMOVED: Logo is now fixed at top left */
+/* body.music-active .logo { top: 64px; } */
+
+/* Responsive tweaks for small screens */
+/* Responsive tweaks for mobile */
+@media (max-width: 768px) {
+
+    /* ... Logo/Back Button ... */
+    .logo {
+        top: 10px;
+        left: 12px;
+        font-size: 12px;
+    }
+
+    /* Back button hidden on home, shown only when music-active */
+    .back-button {
+        display: none;
+    }
+
+    body.music-active .back-button {
+        display: block;
+        top: 38px !important;
+        left: 12px !important;
+        font-size: 10px;
+        opacity: 1 !important;
+        padding: 4px 8px;
+    }
+
+    /* Music View - Centered Layout with Header Clearance */
+    .music-view {
+        padding-top: 50px;
+        /* Push content down from fixed header */
+        padding-bottom: 70px;
+        /* Space for footer */
+        padding-left: 16px;
+        padding-right: 16px;
+        justify-content: center;
+        /* Center Vertically */
+        min-height: 100dvh;
+        height: 100dvh;
+        overflow: hidden;
+        /* Prevent body scroll */
+        display: flex;
+    }
+
+    .music-content {
+        gap: 2px;
+        width: 100%;
+        max-width: 100%;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .content-columns {
+        display: contents;
+    }
+
+    /* 1. Artwork - 120% larger & moved down 25px more */
+    .release-info {
+        order: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 50px;
+        margin-bottom: 0;
+        /* Reduced gap below artwork */
+    }
+
+    .ep-artwork {
+        max-width: 185px;
+        max-height: 26vh;
+        margin-bottom: 0;
+        /* No gap */
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .release-header h2 {
+        font-size: 14px;
+        margin-bottom: 0;
+    }
+
+    .release-header p {
+        display: none;
+    }
+
+    /* Lyrics - Centered vertically between Button and Footer */
+
+    .lyrics-container {
+        order: 4;
+        margin: 0;
+        padding: 0;
+        /* Reduced margin to let content sit lower (was 100px) */
+        margin-bottom: 50px;
+        /* Move up 10px visually */
+        margin-top: -10px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        /* Fixed height for 2 lines (~16px * 1.3 * 2 + padding) to prevent shift */
+        height: 60px;
+        min-height: 60px;
+        /* Prevent growing beyond this to affect layout above */
+        flex-grow: 0;
+    }
+
+
+
+    .lyrics-container .lyrics-line {
+        font-size: 16px;
+        /* Reduced from 18px to prevent 3 lines */
+        line-height: 1.3;
+        text-align: center;
+        max-width: 100%;
+        /* Allow full width of container */
+        width: 95%;
+        /* Use almost full screen width */
+        white-space: normal;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    /* Tracks - Pull up closer to artwork */
+    .tracks-area {
+        order: 2;
+        width: 85%;
+        max-width: 320px;
+        margin: 0 auto;
+        margin-top: -40px;
+        /* Pull up more */
+        flex-grow: 0;
+    }
+
+    .track-item-content {
+        padding: 0;
+        justify-content: flex-start;
+        /* LEFT ALIGN */
+        position: relative;
+    }
+
+    .track-left {
+        justify-content: flex-start;
+        /* LEFT ALIGN */
+        width: 100%;
+        gap: 12px;
+    }
+
+    .track-right {
+        display: none !important;
+    }
+
+    .track-title {
+        font-size: 11px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: left;
+        flex: 1;
+        /* Take available space */
+        min-width: 0;
+        /* Allow shrinking */
+    }
+
+    .track-text-container {
+        flex: 1;
+        display: flex;
+        justify-content: space-between;
+        /* Crucial for right align */
+        align-items: center;
+        min-width: 0;
+        margin-right: 0;
+        width: 100%;
+        /* Ensure full width */
+    }
+
+    .track-item {
+        border-bottom: none !important;
+        padding: 0;
+        margin: 0;
+        min-height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        /* LEFT ALIGN ITEM */
+    }
+
+    .inline-support-btn {
+        display: none;
+    }
+
+    .play-icon-btn {
+        min-width: 16px;
+        font-size: 12px;
+        margin: 0;
+    }
+
+    /* Download Button Reduced by 20% (56% of original 70%) & Centered */
+    .download-full-ep-btn {
+        width: 56% !important;
+        margin: 0 auto;
+        padding: 8px;
+        font-size: 9px;
+        opacity: 0.9;
+        display: block;
+    }
+
+    /* Button Container */
+    .tracks-area>div[style*="flex"] {
+        padding-left: 0 !important;
+        justify-content: center !important;
+        margin-top: 16px !important;
+        width: 85%;
+        max-width: 320px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .tracks-area>div[style*="flex"]>button {
+        width: 56% !important;
+    }
+
+    .track-list {
+        width: 100%;
+        padding: 0;
+    }
+
+    .track-duration-inline {
+        display: inline-block !important;
+        font-size: 10px;
+        color: var(--color-text-secondary);
+        margin-left: 0;
+        flex-shrink: 0;
+        text-align: right;
+        /* Explicit right align */
+    }
+
+    .track-meta-right {
+        margin-left: 8px;
+    }
+
+    .duration-download-btn {
+        display: inline-flex;
+        width: 20px;
+        height: 20px;
+    }
+
+    .duration-download-btn svg {
+        width: 12px;
+        height: 12px;
+    }
+
+    .container {
+        height: 100dvh;
+    }
+
+    .message h1 {
+        font-size: clamp(1.8rem, 9vw, 3rem);
+        width: 100%;
+        padding: 0 16px;
+    }
+
+    /* Footer: Hidden on Home, Visible on Music Page */
+    footer {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        padding: 8px 12px;
+        background: var(--color-bg);
+        z-index: 2147483647;
+        /* MAX INT Z-Index */
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        box-sizing: border-box;
+    }
+
+    body.music-active footer {
+        display: block;
+    }
+
+    .socials {
+        gap: 10px;
+    }
+
+    .social-link {
+        font-size: 7px;
+    }
+
+    .footer-row {
+        gap: 10px;
+    }
+
+    .support-link {
+        font-size: 11px;
+        text-align: left;
+    }
+
+    .social-icon-link {
+        width: 30px;
+        height: 30px;
+    }
+
+    .social-icon-link svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .discreet-player-info {
+        display: none !important;
+    }
+
+    /* Global scroll lock */
+    html,
+    body {
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+    }
+}
+
+
+
+/* CRT Effect & Header Transition */
+.message h1 {
+    transition: opacity 1.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.message.clicked h1 {
+    opacity: 0;
+}
+
+
+
+/* New Layout Styles */
+.music-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* Center vertically on mobile */
+    /* flex: 1; Removed to compact layout */
+    /* Take up available space */
+    gap: var(--space-32);
+    max-width: 1000px;
+    width: 100%;
+    margin: 0 auto;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+.music-view.visible .music-content {
+    opacity: 1;
+}
+
+.content-columns {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: var(--space-32);
+    align-items: center;
+}
+
+.release-info {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.tracks-area {
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+
+    /* Desktop: Side-by-side layout, centered on page */
+    .content-columns {
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 48px;
+        width: 100%;
+        padding: 0 var(--space-32);
+    }
+
+    .release-info {
+        flex: 0 0 485px;
+        width: 485px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .ep-artwork {
+        width: 485px;
+        max-width: 485px;
+        margin-bottom: var(--space-16);
+    }
+
+    .tracks-area {
+        flex: 0 1 650px;
+        max-width: 650px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .lyrics-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        margin-top: 32px;
+        margin-bottom: 24px;
+    }
+
+    .lyrics-line {
+        text-align: center;
+        font-size: 16px;
+        max-width: 800px;
+    }
+
+    .release-header {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 0;
+    }
+
+    .release-header h2 {
+        margin-top: 0;
+        margin-bottom: var(--space-16);
+    }
+
+    .release-header p {
+        margin-bottom: var(--space-16);
+    }
+
+    .download-full-ep-btn {
+        width: auto;
+        min-width: 200px;
+        margin-top: 60px;
+    }
+}
+
+/* Logic update for Play Icon handled in JS, but ensuring CSS supports it */
+.play-icon-btn {
+    /* No change needed here, JS controls content */
+}
+
+/* Disorganized to Organized Animation */
+.track-item {
+    /* Initial disorganized state */
+    opacity: 0;
+    transform: translate(var(--tx), var(--ty)) rotate(var(--r));
+    transition:
+        opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1),
+        transform 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Organized state */
+.music-view.organized .track-item {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0);
+}
+
+.release-info {
+    transition: opacity 1s ease, transform 1s ease;
+    opacity: 0;
+    transform: translateX(-20px);
+}
+
+.music-view.organized .release-info {
+    opacity: 1;
+    transform: none;
+}
+
+.player {
+    transition: opacity 1s ease 0.5s;
+    /* Delay player fade in */
+    opacity: 0;
+}
+
+.music-view.organized .player {
+    opacity: 1;
+}
+
+/* Older Music Section */
+.older-music-section {
+    width: auto !important;
+    text-align: right;
+    margin-top: 0;
+    padding: 0;
+    opacity: 0;
+    transition: opacity 1s ease 0.5s, bottom 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    position: fixed;
+    bottom: 124px;
+    /* Footer is ~112px, giving ~12px gap */
+    right: var(--space-24) !important;
+    left: auto !important;
+    z-index: 997;
+    pointer-events: auto;
+    background: none;
+    /* Ensure no background covers anything */
+}
+
+
+
+.music-view.organized .older-music-section {
+    opacity: 1;
+}
+
+.older-music-btn {
+    background: none;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+    padding: 16px 40px;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Akira Expanded', sans-serif;
+}
+
+/* Archive Grid Styles */
+#archiveList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 32px;
+    padding: 0;
+    height: auto;
+    max-height: 100%;
+    overflow-y: visible;
+    /* Allow scrolling */
+    border: none;
+    justify-content: center;
+    /* Center the grid items */
+    max-width: 900px;
+    margin: 0 auto;
+    /* Center the grid container */
+}
+
+/* Archive View Specific Layout overrides */
+#archiveView .music-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    min-height: 60vh;
+    max-width: 1000px;
+}
+
+#archiveView .tracks-area {
+    width: 100%;
+    max-width: 1000px;
+    /* Expand to full width */
+    flex: unset;
+    height: auto;
+    overflow: visible;
+}
+
+/* Override archive view in media query to prevent layout conflicts */
+@media (min-width: 768px) {
+    #archiveView .music-content {
+        flex-direction: column;
+        height: auto;
+        margin-top: 0;
+    }
+
+    #archiveView .tracks-area {
+        max-width: 1000px;
+        height: auto;
+    }
+}
+
+#archiveList::-webkit-scrollbar {
+    width: 4px;
+}
+
+#archiveList::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+/* Override track-item for archive grid */
+#archiveList .track-item {
+    flex: unset;
+    width: 100%;
+    height: auto;
+    border: none;
+    border-radius: var(--radius-base);
+    background: transparent;
+    margin: 0;
+    min-height: 0;
+    padding: 0;
+    opacity: 0;
+    /* Handled by JS animation */
+}
+
+#archiveList .track-item:hover {
+    background: transparent;
+    opacity: 1;
+    border: none !important;
+    border-bottom: none !important;
+    box-shadow: none;
+    outline: none;
+}
+
+.archive-item {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.archive-thumb {
+    width: 100%;
+    aspect-ratio: 1;
+    /* Square */
+    overflow: hidden;
+    border-radius: var(--radius-base);
+    background: #222;
+    position: relative;
+}
+
+.archive-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+    display: block;
+}
+
+.archive-item:hover .archive-thumb img {
+    transform: scale(1.05);
+}
+
+.archive-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.archive-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-text);
+    font-family: 'Akira Expanded', sans-serif;
+    line-height: 1.2;
+}
+
+.archive-meta {
+    font-size: 10px;
+    color: var(--color-text-secondary);
+    font-family: 'Space Mono', monospace;
+    text-transform: uppercase;
+}
+
+.lyrics-container {
+    width: 100%;
+    text-align: center;
+    margin-top: var(--space-32);
+    font-family: 'Akira Expanded', sans-serif;
+    /* Font size increased ~30% */
+    font-size: clamp(16px, 2.5vw, 24px);
+    color: var(--color-text);
+    min-height: 1.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s ease;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    padding: 0 20px;
+    /* Allow container to fill remaining vertical space to center lyrics */
+    flex-grow: 1;
+    /* Prevent wrapping */
+    white-space: nowrap;
+}
+
+.lyrics-line {
+    /* opacity: 0; Removed for instant change */
+    /* transition: opacity 0.1s ease-out; Removed */
+}
+
+.lyrics-line.visible {
+    /* opacity: 1; Removed */
+}
+
+.volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 60px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.volume-slider:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--color-text);
+    cursor: pointer;
+    border: none;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.volume-slider::-webkit-slider-thumb:hover {
+    background: var(--color-accent);
+    transform: scale(1.2);
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--color-text);
+    cursor: pointer;
+    border: none;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.volume-slider::-moz-range-thumb:hover {
+    background: var(--color-accent);
+    transform: scale(1.2);
+}
+
+.toast {
+    background: var(--color-bg);
+    border: 1px solid var(--color-accent);
+    color: var(--color-text);
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-family: 'Space Mono', monospace;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    min-width: 250px;
+    text-align: center;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Lyrics Focus Mode - Global */
+.music-view.lyrics-focused .content-columns,
+.music-view.lyrics-focused .back-button {
+    opacity: 0.15;
+    /* Slightly dimmed */
+    transition: opacity 0.5s ease;
+}
+
+.music-view.lyrics-focused .lyrics-container {
+    z-index: 10;
+}
+
+/* Doors Entrance Styles */
+.doors-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    width: 100%;
+    max-width: 600px;
+    padding: 24px;
+    z-index: 2;
+}
+
+@media (min-width: 768px) {
+    .doors-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+    }
+
+    .door-card:nth-last-child(1):nth-child(odd) {
+        grid-column: span 2;
+        max-width: 50%;
+        /* Nice centering touch */
+        margin: 0 auto;
+        width: 100%;
+    }
+}
+
+.door-card {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--color-text);
+    padding: 20px;
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    text-align: center;
+    opacity: 0;
+    display: flex;
+    /* Kept flex for centering */
+    justify-content: center;
+    align-items: center;
+    min-height: 80px;
+    /* Reduced height back to original feel */
+    animation: fadeInDoors 1s ease forwards;
+}
+
+/* Shut Door Animation */
+.door-card.shutting {
+    background: #0a0a0a !important;
+    transform: scale(0.96) !important;
+    border-color: #333 !important;
+    color: #444 !important;
+    transition: all 0.1s ease;
+}
+
+@keyframes fadeInDoors {
+    to {
+        opacity: 1;
+    }
+}
+
+.door-card:hover,
+.door-card:focus-visible {
+    border-color: var(--color-accent);
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.05);
+    outline: none;
+}
+
+/* Artist Reply Section */
+#artistReply {
+    margin-top: 24px;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--color-accent);
+    text-align: center;
+    font-style: italic;
+    opacity: 0;
+    animation: replyFadeIn 2s ease forwards 1s;
+    min-height: 20px;
+}
+
+@keyframes replyFadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+.void-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.void-overlay.active {
+    visibility: visible;
+    pointer-events: all;
+}
+
+.void-text {
+    font-family: 'Akira Expanded', sans-serif;
+    font-size: clamp(14px, 5vw, 32px);
+    /* Adjusted for better mobile scaling */
+    letter-spacing: 2px;
+    color: var(--color-text);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    text-align: center;
+    padding: 0 24px;
+    /* More padding */
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    line-height: 1.5;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    font-weight: 700;
+    /* Ensure it hits the bold variation if imported that way, or synth bold */
+    text-transform: uppercase;
+    /* Usually Akira looks best uppercase */
+}
+
+.void-overlay.active .void-text {
+    opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .void-overlay,
+    .void-text {
+        transition: none;
+    }
+}

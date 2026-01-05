@@ -373,6 +373,41 @@ body {
     margin-left: var(--space-16);
 }
 
+.track-meta-right {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: var(--space-16);
+    flex-shrink: 0;
+}
+
+.track-meta-right .track-duration-inline {
+    margin-left: 0;
+}
+
+.duration-download-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+}
+
+.duration-download-btn svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+}
+
+.duration-download-btn:hover {
+    color: var(--color-accent);
+}
+
 /* Player Wrapper Animation */
 /* Hide expansion elements */
 .track-player-wrapper {
@@ -776,6 +811,7 @@ button:hover {
 
 
 footer {
+    display: none;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -790,6 +826,28 @@ footer {
     /* Ensure footer has background to cover content */
     pointer-events: auto;
     /* Ensure clickable */
+}
+
+body.music-active footer {
+    display: block;
+}
+
+.home-splash {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    pointer-events: none;
+}
+
+.home-splash-text {
+    font-family: 'Akira Expanded', sans-serif;
+    font-size: clamp(20px, 4vw, 42px);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--color-text);
 }
 
 .site-footer {
@@ -858,12 +916,146 @@ footer {
     width: min(92vw, 560px);
 }
 
+.support-modal .modal-content.support-modal-content {
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+.support-finder {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    overflow: hidden;
+    background: #0a0a0a;
+}
+
+.support-finder-header {
+    padding: 22px 20px;
+    background: #000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: center;
+}
+
+.support-finder-header h3 {
+    margin: 0 0 8px 0;
+}
+
+.support-finder-header p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+}
+
+.support-finder-content {
+    padding: 18px 20px 20px;
+}
+
+.support-finder-content > * + * {
+    margin-top: 14px;
+}
+
+.support-finder-content > .support-hotline-section {
+    margin-top: 16px;
+}
+
+.support-finder-content > .support-worldwide {
+    margin-top: 12px;
+}
+
+.support-region-info {
+    background: #111;
+    border-left: 2px solid rgba(179, 0, 0, 0.6);
+    padding: 10px 12px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--color-text);
+}
+
+.support-region-info strong {
+    color: var(--color-accent);
+}
+
+.support-hotline-section { }
+
+.support-section-title {
+    margin: 0 0 10px 0;
+    font-size: 13px;
+    font-family: 'Space Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-text);
+}
+
+.support-hotline-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.support-hotline-card {
+    background: #111;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 14px;
+}
+
+.support-hotline-name {
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 4px;
+    color: var(--color-text);
+}
+
+.support-hotline-details {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+    margin-bottom: 12px;
+}
+
+.support-contact-methods {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.support-contact-btn {
+    flex: 1;
+    min-width: 140px;
+    padding: 9px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: 12px;
+    font-family: 'Space Mono', monospace;
+    text-align: center;
+}
+
+.support-contact-btn:hover {
+    border-color: rgba(179, 0, 0, 0.6);
+    color: var(--color-text);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.support-emergency-banner {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 12px;
+    color: var(--color-text);
+    text-align: center;
+}
+
 .support-region-row {
     display: flex;
     gap: 12px;
     align-items: center;
-    margin-top: var(--space-24);
-    margin-bottom: var(--space-16);
+    margin: 0;
 }
 
 .support-region-row label {
@@ -876,7 +1068,7 @@ footer {
 
 .support-region-row select {
     flex: 1;
-    padding: 10px var(--space-16);
+    padding: 10px 12px;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--color-border);
     color: var(--color-text);
@@ -884,27 +1076,6 @@ footer {
     font-family: 'Space Mono', monospace;
 }
 
-.support-hotlines {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.support-hotlines li {
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: var(--radius-base);
-    padding: 12px 14px;
-    background: rgba(255, 255, 255, 0.015);
-}
-
-.support-hotlines a {
-    color: var(--color-text);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-}
 
 .support-worldwide {
     margin-top: var(--space-16);
@@ -1387,13 +1558,28 @@ input:focus-visible {
     }
 
     .track-duration-inline {
-        display: block !important;
+        display: inline-block !important;
         font-size: 10px;
         color: var(--color-text-secondary);
-        margin-left: 8px;
+        margin-left: 0;
         flex-shrink: 0;
         text-align: right;
         /* Explicit right align */
+    }
+
+    .track-meta-right {
+        margin-left: 8px;
+    }
+
+    .duration-download-btn {
+        display: inline-flex;
+        width: 20px;
+        height: 20px;
+    }
+
+    .duration-download-btn svg {
+        width: 12px;
+        height: 12px;
     }
 
     .container {
@@ -1408,7 +1594,7 @@ input:focus-visible {
 
     /* Footer: Hidden on Home, Visible on Music Page */
     footer {
-        display: block;
+        display: none;
         position: fixed;
         bottom: 0;
         left: 0;
@@ -1420,6 +1606,10 @@ input:focus-visible {
         /* MAX INT Z-Index */
         border-top: 1px solid rgba(255, 255, 255, 0.05);
         box-sizing: border-box;
+    }
+
+    body.music-active footer {
+        display: block;
     }
 
     .socials {
@@ -2015,13 +2205,13 @@ input:focus-visible {
     display: flex;
     justify-content: center;
     align-items: center;
-    opacity: 0;
+    opacity: 1;
+    visibility: hidden;
     pointer-events: none;
-    transition: opacity 0.5s ease;
 }
 
 .void-overlay.active {
-    opacity: 1;
+    visibility: visible;
     pointer-events: all;
 }
 

@@ -1,0 +1,58 @@
+/* The Base Style */
+.roche-glitch {
+  position: relative;
+  cursor: pointer; /* Shows hand icon */
+}
+
+/* The Glitch Layers (Hidden by default) */
+.roche-glitch::before,
+.roche-glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #0a0a0a; /* Matches your bg color */
+  visibility: hidden; /* Hides them until click */
+}
+
+/* THE TRIGGER: When you CLICK (:active) */
+.roche-glitch:active {
+  opacity: 0; /* Main text fades out */
+}
+
+.roche-glitch:active::before {
+  visibility: visible;
+  left: -2px;
+  text-shadow: 2px 0 #ff00de; /* Roche Pink */
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+  animation: glitch-anim-1 0.3s infinite linear alternate-reverse;
+}
+
+.roche-glitch:active::after {
+  visibility: visible;
+  left: 2px;
+  text-shadow: -2px 0 #00ffea; /* Cyan Cyan */
+  clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+  animation: glitch-anim-2 0.3s infinite linear alternate-reverse;
+}
+
+/* The Animation Keyframes */
+@keyframes glitch-anim-1 {
+  0% { clip-path: inset(20% 0 80% 0); transform: translate(-2px, 2px); }
+  20% { clip-path: inset(60% 0 10% 0); transform: translate(2px, -2px); }
+  40% { clip-path: inset(40% 0 50% 0); transform: translate(-2px, 2px); }
+  60% { clip-path: inset(80% 0 5% 0); transform: translate(2px, -2px); }
+  80% { clip-path: inset(10% 0 70% 0); transform: translate(-2px, 2px); }
+  100% { clip-path: inset(30% 0 20% 0); transform: translate(2px, -2px); }
+}
+
+@keyframes glitch-anim-2 {
+  0% { clip-path: inset(10% 0 60% 0); transform: translate(2px, -2px); }
+  20% { clip-path: inset(30% 0 20% 0); transform: translate(-2px, 2px); }
+  40% { clip-path: inset(70% 0 10% 0); transform: translate(2px, -2px); }
+  60% { clip-path: inset(20% 0 50% 0); transform: translate(-2px, 2px); }
+  80% { clip-path: inset(60% 0 30% 0); transform: translate(2px, -2px); }
+  100% { clip-path: inset(50% 0 40% 0); transform: translate(-2px, 2px); }
+}

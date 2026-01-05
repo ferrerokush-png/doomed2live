@@ -158,6 +158,7 @@ let isFullEPDownload = false;
 let previousView = 'home'; // Track where we came from
 let placeholderAudio = null; // Cache for placeholder audio
 const trackPlaceholders = {}; // Cache placeholders per track
+const audioPlayer = document.getElementById('audioPlayer');
 
 // Lyrics State
 let lyricsData = [];
@@ -169,6 +170,7 @@ function getPrefersReducedMotion() {
 }
 
 let lyricsFocusTimeoutId = null;
+let lyricsFocusArmed = false;
 
 function scheduleLyricsFocus(delayMs = 3000) {
     if (lyricsFocusTimeoutId) clearTimeout(lyricsFocusTimeoutId);
@@ -187,11 +189,10 @@ function clearLyricsFocus() {
 
 function enterVoid(btn) {
     const overlay = document.getElementById('voidOverlay');
-
     const trackTitle = btn ? btn.getAttribute('data-track') : null;
 
     if (!overlay) {
-        transitionToMusic(trackTitle);
+        transitionToMusic(trackTitle, 0);
         return;
     }
 
@@ -204,11 +205,9 @@ function enterVoid(btn) {
     overlay.classList.add('active');
     overlay.setAttribute('aria-hidden', 'false');
 
-    // Start transition (and autoplay) immediately while we still have a user gesture.
-    transitionToMusic(trackTitle);
-
-    // Keep the overlay up briefly, then fade it out.
     const delay = getPrefersReducedMotion() ? 0 : 4000;
+    transitionToMusic(trackTitle, delay);
+
     setTimeout(() => {
         overlay.classList.remove('active');
         overlay.setAttribute('aria-hidden', 'true');
@@ -216,7 +215,7 @@ function enterVoid(btn) {
     }, delay);
 }
 
-function transitionToMusic(autoplayTrackTitle) {
+function transitionToMusic(autoplayTrackTitle, pageReadyDelay = 0) {
     previousView = 'home';
     document.body.classList.add('music-active');
 
@@ -235,14 +234,19 @@ function transitionToMusic(autoplayTrackTitle) {
     loadEP('doomed');
 
     if (autoplayTrackTitle) {
-        requestAnimationFrame(() => {
+        setTimeout(() => {
             requestAnimationFrame(() => {
-                autoplayTrackByTitle('doomed', autoplayTrackTitle);
+                requestAnimationFrame(() => {
+                    autoplayTrackByTitle('doomed', autoplayTrackTitle);
+                });
             });
-        });
+        }, pageReadyDelay);
     }
 
-    scheduleLyricsFocus(3000);
+    setTimeout(() => {
+        lyricsFocusArmed = true;
+        clearLyricsFocus();
+    }, pageReadyDelay);
 
     setTimeout(() => {
         musicView.classList.add('organized');
@@ -444,6 +448,8 @@ function loadEP(epKey) {
     data.tracks.forEach((track, index) => {
         const trackEl = document.createElement('div');
         trackEl.className = 'track-item';
+        trackEl.setAttribute('role', 'button');
+        trackEl.tabIndex = 0;
 
         // Random values for disorganization effect
         const tx = (Math.random() * 60 - 30) + 'px';
@@ -463,7 +469,14 @@ function loadEP(epKey) {
                             <div class="play-icon-btn">▶</div>
                             <div class="track-text-container">
                                 <span class="track-title">${track.title}</span>
-                                <span class="track-duration-inline">${track.duration}</span>
+                                <span class="track-meta-right">
+                                    <span class="track-duration-inline">${track.duration}</span>
+                                    <button class="duration-download-btn" onclick="downloadTrack(event, '${epKey}', ${index})" aria-label="Download ${track.title}">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                            <path d="M12 3v10.17l3.59-3.58L17 11l-5 5-5-5 1.41-1.41L11 13.17V3h1zM5 19h14v2H5v-2z" />
+                                        </svg>
+                                    </button>
+                                </span>
                             </div>
                         </div>
                         <div class="track-right">
@@ -475,9 +488,17 @@ function loadEP(epKey) {
         // Pass event to prevent bubbles handled by buttons
         trackEl.onclick = (e) => {
             // If clicked explicitly on support button, it's handled there
-            if (e.target.closest('.inline-support-btn')) return;
+            if (e.target.closest('.inline-support-btn, .duration-download-btn')) return;
             selectTrack(track, trackEl);
         };
+
+        trackEl.addEventListener('keydown', (e) => {
+            if (e.target.closest('.inline-support-btn, .duration-download-btn')) return;
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                selectTrack(track, trackEl);
+            }
+        });
 
         trackList.appendChild(trackEl);
     });
@@ -587,6 +608,8 @@ function selectTrack(track, trackEl) {
 
     currentTrack = track;
     loadLyrics(track.title);
+    lyricsFocusArmed = true;
+    clearLyricsFocus();
 
     // Audio Logic
     audioPlayer.pause();
@@ -745,7 +768,7 @@ function togglePlayFromMini() {
 }
 
 function seekFooter(event) {
-    if (!audioPlayer.src || !audioPlayer.duration) return;
+    if (!audioPlayer || !audioPlayer.src || !audioPlayer.duration) return;
     const container = event.currentTarget;
     const rect = container.getBoundingClientRect();
     const percent = (event.clientX - rect.left) / rect.width;
@@ -776,12 +799,13 @@ function updateMiniPlayer() {
 
 
 function seek(event) {
-    if (!audioPlayer.src || !audioPlayer.duration) return;
+    if (!audioPlayer || !audioPlayer.src || !audioPlayer.duration) return;
     const rect = event.currentTarget.getBoundingClientRect();
     const percent = (event.clientX - rect.left) / rect.width;
     audioPlayer.currentTime = percent * audioPlayer.duration;
 }
 
+if (audioPlayer) {
 audioPlayer.addEventListener('timeupdate', () => {
     const current = Math.floor(audioPlayer.currentTime);
     const minutes = Math.floor(current / 60);
@@ -822,7 +846,6 @@ audioPlayer.addEventListener('pause', () => {
 
 audioPlayer.addEventListener('play', () => {
     startLyricSync(); // Start high precision loop
-    scheduleLyricsFocus(3000);
 });
 
 // Dynamic Duration Fix: Update track list duration when file loads
@@ -853,11 +876,12 @@ audioPlayer.addEventListener('ended', () => {
     updateTrackIcons();
     updateMiniPlayer();
 });
+}
 
 // Setup Mini Player Scrubbing
 function setupMiniScrubbing() {
     const container = document.getElementById('miniProgressContainer');
-    if (!container) return;
+    if (!container || !audioPlayer) return;
 
     container.addEventListener('click', (e) => {
         if (!audioPlayer.duration) return;
@@ -892,6 +916,90 @@ initStripe();
 // Multi-Step Modal Logic
 let selectedPaymentType = 'min'; // 'min' or 'custom'
 let stripeCheckout = null;
+
+const PENDING_DOWNLOAD_STORAGE_KEY = 'pendingDownload';
+
+function setPendingDownload(downloadUrl, itemTitle) {
+    if (!downloadUrl || !itemTitle) return;
+    try {
+        localStorage.setItem(PENDING_DOWNLOAD_STORAGE_KEY, JSON.stringify({ downloadUrl, itemTitle }));
+    } catch { }
+}
+
+function getPendingDownload() {
+    try {
+        const raw = localStorage.getItem(PENDING_DOWNLOAD_STORAGE_KEY);
+        return raw ? JSON.parse(raw) : null;
+    } catch {
+        return null;
+    }
+}
+
+function clearPendingDownload() {
+    try {
+        localStorage.removeItem(PENDING_DOWNLOAD_STORAGE_KEY);
+    } catch { }
+}
+
+function startFreeDownload() {
+    closeModal('sympathyModal');
+
+    const itemTitle = isFullEPDownload ? "Doomed to Live (Full EP)" : (currentTrack ? currentTrack.title : "Doomed to Live (Full EP)");
+    const downloadUrl = isFullEPDownload
+        ? musicData.doomed.fullEpZip
+        : (currentTrack && currentTrack.mp3Url ? currentTrack.mp3Url : musicData.doomed.fullEpZip);
+
+    setPendingDownload(downloadUrl, itemTitle);
+    downloadFile(downloadUrl, itemTitle);
+    openPostDownloadModal();
+}
+
+function openPostDownloadModal() {
+    const modal = document.getElementById('postDownloadModal');
+    if (!modal) return;
+
+    const pending = getPendingDownload();
+    const downloadWrap = document.getElementById('postDownloadDownload');
+    if (downloadWrap) {
+        downloadWrap.style.display = pending && pending.downloadUrl ? 'block' : 'none';
+    }
+
+    modal.classList.add('active');
+    const emailInput = document.getElementById('postDownloadEmail');
+    if (emailInput) emailInput.focus();
+}
+
+function downloadPending() {
+    const pending = getPendingDownload();
+    if (!pending || !pending.downloadUrl || !pending.itemTitle) return;
+    downloadFile(pending.downloadUrl, pending.itemTitle);
+}
+
+function submitPostDownloadEmail(event) {
+    event.preventDefault();
+    const email = (document.getElementById('postDownloadEmail')?.value || '').trim();
+    const statusEl = document.getElementById('postDownloadEmailStatus');
+
+    if (!email) {
+        if (statusEl) statusEl.textContent = 'No worries — you can skip this.';
+        return;
+    }
+
+    // Placeholder: integrate Mailchimp/Buttondown/custom API here.
+    if (statusEl) statusEl.textContent = 'Saved. I’ll only email when it matters.';
+}
+
+function skipPostDownloadEmail() {
+    closeModal('postDownloadModal');
+}
+
+function answerIdentity(answerKey) {
+    try {
+        localStorage.setItem('identityAnswer', String(answerKey));
+    } catch { }
+    showToast('Thank you.');
+    closeModal('postDownloadModal');
+}
 
 function downloadTrack(event, epKey, index) {
     if (event) event.stopPropagation();
@@ -1017,6 +1125,15 @@ const SUPPORT_RESOURCES = {
     ]
 };
 
+const SUPPORT_REGION_LABELS = {
+    us: 'United States',
+    ca: 'Canada',
+    uk: 'United Kingdom',
+    roi: 'Republic of Ireland',
+    au: 'Australia',
+    int: 'International'
+};
+
 function getFocusableElements(rootEl) {
     return Array.from(
         rootEl.querySelectorAll(
@@ -1057,76 +1174,61 @@ function guessSupportRegionClientSide() {
     return 'int';
 }
 
-async function fetchSupportCountryCode() {
-    try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 1500);
-        const res = await fetch('/api/region', { signal: controller.signal, cache: 'no-store' });
-        clearTimeout(timeout);
-        if (!res.ok) return null;
-        const data = await res.json();
-        return data && data.countryCode ? String(data.countryCode).toUpperCase() : null;
-    } catch {
-        return null;
-    }
-}
+// NOTE: Region detection is local-only (no IP / API calls).
 
 function renderSupportHotlines(regionKey) {
     const listEl = document.getElementById('supportHotlineList');
     if (!listEl) return;
     listEl.innerHTML = '';
 
+    const regionInfo = document.getElementById('supportRegionInfo');
+    if (regionInfo) {
+        const label = SUPPORT_REGION_LABELS[regionKey] || SUPPORT_REGION_LABELS.int;
+        regionInfo.innerHTML = `Showing support services for: <strong>${label}</strong>`;
+    }
+
     const resources = SUPPORT_RESOURCES[regionKey] || SUPPORT_RESOURCES.int;
     resources.forEach((resource) => {
-        const li = document.createElement('li');
+        const card = document.createElement('div');
+        card.className = 'support-hotline-card';
 
-        const title = document.createElement('div');
-        title.textContent = resource.name;
-        title.style.fontWeight = '700';
-        title.style.marginBottom = '6px';
-        li.appendChild(title);
+        const name = document.createElement('div');
+        name.className = 'support-hotline-name';
+        name.textContent = resource.name;
+        card.appendChild(name);
 
-        const actions = document.createElement('div');
-        actions.style.display = 'flex';
-        actions.style.flexWrap = 'wrap';
-        actions.style.gap = '10px';
-        actions.style.alignItems = 'center';
+        const details = document.createElement('div');
+        details.className = 'support-hotline-details';
+        details.textContent = resource.note || 'Official support information';
+        card.appendChild(details);
+
+        const methods = document.createElement('div');
+        methods.className = 'support-contact-methods';
 
         if (resource.tel) {
             const telLink = document.createElement('a');
+            telLink.className = 'support-contact-btn';
             telLink.href = `tel:${resource.tel}`;
             telLink.textContent = `Call ${resource.tel}`;
-            actions.appendChild(telLink);
+            methods.appendChild(telLink);
         }
 
         const infoLink = document.createElement('a');
+        infoLink.className = 'support-contact-btn';
         infoLink.href = resource.url;
         infoLink.target = '_blank';
         infoLink.rel = 'noopener noreferrer';
         infoLink.textContent = 'Official info';
-        actions.appendChild(infoLink);
+        methods.appendChild(infoLink);
 
-        li.appendChild(actions);
-
-        if (resource.note) {
-            const note = document.createElement('div');
-            note.textContent = resource.note;
-            note.style.marginTop = '8px';
-            note.style.fontSize = '12px';
-            note.style.color = 'var(--color-text-secondary)';
-            li.appendChild(note);
-        }
-
-        listEl.appendChild(li);
+        card.appendChild(methods);
+        listEl.appendChild(card);
     });
 }
 
 async function resolveInitialSupportRegion() {
     const saved = localStorage.getItem(SUPPORT_REGION_STORAGE_KEY);
     if (saved && SUPPORT_RESOURCES[saved]) return saved;
-
-    const countryCode = await fetchSupportCountryCode();
-    if (countryCode) return guessSupportRegionFromCountryCode(countryCode);
 
     return guessSupportRegionClientSide();
 }
@@ -1248,6 +1350,7 @@ async function initiateStripeCheckout() {
     const minAmount = isFullEPDownload ? 3.99 : 1.00;
     const itemTitle = isFullEPDownload ? "Doomed to Live (Full EP)" : currentTrack.title;
     const downloadUrl = isFullEPDownload ? musicData.doomed.fullEpZip : currentTrack.wavUrl;
+    setPendingDownload(downloadUrl, itemTitle);
 
     if (isNaN(amount) || amount < minAmount) {
         showToast(`Please enter a valid amount (Minimum £${minAmount})`);
@@ -1535,6 +1638,11 @@ function updateLyricDisplay(text) {
 
     if (text) {
         el.classList.add('visible');
+        if (lyricsFocusArmed) {
+            lyricsFocusArmed = false;
+            // Give the lyric line a moment to render before dimming.
+            setTimeout(() => scheduleLyricsFocus(0), 100);
+        }
     } else {
         el.classList.remove('visible');
     }
@@ -1571,6 +1679,17 @@ function downloadFile(url, filename) {
 window.addEventListener('DOMContentLoaded', async () => {
     initSupportUI();
 
+    // Home splash -> doors after 2s
+    const homeSplash = document.getElementById('homeSplash');
+    const doors = document.getElementById('doorsContainer');
+    if (homeSplash && doors) {
+        setTimeout(() => {
+            homeSplash.style.display = 'none';
+            homeSplash.setAttribute('aria-hidden', 'true');
+            doors.style.display = '';
+        }, 2000);
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     const sessionId = urlParams.get('session_id');
 
@@ -1583,7 +1702,15 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (status === 'complete') {
                 // Clean up URL
                 window.history.replaceState({}, document.title, window.location.pathname);
-                showToast(`Payment successful! Welcome to the club, ${customer_email || 'friend'}.`);
+                showToast(`Thank you <3`);
+
+                const pending = getPendingDownload();
+                if (pending && pending.downloadUrl && pending.itemTitle) {
+                    // Paid path: download is ready after checkout, show modal with download button.
+                    openPostDownloadModal();
+                } else {
+                    openPostDownloadModal();
+                }
             }
         } catch (error) {
             console.error('Error checking session status:', error);

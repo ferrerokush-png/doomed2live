@@ -37,7 +37,8 @@ app.use(cors({
 app.use(express.json());
 
 // Serve Static Files
-app.use(express.static(path.join(__dirname, '.')));
+const publicDir = path.join(__dirname, 'public');
+app.use(express.static(publicDir));
 
 // Mount API Routes
 app.post('/api/checkout', checkoutHandler);
@@ -115,36 +116,14 @@ function getJson(url, timeoutMs = 1500) {
     });
 }
 
-// IP-based region detection (no IP persisted/logged)
-app.get('/api/region', async (req, res) => {
-    res.set('Cache-Control', 'no-store');
-
-    let countryCode = countryCodeFromHeaders(req);
-
-    if (!countryCode && process.env.GEOLOOKUP_URL) {
-        const ip = normalizeIp(getClientIp(req));
-        if (!isPrivateIp(ip)) {
-            try {
-                const lookupUrl = buildLookupUrl(process.env.GEOLOOKUP_URL, ip);
-                const json = await getJson(lookupUrl);
-                const maybe =
-                    (json && (json.countryCode || json.country_code || json.country || json.countryCode2)) || null;
-                if (maybe) countryCode = String(maybe).toUpperCase();
-            } catch {
-                // Ignore failures; client will fall back to locale/timezone
-            }
-        }
-    }
-
-    res.json({ countryCode: countryCode || null });
-});
+// NOTE: /api/region removed; support modal uses local-only detection.
 
 // Fallback for SPA/Static site
 app.get('*', (req, res) => {
     if (req.path.startsWith('/api/')) {
         return res.status(404).json({ error: 'API endpoint not found' });
     }
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(publicDir, 'index.html'));
 });
 
 const port = process.env.PORT || 4242;
