@@ -164,8 +164,17 @@ let lyricsData = [];
 let currentLyricIndex = -1;
 let lyricTimeout = null;
 
+function getPrefersReducedMotion() {
+    return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+}
+
 function enterVoid(btn) {
     const overlay = document.getElementById('voidOverlay');
+
+    if (!overlay) {
+        transitionToMusic();
+        return;
+    }
 
     // Interaction: Shut Door (Visual Feedback)
     if (btn) btn.classList.add('shutting');
@@ -182,8 +191,7 @@ function enterVoid(btn) {
         overlay.setAttribute('aria-hidden', 'false');
 
         // Determine Delay (Respect Reduced Motion)
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const delay = prefersReducedMotion ? 0 : 4000;
+        const delay = getPrefersReducedMotion() ? 0 : 4000;
 
         setTimeout(() => {
             transitionToMusic();
@@ -222,11 +230,6 @@ function transitionToMusic() {
     setTimeout(() => {
         musicView.classList.add('organized');
 
-        // Scroll to EP Anchor
-        const epAnchor = document.getElementById('ep');
-        if (epAnchor) {
-            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        }
     }, 100);
 }
 
