@@ -165,6 +165,68 @@ let lyricsData = [];
 let currentLyricIndex = -1;
 let lyricTimeout = null;
 
+const RELEASE_ISO = '2026-01-15T00:00:00Z';
+const PREVIEW_HOSTS = new Set([
+    'preview.doomed2live.com',
+    'localhost',
+    '127.0.0.1'
+]);
+
+let releaseGateIntervalId = null;
+
+function shouldBypassReleaseGate() {
+    return PREVIEW_HOSTS.has(window.location.hostname);
+}
+
+function updateReleaseGate() {
+    const gateMessage = document.getElementById('releaseGateMessage');
+    const gateCountdown = document.getElementById('releaseGateCountdown');
+    if (!gateMessage || !gateCountdown) return false;
+
+    const targetTime = new Date(RELEASE_ISO).getTime();
+    const now = Date.now();
+    const remaining = targetTime - now;
+
+    if (remaining <= 0) {
+        gateMessage.textContent = 'Release is live';
+        gateCountdown.textContent = '00d 00h 00m 00s';
+        return false;
+    }
+
+    const dayMs = 24 * 60 * 60 * 1000;
+    const hourMs = 60 * 60 * 1000;
+    const minuteMs = 60 * 1000;
+
+    const days = Math.floor(remaining / dayMs);
+    const hours = Math.floor((remaining % dayMs) / hourMs);
+    const minutes = Math.floor((remaining % hourMs) / minuteMs);
+    const seconds = Math.floor((remaining % minuteMs) / 1000);
+
+    gateMessage.textContent = `Come back in ${days} day${days === 1 ? '' : 's'}`;
+    gateCountdown.textContent = `${days.toString().padStart(2, '0')}d ${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`;
+
+    return true;
+}
+
+function initReleaseGate() {
+    if (shouldBypassReleaseGate()) return;
+    const gate = document.getElementById('releaseGate');
+    if (!gate) return;
+
+    if (updateReleaseGate()) {
+        document.body.classList.add('site-locked');
+        releaseGateIntervalId = setInterval(() => {
+            if (!updateReleaseGate()) {
+                document.body.classList.remove('site-locked');
+                if (releaseGateIntervalId) clearInterval(releaseGateIntervalId);
+                releaseGateIntervalId = null;
+            }
+        }, 1000);
+    }
+}
+
+initReleaseGate();
+
 function getPrefersReducedMotion() {
     return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 }
@@ -1484,9 +1546,10 @@ async function loadLyrics(title) {
         container.classList.remove('visible');
     }
 
-    // Convert Title to filename format (Sentence case + .lrc)
-    // "Doomed to Live" -> "Doomed to live.lrc"
-    let filename = title.charAt(0).toUpperCase() + title.slice(1).toLowerCase() + '.lrc';
+    // Convert Title to filename format (lowercase + .lrc)
+    // "Doomed to Live" -> "doomed to live.lrc"
+    const normalizedTitle = title.trim().toLowerCase();
+    let filename = normalizedTitle + '.lrc';
 
     try {
         const res = await fetch('lyrics/' + filename);
@@ -1508,7 +1571,7 @@ async function loadLyrics(title) {
             // Fallback 2: Try slugified (lowercase, no spaces)
             // "Doomed to Live" -> "doomedtolive.lrc"
             try {
-                const slug = title.replace(/\s+/g, '').toLowerCase() + '.lrc';
+                const slug = normalizedTitle.replace(/\s+/g, '') + '.lrc';
                 const res3 = await fetch('lyrics/' + slug);
                 if (res3.ok) {
                     const text3 = await res3.text();

@@ -373,6 +373,52 @@ body {
     margin-left: var(--space-16);
 }
 
+.release-gate {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at center, rgba(10, 10, 10, 0.85), rgba(0, 0, 0, 0.98));
+    color: var(--color-text);
+    z-index: 9999;
+    text-align: center;
+}
+
+.release-gate__inner {
+    max-width: 520px;
+    padding: 24px;
+}
+
+.release-gate__title {
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.2em;
+    font-size: 18px;
+    margin-bottom: 14px;
+}
+
+.release-gate__message {
+    font-size: 20px;
+    margin-bottom: 12px;
+}
+
+.release-gate__countdown {
+    font-size: 16px;
+    color: var(--color-text-secondary);
+}
+
+body.site-locked {
+    overflow: hidden;
+}
+
+body.site-locked > :not(#releaseGate) {
+    display: none !important;
+}
+
+body.site-locked #releaseGate {
+    display: flex;
+}
+
 .track-meta-right {
     display: inline-flex;
     align-items: center;
