@@ -1,64 +1,54 @@
-// Simple Node.js/Express backend for Stripe Embedded Checkout
-// Run this with: node server.js (requires: npm install express stripe cors dotenv)
-
 const express = require('express');
-require('dotenv').config();
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY); // Get from Stripe Dashboard
+const path = require('path');
 const cors = require('cors');
+require('dotenv').config();
+
+// Import API handlers
+const checkoutHandler = require('./api/checkout');
+const configHandler = require('./api/config');
+const sessionStatusHandler = require('./api/session-status');
+
 const app = express();
 
+// Security: Stricter CORS
+const allowedOrigins = [
+    'http://localhost:4242',
+    'http://localhost:5500',
+    'http://127.0.0.1:5500',
+    'https://doomed2live.com',
+    'https://www.doomed2live.com'
+];
+
+app.use(cors({
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.indexOf(origin) === -1) {
+            return callback(new Error('The CORS policy for this site does not allow access from the specified Origin.'));
+        }
+        return callback(null, true);
+    },
+    credentials: true
+}));
+
 app.use(express.json());
-app.use(cors()); // Allow your HTML site to talk to this server
 
-// Create a Checkout Session for Embedded Checkout
-app.post('/create-checkout-session', async (req, res) => {
-    const { amount, email, name, itemTitle } = req.body;
+// Serve Static Files
+app.use(express.static(path.join(__dirname, '.')));
 
-    try {
-        // Convert amount to pence (Stripe uses smallest currency unit)
-        const amountInPence = Math.round(amount * 100);
+// Mount API Routes
+app.post('/api/checkout', checkoutHandler);
+app.get('/api/config', configHandler);
+app.get('/api/session-status', sessionStatusHandler);
 
-        // Create a Checkout Session for embedded checkout
-        const session = await stripe.checkout.sessions.create({
-            ui_mode: 'embedded', // This makes it embeddable
-            line_items: [
-                {
-                    price_data: {
-                        currency: 'gbp',
-                        product_data: {
-                            name: itemTitle || 'ROCHÈ Music Support',
-                            description: `Pay what you want support for ${itemTitle}`,
-                        },
-                        unit_amount: amountInPence, // Amount in pence
-                    },
-                    quantity: 1,
-                },
-            ],
-            customer_email: email,
-            mode: 'payment',
-            return_url: `${req.headers.origin}/?session_id={CHECKOUT_SESSION_ID}`,
-            metadata: {
-                customer_name: name || '',
-                item_title: itemTitle || '',
-            },
-        });
-
-        res.send({ clientSecret: session.client_secret });
-    } catch (error) {
-        res.status(400).send({ error: { message: error.message } });
+// Fallback for SPA/Static site
+app.get('*', (req, res) => {
+    if (req.path.startsWith('/api/')) {
+        return res.status(404).json({ error: 'API endpoint not found' });
     }
-});
-
-// Retrieve Checkout Session status (for handling success)
-app.get('/session-status', async (req, res) => {
-    const session = await stripe.checkout.sessions.retrieve(req.query.session_id);
-
-    res.send({
-        status: session.status,
-        customer_email: session.customer_details?.email,
-    });
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 const port = process.env.PORT || 4242;
 app.listen(port, () => console.log(`Void server running on port ${port}`));
-
