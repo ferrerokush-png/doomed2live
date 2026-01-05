@@ -168,46 +168,55 @@ function getPrefersReducedMotion() {
     return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 }
 
+let lyricsFocusTimeoutId = null;
+
+function scheduleLyricsFocus(delayMs = 3000) {
+    if (lyricsFocusTimeoutId) clearTimeout(lyricsFocusTimeoutId);
+    lyricsFocusTimeoutId = setTimeout(() => {
+        const musicView = document.getElementById('musicView');
+        if (musicView) musicView.classList.add('lyrics-focused');
+    }, delayMs);
+}
+
+function clearLyricsFocus() {
+    if (lyricsFocusTimeoutId) clearTimeout(lyricsFocusTimeoutId);
+    lyricsFocusTimeoutId = null;
+    const musicView = document.getElementById('musicView');
+    if (musicView) musicView.classList.remove('lyrics-focused');
+}
+
 function enterVoid(btn) {
     const overlay = document.getElementById('voidOverlay');
 
+    const trackTitle = btn ? btn.getAttribute('data-track') : null;
+
     if (!overlay) {
-        transitionToMusic();
+        transitionToMusic(trackTitle);
         return;
     }
 
-    // Interaction: Shut Door (Visual Feedback)
     if (btn) btn.classList.add('shutting');
 
-    // Update Overlay Text with Whisper
     const replyText = btn ? btn.getAttribute('data-reply') : 'You are not alone';
     const voidTextEl = overlay.querySelector('.void-text');
     if (voidTextEl) voidTextEl.textContent = replyText;
 
-    // Short delay for button animation
+    overlay.classList.add('active');
+    overlay.setAttribute('aria-hidden', 'false');
+
+    // Start transition (and autoplay) immediately while we still have a user gesture.
+    transitionToMusic(trackTitle);
+
+    // Keep the overlay up briefly, then fade it out.
+    const delay = getPrefersReducedMotion() ? 0 : 4000;
     setTimeout(() => {
-        // Show Overlay
-        overlay.classList.add('active');
-        overlay.setAttribute('aria-hidden', 'false');
-
-        // Determine Delay (Respect Reduced Motion)
-        const delay = getPrefersReducedMotion() ? 0 : 4000;
-
-        setTimeout(() => {
-            transitionToMusic();
-
-            // Hide Overlay after transition starts
-            setTimeout(() => {
-                overlay.classList.remove('active');
-                overlay.setAttribute('aria-hidden', 'true');
-                if (btn) btn.classList.remove('shutting');
-            }, 500);
-
-        }, delay);
-    }, 100);
+        overlay.classList.remove('active');
+        overlay.setAttribute('aria-hidden', 'true');
+        if (btn) btn.classList.remove('shutting');
+    }, delay);
 }
 
-function transitionToMusic() {
+function transitionToMusic(autoplayTrackTitle) {
     previousView = 'home';
     document.body.classList.add('music-active');
 
@@ -222,15 +231,43 @@ function transitionToMusic() {
     void musicView.offsetWidth;
     musicView.classList.add('visible');
 
-    // Load content if not loaded
-    if (!currentTrack) {
-        loadEP('doomed');
+    // Always build the EP UI when entering from home
+    loadEP('doomed');
+
+    if (autoplayTrackTitle) {
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                autoplayTrackByTitle('doomed', autoplayTrackTitle);
+            });
+        });
     }
+
+    scheduleLyricsFocus(3000);
 
     setTimeout(() => {
         musicView.classList.add('organized');
 
     }, 100);
+}
+
+function autoplayTrackByTitle(epKey, title) {
+    const ep = musicData[epKey];
+    if (!ep || !Array.isArray(ep.tracks)) return;
+
+    const matchTitle = String(title).trim().toLowerCase();
+    const track = ep.tracks.find(t => String(t.title).trim().toLowerCase() === matchTitle);
+    if (!track) return;
+
+    const trackList = document.getElementById('trackList');
+    const trackEls = trackList ? Array.from(trackList.querySelectorAll('.track-item')) : [];
+    const trackEl = trackEls.find((el) => {
+        const label = el.querySelector('.track-title');
+        return label && String(label.textContent).trim().toLowerCase() === String(track.title).trim().toLowerCase();
+    });
+
+    if (trackEl) {
+        selectTrack(track, trackEl);
+    }
 }
 
 // Deprecated legacy function kept for safety if linked elsewhere (modified to use new flow)
@@ -242,6 +279,8 @@ function goToArchive() {
     const musicView = document.getElementById('musicView');
     const archiveView = document.getElementById('archiveView');
     if (!archiveView) return; // Safety check
+
+    clearLyricsFocus();
 
     // Hide Music View
     musicView.classList.remove('visible', 'organized');
@@ -287,6 +326,8 @@ function goHome() {
     document.body.classList.remove('music-active');
     const musicView = document.getElementById('musicView');
     const archiveView = document.getElementById('archiveView');
+
+    clearLyricsFocus();
 
     // Stop audio and hide mini-player
     audioPlayer.pause();
@@ -775,17 +816,13 @@ audioPlayer.addEventListener('timeupdate', () => {
     // Removed syncLyrics() from here to use high-precision loop requestAnimationFrame
 });
 
-// Ensure focus mode is cleared on pause (unless switching tracks)
 audioPlayer.addEventListener('pause', () => {
     cancelLyricSync(); // Stop high precision loop
-    if (!isSwitchingTrack) {
-        document.getElementById('musicView').classList.remove('lyrics-focused');
-    }
 });
 
 audioPlayer.addEventListener('play', () => {
     startLyricSync(); // Start high precision loop
-    document.getElementById('musicView').classList.add('lyrics-focused');
+    scheduleLyricsFocus(3000);
 });
 
 // Dynamic Duration Fix: Update track list duration when file loads
@@ -923,6 +960,267 @@ function closeModal(modalId) {
         stripeCheckout = null;
         document.getElementById('stripe-checkout-container').innerHTML = '';
     }
+}
+
+// Support modal (hotlines, region-aware)
+let supportModalOpener = null;
+let supportModalKeyHandler = null;
+
+const SUPPORT_REGION_STORAGE_KEY = 'supportRegion';
+
+const SUPPORT_RESOURCES = {
+    us: [
+        {
+            name: '988 Suicide & Crisis Lifeline',
+            url: 'https://988lifeline.org/',
+            tel: '988',
+            note: 'Call, text, or chat'
+        }
+    ],
+    ca: [
+        {
+            name: '9-8-8 Suicide Crisis Helpline',
+            url: 'https://988.ca/',
+            tel: '988',
+            note: 'Call or text'
+        }
+    ],
+    uk: [
+        {
+            name: 'Samaritans (UK)',
+            url: 'https://www.samaritans.org/how-we-can-help/contact-samaritan/talk-us-phone/',
+            tel: '116123',
+            note: '24/7'
+        }
+    ],
+    roi: [
+        {
+            name: 'Samaritans (Republic of Ireland)',
+            url: 'https://www.samaritans.org/how-we-can-help/contact-samaritan/',
+            note: 'Official contact options'
+        }
+    ],
+    au: [
+        {
+            name: 'Lifeline Australia',
+            url: 'https://www.lifeline.org.au/131114',
+            tel: '131114',
+            note: '24/7'
+        }
+    ],
+    int: [
+        {
+            name: 'Find a Helpline (worldwide directory)',
+            url: 'https://findahelpline.com/',
+            note: 'Directory by country/region'
+        }
+    ]
+};
+
+function getFocusableElements(rootEl) {
+    return Array.from(
+        rootEl.querySelectorAll(
+            'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex=\"-1\"])'
+        )
+    ).filter((el) => el.offsetParent !== null || el === document.activeElement);
+}
+
+function guessSupportRegionFromCountryCode(countryCode) {
+    const code = (countryCode || '').toUpperCase();
+    if (code === 'US') return 'us';
+    if (code === 'CA') return 'ca';
+    if (code === 'GB' || code === 'UK') return 'uk';
+    if (code === 'IE') return 'roi';
+    if (code === 'AU') return 'au';
+    return 'int';
+}
+
+function guessSupportRegionClientSide() {
+    const language = (navigator.language || '').toUpperCase();
+    const regionPart = language.includes('-') ? language.split('-')[1] : '';
+    if (regionPart === 'US') return 'us';
+    if (regionPart === 'CA') return 'ca';
+    if (regionPart === 'GB' || regionPart === 'UK') return 'uk';
+    if (regionPart === 'IE') return 'roi';
+    if (regionPart === 'AU') return 'au';
+
+    try {
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+        if (tz.includes('Australia')) return 'au';
+        if (tz === 'Europe/Dublin') return 'roi';
+        if (tz === 'Europe/London') return 'uk';
+        if (tz.startsWith('America/')) return 'us';
+    } catch {
+        // ignore
+    }
+
+    return 'int';
+}
+
+async function fetchSupportCountryCode() {
+    try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 1500);
+        const res = await fetch('/api/region', { signal: controller.signal, cache: 'no-store' });
+        clearTimeout(timeout);
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data && data.countryCode ? String(data.countryCode).toUpperCase() : null;
+    } catch {
+        return null;
+    }
+}
+
+function renderSupportHotlines(regionKey) {
+    const listEl = document.getElementById('supportHotlineList');
+    if (!listEl) return;
+    listEl.innerHTML = '';
+
+    const resources = SUPPORT_RESOURCES[regionKey] || SUPPORT_RESOURCES.int;
+    resources.forEach((resource) => {
+        const li = document.createElement('li');
+
+        const title = document.createElement('div');
+        title.textContent = resource.name;
+        title.style.fontWeight = '700';
+        title.style.marginBottom = '6px';
+        li.appendChild(title);
+
+        const actions = document.createElement('div');
+        actions.style.display = 'flex';
+        actions.style.flexWrap = 'wrap';
+        actions.style.gap = '10px';
+        actions.style.alignItems = 'center';
+
+        if (resource.tel) {
+            const telLink = document.createElement('a');
+            telLink.href = `tel:${resource.tel}`;
+            telLink.textContent = `Call ${resource.tel}`;
+            actions.appendChild(telLink);
+        }
+
+        const infoLink = document.createElement('a');
+        infoLink.href = resource.url;
+        infoLink.target = '_blank';
+        infoLink.rel = 'noopener noreferrer';
+        infoLink.textContent = 'Official info';
+        actions.appendChild(infoLink);
+
+        li.appendChild(actions);
+
+        if (resource.note) {
+            const note = document.createElement('div');
+            note.textContent = resource.note;
+            note.style.marginTop = '8px';
+            note.style.fontSize = '12px';
+            note.style.color = 'var(--color-text-secondary)';
+            li.appendChild(note);
+        }
+
+        listEl.appendChild(li);
+    });
+}
+
+async function resolveInitialSupportRegion() {
+    const saved = localStorage.getItem(SUPPORT_REGION_STORAGE_KEY);
+    if (saved && SUPPORT_RESOURCES[saved]) return saved;
+
+    const countryCode = await fetchSupportCountryCode();
+    if (countryCode) return guessSupportRegionFromCountryCode(countryCode);
+
+    return guessSupportRegionClientSide();
+}
+
+function openSupportModal(openerEl) {
+    const modal = document.getElementById('supportModal');
+    if (!modal) return;
+
+    supportModalOpener = openerEl || document.activeElement;
+
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+
+    const content = modal.querySelector('.support-modal-content') || modal.querySelector('.modal-content');
+    const closeBtn = document.getElementById('supportModalClose');
+
+    const focusTarget = closeBtn || content;
+    if (focusTarget) {
+        setTimeout(() => focusTarget.focus(), 0);
+    }
+
+    supportModalKeyHandler = (e) => {
+        if (!modal.classList.contains('active')) return;
+
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            closeSupportModal();
+            return;
+        }
+
+        if (e.key === 'Tab') {
+            const focusables = getFocusableElements(modal);
+            if (!focusables.length) return;
+
+            const first = focusables[0];
+            const last = focusables[focusables.length - 1];
+
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        }
+    };
+
+    document.addEventListener('keydown', supportModalKeyHandler);
+}
+
+function closeSupportModal() {
+    const modal = document.getElementById('supportModal');
+    if (!modal) return;
+
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+
+    if (supportModalKeyHandler) {
+        document.removeEventListener('keydown', supportModalKeyHandler);
+        supportModalKeyHandler = null;
+    }
+
+    if (supportModalOpener && typeof supportModalOpener.focus === 'function') {
+        supportModalOpener.focus();
+    }
+    supportModalOpener = null;
+}
+
+async function initSupportUI() {
+    const openBtn = document.getElementById('supportNowBtn');
+    const modal = document.getElementById('supportModal');
+    const closeBtn = document.getElementById('supportModalClose');
+    const regionSelect = document.getElementById('supportRegionSelect');
+
+    if (!openBtn || !modal || !closeBtn || !regionSelect) return;
+
+    openBtn.addEventListener('click', async () => {
+        const region = await resolveInitialSupportRegion();
+        regionSelect.value = region;
+        renderSupportHotlines(region);
+        openSupportModal(openBtn);
+    });
+
+    closeBtn.addEventListener('click', closeSupportModal);
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeSupportModal();
+    });
+
+    regionSelect.addEventListener('change', () => {
+        const value = regionSelect.value;
+        localStorage.setItem(SUPPORT_REGION_STORAGE_KEY, value);
+        renderSupportHotlines(value);
+    });
 }
 
 function setPaymentAmount(type) {
@@ -1271,6 +1569,8 @@ function downloadFile(url, filename) {
 
 // Check for completed checkout session on page load
 window.addEventListener('DOMContentLoaded', async () => {
+    initSupportUI();
+
     const urlParams = new URLSearchParams(window.location.search);
     const sessionId = urlParams.get('session_id');
 

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -22,18 +22,17 @@
 </head>
 
 <body>
-    <div class="logo">ROCHÈ</div>
+    <div class="logo">ROCHÃˆ</div>
 
     <div class="container" id="homeView">
         <div class="doors-container">
-            <button class="door-card" onclick="enterVoid(this)" data-reply="Yeah. I see it too.">The system is
+            <button class="door-card" onclick="enterVoid(this)" data-reply="You don't have to face it alone." data-track="Doomed to Live">The system is
                 rigged</button>
-            <button class="door-card" onclick="enterVoid(this)" data-reply="Then let me hold the weight for a second.">I
+            <button class="door-card" onclick="enterVoid(this)" data-reply="Then let me hold the weight for a second." data-track="If Only">I
                 feel powerless</button>
-            <button class="door-card" onclick="enterVoid(this)" data-reply="Me neither. Not the clean kind.">I don't
-                believe in love</button>
-            <button class="door-card" onclick="enterVoid(this)" data-reply="You are not alone">All of the above</button>
-            <button class="door-card" onclick="enterVoid(this)" data-reply="Then we’ll settle for honest ones.">There
+            <button class="door-card" onclick="enterVoid(this)" data-reply="Great minds think alike" data-track="Why Do Fools Fall In Love">Love is not real</button>
+            <button class="door-card" onclick="enterVoid(this)" data-reply="You are not alone" data-track="Mayday">I just want to disappear</button>
+            <button class="door-card" onclick="enterVoid(this)" data-reply="Let me try to soften the crash" data-track="End Like This">There
                 are no happy endings</button>
         </div>
     </div>
@@ -46,7 +45,7 @@
     <div class="music-view" id="musicView">
         <div id="ep"></div> <!-- Anchor Target -->
         <audio id="audioPlayer"></audio>
-        <button class="back-button" onclick="goHome()">← Back</button>
+        <button class="back-button" onclick="goHome()">â† Back</button>
 
         <div class="music-content">
             <div class="content-columns">
@@ -64,11 +63,11 @@
                     <div id="playerTemplate" style="display: none;">
                         <div class="player" id="player">
                             <div class="player-title">Now Playing</div>
-                            <div class="player-track" id="playerTrack">—</div>
+                            <div class="player-track" id="playerTrack">â€”</div>
                             <!-- Audio element moved to root -->
                             <div class="player-controls">
-                                <button id="playBtn" onclick="togglePlay(event)">▶ Play</button>
-                                <button class="download-btn" onclick="downloadTrack(event)">☕ Support &
+                                <button id="playBtn" onclick="togglePlay(event)">â–¶ Play</button>
+                                <button class="download-btn" onclick="downloadTrack(event)">â˜• Support &
                                     Download</button>
                             </div>
                             <div class="player-progress" onclick="seek(event)">
@@ -106,7 +105,7 @@
     <!-- Archive View (Reusing layout structure) -->
     <!-- Temporarily Deactivated
     <div class="music-view" id="archiveView">
-        <button class="back-button" onclick="returnToLatest()">← Latest</button>
+        <button class="back-button" onclick="returnToLatest()">â† Latest</button>
 
         <div class="music-content">
             <div class="tracks-area">
@@ -130,41 +129,80 @@
         <div class="discreet-controls">
             <input type="range" id="volumeSlider" class="volume-slider" min="0" max="1" step="0.05" value="1"
                 oninput="setVolume(this.value)">
-            <button class="discreet-btn" id="discreetPlayBtn" onclick="togglePlay()">▶</button>
+            <button class="discreet-btn" id="discreetPlayBtn" onclick="togglePlay()">â–¶</button>
         </div>
     </div>
 
-    <footer>
-        <!-- Progress Bar Integrated into Footer Top Border -->
-        <div class="footer-progress-container" id="footerProgressContainer" onclick="seekFooter(event)">
-            <div class="footer-progress-bar" id="footerProgressBar"></div>
+    <footer class="site-footer" id="siteFooter">
+    <!-- Progress Bar Integrated into Footer Top Border -->
+    <div class="footer-progress-container" id="footerProgressContainer" onclick="seekFooter(event)">
+        <div class="footer-progress-bar" id="footerProgressBar"></div>
+    </div>
+
+    <div class="footer-row">
+        <button type="button" class="support-link" id="supportNowBtn">Need support right now?</button>
+
+        <nav class="socials socials--icons" aria-label="Social links">
+            <a href="https://open.spotify.com/artist/2EJmFMBLaeIYrmKK15iQ3M" class="social-icon-link" target="_blank" rel="noopener noreferrer" aria-label="Spotify">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2Zm4.62 14.42a.75.75 0 0 1-1.03.25c-2.82-1.73-6.37-2.12-10.55-1.17a.75.75 0 0 1-.33-1.46c4.55-1.04 8.48-.59 11.65 1.34.35.21.46.67.26 1.04Zm.92-2.65a.9.9 0 0 1-1.23.3c-3.23-1.98-8.15-2.55-11.97-1.39a.9.9 0 1 1-.52-1.72c4.36-1.32 9.79-.68 13.5 1.59.42.26.55.82.3 1.22Zm.1-2.78c-3.87-2.3-10.26-2.51-13.95-1.39a1.05 1.05 0 1 1-.61-2c4.24-1.29 11.31-1.04 15.77 1.62a1.05 1.05 0 0 1-1.21 1.77Z" />
+                </svg>
+                <span class="sr-only">Spotify</span>
+            </a>
+            <a href="https://instagram.com/@rocheofficiel" class="social-icon-link" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.75-2.25a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Z" />
+                </svg>
+                <span class="sr-only">Instagram</span>
+            </a>
+            <a href="https://youtube.com/@rocheofficiel" class="social-icon-link" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M21.7 8.02a3 3 0 0 0-2.11-2.12C17.7 5.4 12 5.4 12 5.4s-5.7 0-7.59.5A3 3 0 0 0 2.3 8.02 31.1 31.1 0 0 0 1.8 12c0 1.31.17 2.63.5 3.98a3 3 0 0 0 2.11 2.12c1.89.5 7.59.5 7.59.5s5.7 0 7.59-.5a3 3 0 0 0 2.11-2.12c.33-1.35.5-2.67.5-3.98s-.17-2.63-.5-3.98ZM10 15.2V8.8L15.6 12 10 15.2Z" />
+                </svg>
+                <span class="sr-only">YouTube</span>
+            </a>
+            <a href="https://tiktok.com/@rocheofficiel" class="social-icon-link" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M14 2h2c.24 2.06 1.63 3.67 3.7 4.02v2.04c-1.44-.04-2.78-.52-3.86-1.32v7.86a6.58 6.58 0 1 1-6.58-6.58c.28 0 .56.02.83.06v2.22a3.96 3.96 0 1 0 2.39 3.64V2Z" />
+                </svg>
+                <span class="sr-only">TikTok</span>
+            </a>
+        </nav>
+    </div>
+</footer>
+
+<!-- Support Modal -->
+<div class="modal support-modal" id="supportModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="supportModalTitle" aria-describedby="supportModalDesc">
+    <div class="modal-content support-modal-content" role="document" tabindex="-1">
+        <button class="modal-close" type="button" id="supportModalClose" aria-label="Close">×</button>
+        <h3 id="supportModalTitle">Need support right now?</h3>
+        <p id="supportModalDesc">If you’re in immediate danger, call your local emergency number.</p>
+        <p>If you can, contact a crisis hotline in your region:</p>
+
+        <div class="support-region-row">
+            <label for="supportRegionSelect">Region</label>
+            <select id="supportRegionSelect" name="region">
+                <option value="us">United States</option>
+                <option value="ca">Canada</option>
+                <option value="uk">United Kingdom</option>
+                <option value="roi">Republic of Ireland</option>
+                <option value="au">Australia</option>
+                <option value="int">International</option>
+            </select>
         </div>
-        <div class="poem">
-            <span>
-                <a href="https://www.samaritans.org/" target="_blank" rel="noopener noreferrer">SAMARITANS</a> <span
-                    style="color: var(--color-accent)">116 123</span> •
-                <a href="https://www.thecalmzone.net/" target="_blank" rel="noopener noreferrer">CALM</a> <span
-                    style="color: var(--color-accent)">0800 58 58 58</span> •
-                <a href="https://www.papyrus-uk.org/" target="_blank" rel="noopener noreferrer">PAPYRUS</a> <span
-                    style="color: var(--color-accent)">0800 068 4141</span> •
-                <a href="https://www.crisis.org.uk/get-help/" target="_blank" rel="noopener noreferrer">CRISIS</a> <span
-                    style="color: var(--color-accent)">85258</span> •
-                <a href="https://www.helpmusicians.org.uk/" target="_blank" rel="noopener noreferrer">HELP MUSICIANS
-                    UK</a> <span style="color: var(--color-accent)">0808 802 8008</span>
-            </span>
-        </div>
-        <div class="socials">
-            <a href="https://tiktok.com/@rocheofficiel" class="social-link">TikTok</a>
-            <a href="https://instagram.com/@rocheofficiel" class="social-link">Instagram</a>
-            <a href="https://youtube.com/@rocheofficiel" class="social-link">YouTube</a>
-            <a href="https://open.spotify.com/artist/2EJmFMBLaeIYrmKK15iQ3M" class="social-link">Spotify</a>
-        </div>
-    </footer>
+
+        <ul class="support-hotlines" id="supportHotlineList"></ul>
+
+        <p class="support-worldwide">
+            <a href="https://findahelpline.com/" target="_blank" rel="noopener noreferrer">Find help worldwide</a>
+        </p>
+    </div>
+</div>
 
     <!-- Sympathy Modal (First Interaction) -->
     <div class="modal" id="sympathyModal">
         <div class="modal-content" style="text-align: center;">
-            <button class="modal-close" onclick="closeModal('sympathyModal')">×</button>
+            <button class="modal-close" onclick="closeModal('sympathyModal')">Ã—</button>
             <h3 style="margin-bottom: 32px; font-size: 20px;">ONE SECOND MATE</h3>
             <p style="font-size: 14px; line-height: 1.6; margin-bottom: 24px;">
                 Toss a penny in the hat for the poor noisemaker. A warm meal buys a
@@ -174,10 +212,10 @@
                 Or take the tune for free, if fortune hasn't favored ye this week.
             </p>
             <div style="display: flex; flex-direction: column; gap: 16px;">
-                <button class="submit-btn" onclick="openPaymentModal()">💰 Toss a Penny</button>
+                <button class="submit-btn" onclick="openPaymentModal()">ðŸ’° Toss a Penny</button>
                 <button class="submit-btn"
                     style="background: transparent; border: 1px solid var(--color-text-secondary); color: var(--color-text-secondary);"
-                    onclick="openContactModal()">⬇️ JUST FUCKING DOWNLOAD!</button>
+                    onclick="openContactModal()">â¬‡ï¸ JUST FUCKING DOWNLOAD!</button>
             </div>
         </div>
     </div>
@@ -185,22 +223,22 @@
     <!-- Payment Input Modal -->
     <div class="modal" id="paymentModal">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeModal('paymentModal')">×</button>
+            <button class="modal-close" onclick="closeModal('paymentModal')">Ã—</button>
             <button class="back-link" onclick="backToSympathy()"
-                style="border: none; background: none; color: var(--color-text-secondary); cursor: pointer; margin-bottom: 16px; padding: 0;">←
+                style="border: none; background: none; color: var(--color-text-secondary); cursor: pointer; margin-bottom: 16px; padding: 0;">â†
                 Back</button>
             <h3>Toss a Penny</h3>
             <p id="paymentDescription">Select your contribution amount.</p>
 
             <div class="form-group">
-                <label>Amount (£)</label>
+                <label>Amount (Â£)</label>
                 <div style="display: flex; gap: 16px; margin-bottom: 16px;">
                     <button class="amount-option-btn active" onclick="setPaymentAmount('min')">Minimum</button>
                     <button class="amount-option-btn" onclick="setPaymentAmount('custom')">Custom</button>
                 </div>
                 <input type="number" id="paymentAmountInput" placeholder="Enter amount" step="0.01">
                 <p id="minAmountMsg" style="font-size: 10px; color: var(--color-accent); margin-top: 4px;">Minimum:
-                    £1.00
+                    Â£1.00
                 </p>
             </div>
 
@@ -211,9 +249,9 @@
     <!-- Contact Form Modal (Free MP3) -->
     <div class="modal" id="contactModal">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeModal('contactModal')">×</button>
+            <button class="modal-close" onclick="closeModal('contactModal')">Ã—</button>
             <button class="back-link" onclick="backToSympathy()"
-                style="border: none; background: none; color: var(--color-text-secondary); cursor: pointer; margin-bottom: 16px; padding: 0;">←
+                style="border: none; background: none; color: var(--color-text-secondary); cursor: pointer; margin-bottom: 16px; padding: 0;">â†
                 Back</button>
             <h3>Fortune Hasn't Favored?</h3>
             <p>No worries. Just let me know who's listening.</p>
@@ -240,7 +278,7 @@
     <!-- Stripe Checkout Modal -->
     <div class="modal" id="checkoutModal">
         <div class="modal-content" style="max-width: 800px; width: 95%;">
-            <button class="modal-close" onclick="closeModal('checkoutModal')">×</button>
+            <button class="modal-close" onclick="closeModal('checkoutModal')">Ã—</button>
             <div id="stripe-checkout-container"></div>
         </div>
     </div>

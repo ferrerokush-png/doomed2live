@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
+const https = require('https');
+const http = require('http');
 require('dotenv').config();
 
 // Import API handlers
@@ -41,6 +43,101 @@ app.use(express.static(path.join(__dirname, '.')));
 app.post('/api/checkout', checkoutHandler);
 app.get('/api/config', configHandler);
 app.get('/api/session-status', sessionStatusHandler);
+
+function getClientIp(req) {
+    const xForwardedFor = req.headers['x-forwarded-for'];
+    if (typeof xForwardedFor === 'string' && xForwardedFor.length) {
+        return xForwardedFor.split(',')[0].trim();
+    }
+    return req.socket && req.socket.remoteAddress ? req.socket.remoteAddress : '';
+}
+
+function normalizeIp(ip) {
+    if (!ip) return '';
+    if (ip.startsWith('::ffff:')) return ip.slice('::ffff:'.length);
+    return ip;
+}
+
+function isPrivateIp(ip) {
+    if (!ip) return true;
+    if (ip === '::1' || ip === '127.0.0.1') return true;
+    if (ip.startsWith('10.') || ip.startsWith('192.168.')) return true;
+
+    if (ip.startsWith('172.')) {
+        const parts = ip.split('.');
+        const secondOctet = Number(parts[1]);
+        if (Number.isFinite(secondOctet) && secondOctet >= 16 && secondOctet <= 31) return true;
+    }
+
+    return false;
+}
+
+function countryCodeFromHeaders(req) {
+    const headerKeys = ['cf-ipcountry', 'x-vercel-ip-country', 'x-country-code'];
+    for (const key of headerKeys) {
+        const value = req.headers[key];
+        if (typeof value === 'string' && value.length && value !== 'XX') return value.toUpperCase();
+    }
+    return null;
+}
+
+function buildLookupUrl(baseUrl, ip) {
+    if (baseUrl.includes('{ip}')) return baseUrl.split('{ip}').join(encodeURIComponent(ip));
+
+    const url = new URL(baseUrl);
+    if (!url.searchParams.has('ip')) {
+        url.searchParams.set('ip', ip);
+    }
+    return url.toString();
+}
+
+function getJson(url, timeoutMs = 1500) {
+    return new Promise((resolve, reject) => {
+        const parsed = new URL(url);
+        const client = parsed.protocol === 'http:' ? http : https;
+
+        const req = client.get(parsed, (resp) => {
+            let data = '';
+            resp.on('data', (chunk) => (data += chunk));
+            resp.on('end', () => {
+                try {
+                    resolve(JSON.parse(data));
+                } catch (e) {
+                    reject(e);
+                }
+            });
+        });
+
+        req.on('error', reject);
+        req.setTimeout(timeoutMs, () => {
+            req.destroy(new Error('timeout'));
+        });
+    });
+}
+
+// IP-based region detection (no IP persisted/logged)
+app.get('/api/region', async (req, res) => {
+    res.set('Cache-Control', 'no-store');
+
+    let countryCode = countryCodeFromHeaders(req);
+
+    if (!countryCode && process.env.GEOLOOKUP_URL) {
+        const ip = normalizeIp(getClientIp(req));
+        if (!isPrivateIp(ip)) {
+            try {
+                const lookupUrl = buildLookupUrl(process.env.GEOLOOKUP_URL, ip);
+                const json = await getJson(lookupUrl);
+                const maybe =
+                    (json && (json.countryCode || json.country_code || json.country || json.countryCode2)) || null;
+                if (maybe) countryCode = String(maybe).toUpperCase();
+            } catch {
+                // Ignore failures; client will fall back to locale/timezone
+            }
+        }
+    }
+
+    res.json({ countryCode: countryCode || null });
+});
 
 // Fallback for SPA/Static site
 app.get('*', (req, res) => {
