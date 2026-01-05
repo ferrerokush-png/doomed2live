@@ -1145,9 +1145,13 @@ let lyricRequestFrame;
 function startLyricSync() {
     cancelLyricSync();
 
+    const audio = document.getElementById('audioPlayer');
+
     function loop() {
         syncLyrics();
-        if (isPlaying) {
+        // Use the source of truth (audio.paused) instead of manual isPlaying state
+        // to avoid race conditions where the play event fires before isPlaying is set to true.
+        if (!audio.paused) {
             lyricRequestFrame = requestAnimationFrame(loop);
         }
     }
