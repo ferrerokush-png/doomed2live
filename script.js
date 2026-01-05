@@ -769,14 +769,19 @@ audioPlayer.addEventListener('timeupdate', () => {
     const footerProgressBar = document.getElementById('footerProgressBar');
     if (footerProgressBar) footerProgressBar.style.width = percent + '%';
 
-    syncLyrics();
+    // Removed syncLyrics() from here to use high-precision loop requestAnimationFrame
 });
 
 // Ensure focus mode is cleared on pause (unless switching tracks)
 audioPlayer.addEventListener('pause', () => {
+    cancelLyricSync(); // Stop high precision loop
     if (!isSwitchingTrack) {
         document.getElementById('musicView').classList.remove('lyrics-focused');
     }
+});
+
+audioPlayer.addEventListener('play', () => {
+    startLyricSync(); // Start high precision loop
 });
 
 // Dynamic Duration Fix: Update track list duration when file loads
@@ -1113,6 +1118,7 @@ function parseLyrics(text) {
     const lines = text.split('\n');
     const regex = /^\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/;
 
+    // Updated Parsing to allow empty lines (manual clear)
     lyricsData = lines.map(line => {
         const match = line.match(regex);
         if (!match) return null;
@@ -1130,7 +1136,26 @@ function parseLyrics(text) {
             time: min * 60 + sec + ms,
             text: content
         };
-    }).filter(item => item !== null && item.text !== '');
+    }).filter(item => item !== null); // Removed check for empty text to allow manual clearing
+}
+
+// Optimized Sync Loop
+let lyricRequestFrame;
+
+function startLyricSync() {
+    cancelLyricSync();
+
+    function loop() {
+        syncLyrics();
+        if (isPlaying) {
+            lyricRequestFrame = requestAnimationFrame(loop);
+        }
+    }
+    loop();
+}
+
+function cancelLyricSync() {
+    if (lyricRequestFrame) cancelAnimationFrame(lyricRequestFrame);
 }
 
 function syncLyrics() {
@@ -1139,21 +1164,58 @@ function syncLyrics() {
     const audio = document.getElementById('audioPlayer');
     const time = audio.currentTime;
 
-    // Find current line (last line passed)
+    // 1. Find the current active line index
+    // We look for the latest timestamp that has passed
     let activeIndex = -1;
     for (let i = 0; i < lyricsData.length; i++) {
         if (time >= lyricsData[i].time) {
             activeIndex = i;
         } else {
+            // Since time is increasing, we can break early if list is sorted (mostly true)
             break;
         }
     }
 
-    if (activeIndex !== currentLyricIndex) {
+    // 2. Handle Auto-Fade Out (Heuristic)
+    // If we are deep into the line but haven't hit the next one yet, check if we should fade out
+    if (activeIndex !== -1) {
+        const currentLine = lyricsData[activeIndex];
+        const nextLine = lyricsData[activeIndex + 1];
+
+        // Calculate a reasonable duration for this line
+        // Base: 2.5s buffer + 0.4s per word
+        // This prevents lyrics from hanging during long instrumentals
+        const wordCount = currentLine.text ? currentLine.text.split(' ').length : 0;
+        const estimatedDuration = 2.5 + (wordCount * 0.4);
+
+        // If there is a next line, the gap is the hard limit, but we might fade earlier
+        const timeSinceStart = time - currentLine.time;
+
+        if (timeSinceStart > estimatedDuration && currentLine.text !== '') {
+            // If we've exceeded our estimated duration, treat as silence
+            // But only if we aren't already showing nothing
+            if (currentLyricIndex === activeIndex) {
+                // Force a clear by pretending we are in a "gap" state
+                // We do this by updating display to empty, but keeping index to avoid loops
+                updateLyricDisplay('');
+                currentLyricIndex = -2; // Special state: "Cleared for current line"
+                return;
+            } else if (currentLyricIndex === -2) {
+                return; // Already cleared
+            }
+        }
+    }
+
+    // 3. Update Display if Index Changed
+    if (activeIndex !== currentLyricIndex && activeIndex !== -2) {
         currentLyricIndex = activeIndex;
-        const line = lyricsData[activeIndex];
-        const text = line ? line.text : ''; // Empty if before first timestamp
-        updateLyricDisplay(text);
+
+        if (activeIndex === -1) {
+            updateLyricDisplay('');
+        } else {
+            const line = lyricsData[activeIndex];
+            updateLyricDisplay(line.text);
+        }
     }
 }
 
@@ -1161,26 +1223,33 @@ function updateLyricDisplay(text) {
     const el = document.getElementById('currentLyricLine');
     if (!el) return;
 
-    // Fade out
+    // Optimization: If text is same, don't re-animate (unless it was fading out)
+    if (el.textContent === text && el.classList.contains('visible')) return;
+
+    // Immediate update for better responsiveness
+    // If text is empty, just remove visible class
+    if (!text) {
+        el.classList.remove('visible');
+        return;
+    }
+
+    // If we are switching text, quick fade transition
     el.classList.remove('visible');
 
     if (lyricTimeout) clearTimeout(lyricTimeout);
 
-    // Wait for fade out, then swap text and fade in
-    // Wait for fade out, then swap text and fade in
+    // Shorten delay to 50ms for snappier feel
     lyricTimeout = setTimeout(() => {
         el.textContent = text;
         const musicView = document.getElementById('musicView');
 
         if (text) {
             el.classList.add('visible');
-            // Enable Focus Mode
             if (musicView) musicView.classList.add('lyrics-focused');
         } else {
-            // Disable Focus Mode if no lyrics
             if (musicView) musicView.classList.remove('lyrics-focused');
         }
-    }, 100); // Matches CSS transition duration
+    }, 50);
 }
 
 /*
