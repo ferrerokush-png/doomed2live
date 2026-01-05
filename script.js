@@ -1227,33 +1227,17 @@ function updateLyricDisplay(text) {
     const el = document.getElementById('currentLyricLine');
     if (!el) return;
 
-    // Optimization: If text is same, don't re-animate (unless it was fading out)
-    if (el.textContent === text && el.classList.contains('visible')) return;
+    // Direct update without animation logic
+    el.textContent = text;
+    const musicView = document.getElementById('musicView');
 
-    // Immediate update for better responsiveness
-    // If text is empty, just remove visible class
-    if (!text) {
+    if (text) {
+        el.classList.add('visible');
+        if (musicView) musicView.classList.add('lyrics-focused');
+    } else {
         el.classList.remove('visible');
-        return;
+        if (musicView) musicView.classList.remove('lyrics-focused');
     }
-
-    // If we are switching text, quick fade transition
-    el.classList.remove('visible');
-
-    if (lyricTimeout) clearTimeout(lyricTimeout);
-
-    // Shorten delay to 50ms for snappier feel
-    lyricTimeout = setTimeout(() => {
-        el.textContent = text;
-        const musicView = document.getElementById('musicView');
-
-        if (text) {
-            el.classList.add('visible');
-            if (musicView) musicView.classList.add('lyrics-focused');
-        } else {
-            if (musicView) musicView.classList.remove('lyrics-focused');
-        }
-    }, 50);
 }
 
 /*

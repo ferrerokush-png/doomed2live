@@ -1682,12 +1682,12 @@ footer {
 }
 
 .lyrics-line {
-    opacity: 0;
-    transition: opacity 0.1s ease-out;
+    /* opacity: 0; Removed for instant change */
+    /* transition: opacity 0.1s ease-out; Removed */
 }
 
 .lyrics-line.visible {
-    opacity: 1;
+    /* opacity: 1; Removed */
 }
 
 .volume-slider {
