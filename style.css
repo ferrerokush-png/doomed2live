@@ -391,18 +391,20 @@ body {
 }
 
 .release-gate__title {
-    font-family: 'Space Mono', monospace;
+    font-family: 'Akira Expanded', sans-serif;
     letter-spacing: 0.2em;
     font-size: 18px;
     margin-bottom: 14px;
 }
 
 .release-gate__message {
+    font-family: 'Akira Expanded', sans-serif;
     font-size: 20px;
     margin-bottom: 12px;
 }
 
 .release-gate__countdown {
+    font-family: 'Akira Expanded', sans-serif;
     font-size: 16px;
     color: var(--color-text-secondary);
 }

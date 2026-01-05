@@ -165,7 +165,7 @@ let lyricsData = [];
 let currentLyricIndex = -1;
 let lyricTimeout = null;
 
-const RELEASE_ISO = '2026-01-15T00:00:00Z';
+const RELEASE_UTC_MS = Date.UTC(2026, 0, 15, 0, 0, 0);
 const PREVIEW_HOSTS = new Set([
     'preview.doomed2live.com',
     'localhost',
@@ -179,16 +179,14 @@ function shouldBypassReleaseGate() {
 }
 
 function updateReleaseGate() {
-    const gateMessage = document.getElementById('releaseGateMessage');
     const gateCountdown = document.getElementById('releaseGateCountdown');
-    if (!gateMessage || !gateCountdown) return false;
+    if (!gateCountdown) return false;
 
-    const targetTime = new Date(RELEASE_ISO).getTime();
+    const targetTime = RELEASE_UTC_MS;
     const now = Date.now();
     const remaining = targetTime - now;
 
     if (remaining <= 0) {
-        gateMessage.textContent = 'Release is live';
         gateCountdown.textContent = '00d 00h 00m 00s';
         return false;
     }
@@ -202,7 +200,6 @@ function updateReleaseGate() {
     const minutes = Math.floor((remaining % hourMs) / minuteMs);
     const seconds = Math.floor((remaining % minuteMs) / 1000);
 
-    gateMessage.textContent = `Come back in ${days} day${days === 1 ? '' : 's'}`;
     gateCountdown.textContent = `${days.toString().padStart(2, '0')}d ${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`;
 
     return true;
