@@ -10,8 +10,8 @@
 
 @font-face {
     font-family: 'Akira Expanded';
-    src: url('https://cdn.jsdelivr.net/gh/ferrerokush-png/doomed2live@main/AkiraExpanded-SuperBold.woff2') format('woff2');
-    font-weight: normal;
+    src: url('fonts/AkiraExpanded-SuperBold.woff2') format('woff2');
+    font-weight: 700;
     font-style: normal;
     font-display: swap;
 }

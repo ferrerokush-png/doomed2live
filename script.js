@@ -782,6 +782,7 @@ audioPlayer.addEventListener('pause', () => {
 
 audioPlayer.addEventListener('play', () => {
     startLyricSync(); // Start high precision loop
+    document.getElementById('musicView').classList.add('lyrics-focused');
 });
 
 // Dynamic Duration Fix: Update track list duration when file loads
@@ -1233,10 +1234,8 @@ function updateLyricDisplay(text) {
 
     if (text) {
         el.classList.add('visible');
-        if (musicView) musicView.classList.add('lyrics-focused');
     } else {
         el.classList.remove('visible');
-        if (musicView) musicView.classList.remove('lyrics-focused');
     }
 }
 
